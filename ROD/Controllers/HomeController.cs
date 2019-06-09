@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ROD.Models;
@@ -12,6 +13,12 @@ namespace ROD.Controllers
     {
         public IActionResult Index()
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            var nameSpace = "ROD.Models";
+            var entities = assembly.GetTypes()
+                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
+                      .ToArray();
+            ViewBag.entities = entities;
             return View();
         }
 

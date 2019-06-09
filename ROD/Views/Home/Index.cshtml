@@ -1,4 +1,6 @@
-﻿@{
+﻿
+@using System.Reflection;
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -25,7 +27,7 @@
         .NET Core 2.2
         <br />
         <small class="text-black-50">*This release is not compatible with Visual Studio 2017. Please make sure you have 2019.</small>
-    </li> 
+    </li>
 
     <li>
         Entity Framework
@@ -41,23 +43,60 @@
 </ul>
 
 <h3 id="entities">Entities</h3>
+<div class="row">
+    @foreach (var e in ViewBag.entities)
+    {
+        var className = e.Name;
+        if (className == "BaseModel" || className == "ErrorViewModel")
+        {
+            continue;
+        }
+    <div class="col-md-4">
+        <div id="@e.Name" class="class-section p-2 mt-2">
+            <p class="lead mb-0">@className</p>
+            <hr class="my-1 w-25 ml-0" />
+            <div>
+                <code>
+                    @foreach (var p in e.GetProperties())
+                    {
+                        <span>
+                            @Html.Raw(GetSimpleTypeName(p.PropertyType))
+                            <span class="text-black-50">
+                                @p.Name
+                            </span>
+                        </span>
+                        <br />
+                    }
+                </code>
+            </div>
+        </div>
+    </div>
+    }
+</div>
 
-<ul>
-    <li>Merchants</li>
 
-    <li>Customers</li>
+<div class="row">
+    <div class="col-md-4">
+        
+    </div>
+</div>
+@functions{
+    public string GetSimpleTypeName(System.Type propertyInfo)
+    {
+        var simpleName = "unknown";
+        var propertyTypeString = propertyInfo.ToString();
 
-    <li>Employees</li>
+        if (propertyTypeString.Contains("System."))
+        {
+            simpleName = propertyTypeString.Replace("System.", "");
+        }
+        else if (propertyTypeString.Contains("ROD.Models."))
+        {
+            simpleName = propertyTypeString.Replace("ROD.Models.", "");
+            //var onclick = "$('.class-section').removeClass('card bg-light'); $('#"+name+"').addClass('card bg-light')";
+            //simpleName = $"<button type=\"button\" class=\"btn btn-outline-dark\" onclick=\"{onclick}\">{name}</button>";
+        }
 
-    <li>Inventory</li>
-
-    <li>Notifications</li>
-
-    <li>Orders</li>
-
-    <li>LineItems</li>
-
-    <li>Payments</li>
-
-    <li>Permissions</li>
-</ul>
+        return simpleName;
+    }
+}

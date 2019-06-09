@@ -81,6 +81,6 @@ namespace ROD.Models
         public Merchant Merchant { get; set; }
 
         [ForeignKey("InventoryTypeID")]
-        public Merchant InventoryType { get; set; }
+        public InventoryType InventoryType { get; set; }
     }
 }
