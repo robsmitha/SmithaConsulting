@@ -30,6 +30,8 @@ namespace ROD.Data
         public DbSet<PriceType> PriceTypes { get; set; }
         public DbSet<UnitType> UnitTypes { get; set; }
         public DbSet<ItemImage> ItemImages { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ItemTag> ItemTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +53,8 @@ namespace ROD.Data
             modelBuilder.Entity<PriceType>();
             modelBuilder.Entity<UnitType>();
             modelBuilder.Entity<ItemImage>();
+            modelBuilder.Entity<Tag>();
+            modelBuilder.Entity<ItemTag>();
 
             modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys())
