@@ -11,6 +11,10 @@ namespace ROD.Models
         public string Note { get; set; }
         public decimal Total { get; set; }
         public int OrderStatusTypeID { get; set; }
+        public int MerchantID { get; set; }
+
+        [ForeignKey("MerchantID")]
+        public Merchant Merchant { get; set; }
 
         [ForeignKey("OrderStatusTypeID")]
         public OrderStatusType OrderStatusType { get; set; }

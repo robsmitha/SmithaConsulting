@@ -24,6 +24,10 @@ namespace ROD.Models
         [Display(Name = "Owner")]
         public int OwnerUserID { get; set; }
 
+        public bool SelfBoardingApplication { get; set; }
+
+        public bool IsBillable { get; set; }
+
         [ForeignKey("MerchantTypeID")]
         public MerchantType MerchantType { get; set; }
 
