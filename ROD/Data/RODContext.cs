@@ -16,9 +16,25 @@ namespace ROD.Data
         {
         }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<MerchantType> SalesChannels { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Merchant> Merchants { get; set; }
+        public DbSet<InventoryType> InventoryTypes { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<Customer>();
+            modelBuilder.Entity<MerchantType>();
+            modelBuilder.Entity<User>();
+            modelBuilder.Entity<Merchant>();
+            modelBuilder.Entity<InventoryType>();
+            modelBuilder.Entity<Inventory>();
+
+            modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys())
+                .ToList()
+                .ForEach(r => r.DeleteBehavior = DeleteBehavior.Restrict);
+
         }
     }
 }

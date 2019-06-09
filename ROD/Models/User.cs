@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ROD.Models
 {
-    public class Customer : BaseModel
+    public class User : BaseModel
     {
         [Required]
-        [Display( Name = "First Name")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
@@ -33,5 +33,9 @@ namespace ROD.Models
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
     }
 }
