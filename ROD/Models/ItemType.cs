@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ROD.Models
 {
-    public class InventoryType : BaseModel
+    public class ItemType : BaseModel
     {
         [Required]
         [Display(Name = "Name")]

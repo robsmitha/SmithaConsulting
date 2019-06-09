@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,5 +13,8 @@ namespace ROD.Models
         public int SortOrder { get; set; }
         public string Name { get; set; }
         public bool DefaultModifier { get; set; }
+        public int ItemID { get; set; }
+        [ForeignKey("ItemID")]
+        public Item Item { get; set; }
     }
 }

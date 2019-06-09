@@ -11,6 +11,6 @@ namespace ROD.Models
         public int ItemID { get; set; }
         public double Quantity { get; set; }
         [ForeignKey("ItemID")]
-        public Inventory Inventory { get; set; }
+        public Item Item { get; set; }
     }
 }

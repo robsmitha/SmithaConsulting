@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ROD.Models
 {
-    public class Inventory : BaseModel
+    public class Item : BaseModel
     {
         /// <summary>
         /// Name of the item
@@ -21,8 +21,8 @@ namespace ROD.Models
         public string ItemDescription { get; set; }
 
         [Required]
-        [Display(Name = "Inventory Type")]
-        public int InventoryTypeID { get; set; }
+        [Display(Name = "Item Type")]
+        public int ItemTypeID { get; set; }
 
         [Required]
         [Display(Name = "Merchant")]
@@ -80,7 +80,13 @@ namespace ROD.Models
         [ForeignKey("MerchantID")]
         public Merchant Merchant { get; set; }
 
-        [ForeignKey("InventoryTypeID")]
-        public InventoryType InventoryType { get; set; }
+        [ForeignKey("ItemTypeID")]
+        public ItemType ItemType { get; set; }
+
+        [ForeignKey("UnitTypeID")]
+        public UnitType UnitType { get; set; }
+
+        [ForeignKey("PriceTypeID")]
+        public PriceType PriceType { get; set; }
     }
 }

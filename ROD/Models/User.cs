@@ -21,11 +21,6 @@ namespace ROD.Models
         public string LastName { get; set; }
 
         [Required]
-        [DataType(DataType.PhoneNumber)]
-        [Display(Name = "Phone Number")]
-        public string PhoneNumber { get; set; }
-
-        [Required]
         [DataType(DataType.EmailAddress)]
         [EmailAddress]
         public string Email { get; set; }

@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace ROD.Models
 {
-    public class LineItem : BaseModel
+    public class ItemImage : BaseModel
     {
-        public decimal ItemAmount { get; set; }
+        public string ImageUrl { get; set; }
         public int ItemID { get; set; }
-        public int OrderID { get; set; }
-
         [ForeignKey("ItemID")]
         public Item Item { get; set; }
-
-        [ForeignKey("OrderID")]
-        public Order Order { get; set; }
     }
 }

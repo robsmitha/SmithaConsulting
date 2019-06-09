@@ -51,10 +51,9 @@
         {
             continue;
         }
-    <div class="col-md-4">
+    <div class="col-12">
         <div id="@e.Name" class="class-section p-2 mt-2">
-            <p class="lead mb-0">@className</p>
-            <hr class="my-1 w-25 ml-0" />
+            <p class="lead mb-2">@className</p>
             <div>
                 <code>
                     @foreach (var p in e.GetProperties())
@@ -74,12 +73,6 @@
     }
 </div>
 
-
-<div class="row">
-    <div class="col-md-4">
-        
-    </div>
-</div>
 @functions{
     public string GetSimpleTypeName(System.Type propertyInfo)
     {
@@ -93,8 +86,6 @@
         else if (propertyTypeString.Contains("ROD.Models."))
         {
             simpleName = propertyTypeString.Replace("ROD.Models.", "");
-            //var onclick = "$('.class-section').removeClass('card bg-light'); $('#"+name+"').addClass('card bg-light')";
-            //simpleName = $"<button type=\"button\" class=\"btn btn-outline-dark\" onclick=\"{onclick}\">{name}</button>";
         }
 
         return simpleName;

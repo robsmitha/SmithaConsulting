@@ -39,7 +39,7 @@ namespace ROD.Data
                 }
             };
 
-            context.SalesChannels.AddRange(merchantTypes);
+            context.MerchantTypes.AddRange(merchantTypes);
 
             var users = new List<User>
             {
