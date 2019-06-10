@@ -32,6 +32,14 @@ namespace ROD.Data
         public DbSet<ItemImage> ItemImages { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ItemTag> ItemTags { get; set; }
+        public DbSet<CustomerPhone> CustomerPhones { get; set; }
+        public DbSet<PhoneType> PhoneTypes { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<County> Counties { get; set; }
+        public DbSet<AddressType> AddressTypes { get; set; }
+        public DbSet<CustomerCard> CustomerCards { get; set; }
+        public DbSet<CardType> CardTypes { get; set; }
         public DbSet<Authorization> Authorizations { get; set; }
         public DbSet<AuthorizationType> AuthorizationTypes { get; set; }
         public DbSet<CashEvent> CashEvents { get; set; }
@@ -63,6 +71,14 @@ namespace ROD.Data
             modelBuilder.Entity<ItemImage>();
             modelBuilder.Entity<Tag>();
             modelBuilder.Entity<ItemTag>();
+            modelBuilder.Entity<CustomerPhone>();
+            modelBuilder.Entity<PhoneType>();
+            modelBuilder.Entity<CustomerAddress>();
+            modelBuilder.Entity<State>();
+            modelBuilder.Entity<County>();
+            modelBuilder.Entity<AddressType>();
+            modelBuilder.Entity<CustomerCard>();
+            modelBuilder.Entity<CardType>();
             modelBuilder.Entity<Authorization>();
             modelBuilder.Entity<AuthorizationType>();
             modelBuilder.Entity<CashEvent>();
