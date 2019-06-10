@@ -38,6 +38,8 @@ namespace ROD.Data
         public DbSet<State> States { get; set; }
         public DbSet<County> Counties { get; set; }
         public DbSet<AddressType> AddressTypes { get; set; }
+        public DbSet<CustomerCard> CustomerCards { get; set; }
+        public DbSet<CardType> CardTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +69,8 @@ namespace ROD.Data
             modelBuilder.Entity<State>();
             modelBuilder.Entity<County>();
             modelBuilder.Entity<AddressType>();
+            modelBuilder.Entity<CustomerCard>();
+            modelBuilder.Entity<CardType>();
 
             modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys())
