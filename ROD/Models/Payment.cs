@@ -9,12 +9,18 @@ namespace ROD.Models
     public class Payment : BaseModel
     {
         public decimal Amount { get; set; }
+        public decimal? CashTendered { get; set; }
         public int PaymentTypeID { get; set; }
+        public int PaymentStatusTypeID { get; set; }
+        public int? AuthorizationID { get; set; }
 
         [ForeignKey("PaymentTypeID")]
         public PaymentType PaymentType { get; set; }
 
-        [ForeignKey("OrderID")]
-        public Order Order { get; set; }
+        [ForeignKey("PaymentStatusTypeID")]
+        public PaymentStatusType PaymentStatusType { get; set; }
+
+        [ForeignKey("AuthorizationID")]
+        public Authorization Authorization { get; set; }
     }
 }

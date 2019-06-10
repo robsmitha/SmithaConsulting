@@ -10,6 +10,6 @@ namespace ROD.Models
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool Active { get; set; }
-        public DateTime ModifiedTime { get; set; }
+        public DateTime? ModifiedTime { get; set; }
     }
 }

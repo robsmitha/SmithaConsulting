@@ -13,7 +13,12 @@ namespace ROD.Models
         public string CardType { get; set; }
         public string AuthorizationCode { get; set; }
         public string Token { get; set; }
-        public int AuthorizationTypeID { get;set; }
+        public int OrderID { get; set; }
+        public int AuthorizationTypeID { get; set; }
+
+        [ForeignKey("OrderID")]
+        public Order Order { get; set; }
+
         [ForeignKey("AuthorizationTypeID")]
         public AuthorizationType AuthorizationType { get; set; }
     }

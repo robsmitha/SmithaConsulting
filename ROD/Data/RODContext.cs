@@ -32,6 +32,14 @@ namespace ROD.Data
         public DbSet<ItemImage> ItemImages { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ItemTag> ItemTags { get; set; }
+        public DbSet<Authorization> Authorizations { get; set; }
+        public DbSet<AuthorizationType> AuthorizationTypes { get; set; }
+        public DbSet<CashEvent> CashEvents { get; set; }
+        public DbSet<CashEventType> CashEventTypes { get; set; }
+        public DbSet<Credit> Credits { get; set; }
+        public DbSet<Refund> Refunds { get; set; }
+        public DbSet<VoidReasonType> VoidReasonTypes { get; set; }
+        public DbSet<PaymentStatusType> PaymentStatusTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +63,14 @@ namespace ROD.Data
             modelBuilder.Entity<ItemImage>();
             modelBuilder.Entity<Tag>();
             modelBuilder.Entity<ItemTag>();
+            modelBuilder.Entity<Authorization>();
+            modelBuilder.Entity<AuthorizationType>();
+            modelBuilder.Entity<CashEvent>();
+            modelBuilder.Entity<CashEventType>();
+            modelBuilder.Entity<Credit>();
+            modelBuilder.Entity<Refund>();
+            modelBuilder.Entity<VoidReasonType>();
+            modelBuilder.Entity<PaymentStatusType>();
 
             modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys())
