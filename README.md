@@ -15,16 +15,3 @@
 *   bootstrap 4.3.1
 *   jQuery 3.2.1
 *   Font Awesome 5
-
-### Entities
-
-*   Merchants
-*   Customers
-*   Employees
-*   Inventory
-*   Notifications
-*   Orders
-*   Payments
-*   Content Management
-*   Permissions
-*   Shopping Cart
