@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ROD;
 using ROD.Models;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,11 @@ namespace ROD.Data
 {
     public class RODContext : DbContext
     {
-        public RODContext(DbContextOptions<RODContext> options) : base(options) { }
+        public RODContext()
+        {
+        }
 
+        public RODContext(DbContextOptions<RODContext> options) : base(options) { }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<MerchantType> MerchantTypes { get; set; }
         public DbSet<User> Users { get; set; }

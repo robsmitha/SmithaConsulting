@@ -1,93 +1,45 @@
 ﻿
-@using System.Reflection;
+@model ROD.Models.RegisterViewModel
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<h1 id="rod">rod</h1>
+<h1 id="ROD">ROD</h1>
 
-<h3 id="features">Features</h3>
-
-<ul>
-    <li>Customer Profile</li>
-
-    <li>Administrative Management</li>
-
-    <li>Administrative Roles and Permissions</li>
-
-    <li>Communications</li>
-
-    <li>Online Shop</li>
-</ul>
-
-<h3 id="frameworks">Frameworks</h3>
-
-<ul>
-    <li>
-        .NET Core 2.2
-        <br />
-        <small class="text-black-50">*This release is not compatible with Visual Studio 2017. Please make sure you have 2019.</small>
-    </li>
-
-    <li>
-        Entity Framework
-        <br />
-        <small class="text-black-50">Microsoft.EntityFrameworkCore</small>
-    </li>
-
-    <li>bootstrap 4.3.1</li>
-
-    <li>jQuery 3.2.1</li>
-
-    <li>Font Awesome 5</li>
-</ul>
-
-<h3 id="entities">Entities</h3>
 <div class="row">
-    @foreach (var e in ViewBag.entities)
-    {
-        var className = e.Name;
-        if (className == "BaseModel" || className == "ErrorViewModel")
-        {
-            continue;
-        }
-    <div class="col-12">
-        <div id="@e.Name" class="class-section p-2 mt-2">
-            <p class="lead mb-2">@className</p>
-            <div>
-                <code>
-                    @foreach (var p in e.GetProperties())
-                    {
-                        <span>
-                            @Html.Raw(GetSimpleTypeName(p.PropertyType))
-                            <span class="text-black-50">
-                                @p.Name
-                            </span>
-                        </span>
-                        <br />
-                    }
-                </code>
-            </div>
+    <div class="col-auto">
+        <div class="list-group">
+            @foreach (var i in Model.Items)
+            {
+                <button type="button" class="list-group-item list-group-item-action" onclick="AddLineItem(@i.ID)">
+                    @i.ItemName
+                </button>
+            }
         </div>
     </div>
-    }
 </div>
 
-@functions{
-    public string GetSimpleTypeName(System.Type propertyInfo)
-    {
-        var simpleName = "unknown";
-        var propertyTypeString = propertyInfo.ToString();
-
-        if (propertyTypeString.Contains("System."))
-        {
-            simpleName = propertyTypeString.Replace("System.", "");
-        }
-        else if (propertyTypeString.Contains("ROD.Models."))
-        {
-            simpleName = propertyTypeString.Replace("ROD.Models.", "");
-        }
-
-        return simpleName;
-    }
+@using (Html.BeginForm("AddLineItem", "Home", FormMethod.Post, new { id = "form_add_line_item" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(m => m.CustomerID)
+    @Html.HiddenFor(m => m.SelectedItemID)
 }
+<script>
+    function AddLineItem(id) {
+        $('#SelectedItemID').val(id)
+        var model = $('#form_add_line_item').serialize()
+        $.ajax({
+            url: '@Url.Action("AddLineItem","Home")',
+            type: 'POST',
+            data: model,
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (request, error) {
+                console.log("Request: " + JSON.stringify(request));
+            }
+        });
+    }
+</script>
