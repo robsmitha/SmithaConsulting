@@ -1,11 +1,10 @@
-﻿using ROD.Data;
-using ROD.Models;
+﻿using rodLib.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ROD.Data
+namespace rodLib.Data
 {
     public static class DbInitializer
     {

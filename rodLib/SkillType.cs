@@ -4,7 +4,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace ROD
+namespace rodLib
 {
     public class SkillType : BaseModel
     {

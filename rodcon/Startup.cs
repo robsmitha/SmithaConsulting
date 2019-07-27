@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ROD.Data;
+using rodLib.Data;
 
-namespace ROD
+namespace rodcon
 {
     public class Startup
     {

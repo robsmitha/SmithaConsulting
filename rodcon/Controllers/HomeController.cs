@@ -5,10 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ROD.Data;
-using ROD.Models;
+using rodLib;
+using rodcon.Models;
+using rodLib.Data;
 
-namespace ROD.Controllers
+namespace rodcon.Controllers
 {
     public class HomeController : Controller
     {

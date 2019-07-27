@@ -1,6 +1,6 @@
 using System;
 
-namespace ROD.Models
+namespace rodcon.Models
 {
     public class ErrorViewModel
     {

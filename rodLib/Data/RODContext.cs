@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ROD;
-using ROD.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace ROD.Data
+namespace rodLib.Data
 {
     public class RODContext : DbContext
     {

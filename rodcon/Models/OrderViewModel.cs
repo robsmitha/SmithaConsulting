@@ -1,9 +1,10 @@
-﻿using System;
+﻿using rodLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ROD.Models
+namespace rodcon.Models
 {
     public class OrderViewModel
     {
