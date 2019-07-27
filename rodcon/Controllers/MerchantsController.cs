@@ -1,0 +1,166 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using rod;
+using rod.Data;
+
+namespace rodcon.Controllers
+{
+    public class MerchantsController : Controller
+    {
+        private readonly rodContext _context;
+
+        public MerchantsController(rodContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Merchants
+        public async Task<IActionResult> Index()
+        {
+            var rodContext = _context.Merchants.Include(m => m.MerchantType).Include(m => m.OwnerUser);
+            return View(await rodContext.ToListAsync());
+        }
+
+        // GET: Merchants/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var merchant = await _context.Merchants
+                .Include(m => m.MerchantType)
+                .Include(m => m.OwnerUser)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (merchant == null)
+            {
+                return NotFound();
+            }
+
+            return View(merchant);
+        }
+
+        // GET: Merchants/Create
+        public IActionResult Create()
+        {
+            ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description");
+            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email");
+            return View();
+        }
+
+        // POST: Merchants/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("MerchantName,WebsiteUrl,MerchantTypeID,OwnerUserID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(merchant);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
+            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
+            return View(merchant);
+        }
+
+        // GET: Merchants/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var merchant = await _context.Merchants.FindAsync(id);
+            if (merchant == null)
+            {
+                return NotFound();
+            }
+            ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
+            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
+            return View(merchant);
+        }
+
+        // POST: Merchants/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("MerchantName,WebsiteUrl,MerchantTypeID,OwnerUserID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
+        {
+            if (id != merchant.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(merchant);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MerchantExists(merchant.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
+            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
+            return View(merchant);
+        }
+
+        // GET: Merchants/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var merchant = await _context.Merchants
+                .Include(m => m.MerchantType)
+                .Include(m => m.OwnerUser)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (merchant == null)
+            {
+                return NotFound();
+            }
+
+            return View(merchant);
+        }
+
+        // POST: Merchants/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var merchant = await _context.Merchants.FindAsync(id);
+            _context.Merchants.Remove(merchant);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool MerchantExists(int id)
+        {
+            return _context.Merchants.Any(e => e.ID == id);
+        }
+    }
+}

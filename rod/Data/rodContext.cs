@@ -9,10 +9,6 @@ namespace rod.Data
 {
     public class rodContext : DbContext
     {
-        public rodContext()
-        {
-        }
-
         public rodContext(DbContextOptions<rodContext> options) : base(options) { }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<MerchantType> MerchantTypes { get; set; }

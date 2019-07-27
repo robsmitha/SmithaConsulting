@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using rod;
 using rodcon.Models;
 using rod.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace rodcon.Controllers
 {
@@ -39,33 +40,7 @@ namespace rodcon.Controllers
         public IActionResult AddLineItem(RegisterViewModel model)
         {
             var success = false;
-            //TODO: options
-            using (var context = new rodContext())
-            {
-                var order = new Order
-                {
 
-                };
-
-                var lineItems = new List<LineItem>
-                {
-                    new LineItem
-                    {
-                        ItemAmount = 29.99M,
-                        OrderID = order.ID,
-                        Order = order,
-                    },
-                };
-
-                try
-                {
-                    success = context.SaveChanges() > 0;
-                }
-                catch (Exception e)
-                {
-                    success = false;
-                }
-            }
             return Json(new { success });
         }
         public IActionResult About()
