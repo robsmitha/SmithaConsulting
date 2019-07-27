@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rodcon", "rodcon\rodcon.csproj", "{52A62118-F747-45B3-AA43-2DF512800298}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rodLib", "rodLib\rodLib.csproj", "{0254AEBA-99A7-4C92-8C33-2065690EB06C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rod", "rod\rod.csproj", "{0254AEBA-99A7-4C92-8C33-2065690EB06C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

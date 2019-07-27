@@ -81,6 +81,12 @@
         if (propertyTypeString.Contains("System."))
         {
             simpleName = propertyTypeString.Replace("System.", "");
+            if (simpleName.Contains("Nullable`1["))
+            {
+                simpleName = simpleName.Replace("Nullable`1[", "");
+                simpleName = simpleName.Replace("]", "");
+                simpleName = $"{simpleName}?";
+            }
         }
         else if (propertyTypeString.Contains("rod.Models."))
         {

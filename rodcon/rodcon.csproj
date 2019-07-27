@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\rodLib\rodLib.csproj" />
+    <ProjectReference Include="..\rod\rod.csproj" />
   </ItemGroup>
 
 </Project>

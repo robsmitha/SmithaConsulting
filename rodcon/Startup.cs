@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using rodLib.Data;
+using rod.Data;
 
 namespace rodcon
 {
@@ -43,7 +43,7 @@ namespace rodcon
             });
 
             //Register database context (dependency injection)
-            services.AddDbContext<RODContext>(options =>
+            services.AddDbContext<rodContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

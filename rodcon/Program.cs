@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using rodLib.Data;
+using rod.Data;
 
 namespace rodcon
 {
@@ -23,7 +23,7 @@ namespace rodcon
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<RODContext>();
+                    var context = services.GetRequiredService<rodContext>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)

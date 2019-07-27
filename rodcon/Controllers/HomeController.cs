@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using rodLib;
+using rod;
 using rodcon.Models;
-using rodLib.Data;
+using rod.Data;
 
 namespace rodcon.Controllers
 {
@@ -40,7 +40,7 @@ namespace rodcon.Controllers
         {
             var success = false;
             //TODO: options
-            using (var context = new RODContext())
+            using (var context = new rodContext())
             {
                 var order = new Order
                 {
@@ -70,11 +70,12 @@ namespace rodcon.Controllers
         }
         public IActionResult About()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var nameSpace = "ROD.Models";
-            var entities = assembly.GetTypes()
-                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
-                      .ToArray();
+            var @namespace = "rod";
+            
+
+            var entities = AppDomain.CurrentDomain.GetAssemblies()
+                       .SelectMany(t => t.GetTypes())
+                       .Where(t => t.IsClass && t.Namespace == @namespace).ToArray();
 
             ViewBag.entities = entities;
 
