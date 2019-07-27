@@ -11,7 +11,8 @@ namespace ROD.Data
     {
         public static void Initialize(RODContext context)
         {
-            context.Database.EnsureCreated();
+            if (!context.Database.EnsureCreated())
+                return;
 
             var customers = new List<Customer>
             {
