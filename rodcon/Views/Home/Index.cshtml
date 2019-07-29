@@ -1,46 +1,6 @@
 ﻿
-@model rodcon.Models.RegisterViewModel
-
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <h1>Home</h1>
-
-<div class="row">
-    <div class="col-auto">
-        <div class="list-group">
-            @foreach (var i in Model.Items)
-            {
-                <button type="button" class="list-group-item list-group-item-action" onclick="AddLineItem(@i.ID)">
-                    @i.ItemName
-                </button>
-            }
-        </div>
-    </div>
-</div>
-
-@using (Html.BeginForm("AddLineItem", "Home", FormMethod.Post, new { id = "form_add_line_item" }))
-{
-    @Html.AntiForgeryToken();
-    @Html.HiddenFor(m => m.CustomerID)
-    @Html.HiddenFor(m => m.SelectedItemID)
-}
-<script>
-    function AddLineItem(id) {
-        $('#SelectedItemID').val(id)
-        var model = $('#form_add_line_item').serialize()
-        $.ajax({
-            url: '@Url.Action("AddLineItem","Home")',
-            type: 'POST',
-            data: model,
-            success: function (data) {
-                console.log(data)
-                ShowFeedbackMessage(String(data.success))
-            },
-            error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
-    }
-</script>

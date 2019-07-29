@@ -9,39 +9,63 @@ using rod;
 using rodcon.Models;
 using rod.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace rodcon.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly rodContext _context;
+
+        public HomeController(rodContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
-            var order = new Order
-            {
-                ID = 1,
-            };
-            var orderView = new OrderViewModel
-            {
-                Order = order
-            };
-            var items = new List<Item>
-            {
-                new Item { ID = 1, ItemName = "Item 1", Price = 29.99M },
-                new Item { ID = 2, ItemName = "Item 2", Price = 14.99M },
-                new Item { ID = 3, ItemName = "Item 3", Price = 4.99M },
-                new Item { ID = 4, ItemName = "Item 4", Price = 59.99M }
-            };
-            var model = new RegisterViewModel(items);
-            model.CurrentOrder = orderView;
-            return View(model);
+            return View();
+        }
+        public IActionResult Login()
+        {
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddLineItem(RegisterViewModel model)
+        public async Task<IActionResult> LoginAsync(LoginViewModel model)
         {
-            var success = false;
+            if (ModelState.IsValid)
+            {
+                int userId = 0;
 
-            return Json(new { success });
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(m => m.Email == model.EmailAddress);
+
+                var decryptedPassword = "hotdog";
+
+                if(user.Password == decryptedPassword)
+                {
+                    userId = user.ID;
+                    HttpContext.Session.SetInt32("userId", userId);
+                    return RedirectToAction("Index");
+                }
+
+            }
+            return View(model);
+        }
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignUpAsync(SignUpViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View(model);
         }
         public IActionResult About()
         {

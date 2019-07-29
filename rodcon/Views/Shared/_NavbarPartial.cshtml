@@ -21,8 +21,6 @@
                         Contact
                     </a>
                 </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="featuresDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Features
@@ -42,6 +40,9 @@
                         </a>
                         <a class="dropdown-item" asp-area="" asp-controller="Payments" asp-action="Index">
                             Payments
+                        </a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Customers" asp-action="Index">
+                            Customers
                         </a>
                     </div>
                 </li>
@@ -74,6 +75,18 @@
                     </div>
                 </li>
             </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">
+                        Sign in
+                    </a>
+                </li>
+            </ul>
+            <form class="form-inline" asp-area="" asp-controller="Home" asp-action="SignUp">
+                <button class="btn btn-outline-success">
+                    Sign up
+                </button>
+            </form>
         </div>
     </div>
 </nav>

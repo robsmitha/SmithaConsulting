@@ -4,7 +4,7 @@
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
-<p>Use this area to provide additional information.</p>
+@*<p>Use this area to provide additional information.</p>
 <h3 id="features">Features</h3>
 
 <ul>
@@ -41,15 +41,11 @@
     <li>Font Awesome 5</li>
 </ul>
 
-<h3 id="entities">Entities</h3>
+<h3 id="entities">Entities</h3>*@
 <div class="row">
     @foreach (var e in ViewBag.entities)
     {
         var className = e.Name;
-        if (className == "BaseModel" || className == "ErrorViewModel")
-        {
-            continue;
-        }
         <div class="col-12">
             <div id="@e.Name" class="class-section p-2 mt-2">
                 <p class="lead mb-2">@className</p>
@@ -87,10 +83,6 @@
                 simpleName = simpleName.Replace("]", "");
                 simpleName = $"{simpleName}?";
             }
-        }
-        else if (propertyTypeString.Contains("rod.Models."))
-        {
-            simpleName = propertyTypeString.Replace("rod.Models.", "");
         }
 
         return simpleName;
