@@ -10,7 +10,7 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class MerchantsController : Controller
+    public class MerchantsController : BaseController
     {
         private readonly rodContext _context;
 
@@ -22,7 +22,7 @@ namespace rodcon.Controllers
         // GET: Merchants
         public async Task<IActionResult> Index()
         {
-            var rodContext = _context.Merchants.Include(m => m.MerchantType).Include(m => m.OwnerUser);
+            var rodContext = _context.Merchants.Include(m => m.MerchantType);
             return View(await rodContext.ToListAsync());
         }
 
@@ -36,7 +36,6 @@ namespace rodcon.Controllers
 
             var merchant = await _context.Merchants
                 .Include(m => m.MerchantType)
-                .Include(m => m.OwnerUser)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (merchant == null)
             {
@@ -50,7 +49,6 @@ namespace rodcon.Controllers
         public IActionResult Create()
         {
             ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description");
-            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email");
             return View();
         }
 
@@ -59,7 +57,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MerchantName,WebsiteUrl,MerchantTypeID,OwnerUserID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
+        public async Task<IActionResult> Create([Bind("MerchantName,WebsiteUrl,MerchantTypeID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +66,6 @@ namespace rodcon.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
-            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
             return View(merchant);
         }
 
@@ -86,7 +83,6 @@ namespace rodcon.Controllers
                 return NotFound();
             }
             ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
-            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
             return View(merchant);
         }
 
@@ -95,7 +91,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MerchantName,WebsiteUrl,MerchantTypeID,OwnerUserID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
+        public async Task<IActionResult> Edit(int id, [Bind("MerchantName,WebsiteUrl,MerchantTypeID,SelfBoardingApplication,IsBillable,ID,CreatedAt,Active,ModifiedTime")] Merchant merchant)
         {
             if (id != merchant.ID)
             {
@@ -123,7 +119,6 @@ namespace rodcon.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["MerchantTypeID"] = new SelectList(_context.MerchantTypes, "ID", "Description", merchant.MerchantTypeID);
-            ViewData["OwnerUserID"] = new SelectList(_context.Users, "ID", "Email", merchant.OwnerUserID);
             return View(merchant);
         }
 
@@ -137,7 +132,6 @@ namespace rodcon.Controllers
 
             var merchant = await _context.Merchants
                 .Include(m => m.MerchantType)
-                .Include(m => m.OwnerUser)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (merchant == null)
             {

@@ -1,28 +1,17 @@
 ﻿
+
+
 <!DOCTYPE html>
 <html>
 <partial name="_DocumentHeadPartial" />
 <body>
-    
-    <partial name="_NavbarPartial" />
     <partial name="_CookieConsentPartial" />
+    @await Component.InvokeAsync("Header")
     <partial name="_SystemMessagePartial" />
-    <main class="container my-3">
+    <main class="mb-3 container">
         @RenderBody()
     </main>
-    <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; @DateTime.Now.Year rod</p>
-        <ul class="list-inline">
-            <li class="list-inline-item"><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-        </ul>
-    </footer>
-    <script>
-        function ShowLoadingMessage(elem, message) {
-            var html = '<span class="spinner-grow spinner-grow-sm" role="status"></span><span class="sr-only">Loading...</span> '
-            html = message ? html + message : html
-            $(elem).html(html);
-        }
-    </script>
+    @await Component.InvokeAsync("Footer")
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
@@ -41,8 +30,7 @@
                 crossorigin="anonymous"
                 integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM">
         </script>
-        <script src="~/lib/bootstrap/dist/js/offcanvas.js" asp-append-version="true"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     @RenderSection("Scripts", required: false)
 </body>

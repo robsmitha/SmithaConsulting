@@ -32,13 +32,13 @@ namespace rod
         /// Cost of the item to merchant
         /// </summary>
         [Display(Name = "Cost")]
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
 
         /// <summary>
         /// Price of the item
         /// </summary>
         [Display(Name = "Price")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
         /// <summary>
         /// ['FIXED' or 'VARIABLE' or 'PER_UNIT']
@@ -55,16 +55,16 @@ namespace rod
         public int UnitTypeID { get; set; }
 
         /// <summary>
-        /// PRODuct code, e.g. UPC or EAN
+        /// Product code, e.g. UPC or EAN
         /// </summary>
         [Display(Name = "Code")]
-        public int Code { get; set; }
+        public string Code { get; set; }
 
         /// <summary>
         /// SKU of the item
         /// </summary>
         [Display(Name = "Sku")]
-        public int Sku { get; set; }
+        public string Sku { get; set; }
 
         /// <summary>
         /// Flag to indicate whether or not to use default tax rates
@@ -76,6 +76,18 @@ namespace rod
         /// True if this item should be counted as revenue, for example gift cards and donations would not
         /// </summary>
         public bool IsRevenue { get; set; }
+
+        /// <summary>
+        /// Promo Code
+        /// </summary>
+        [Display(Name = "Lookup Code")]
+        public string LookupCode { get; set; }
+
+        /// <summary>
+        /// Percentage
+        /// </summary>
+        [Display(Name = "Percentage")]
+        public decimal? Percentage { get; set; }
 
         [ForeignKey("MerchantID")]
         public Merchant Merchant { get; set; }

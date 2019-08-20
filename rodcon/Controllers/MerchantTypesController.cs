@@ -10,7 +10,7 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class MerchantTypesController : Controller
+    public class MerchantTypesController : BaseController
     {
         private readonly rodContext _context;
 

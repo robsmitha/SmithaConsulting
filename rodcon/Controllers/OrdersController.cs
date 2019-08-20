@@ -10,7 +10,7 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class OrdersController : Controller
+    public class OrdersController : BaseController
     {
         private readonly rodContext _context;
 
@@ -22,7 +22,7 @@ namespace rodcon.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var rodContext = _context.Orders.Include(o => o.Customer).Include(o => o.Merchant).Include(o => o.OrderStatusType);
+            var rodContext = _context.Orders.Include(o => o.Customer).Include(o => o.Merchant).Include(o => o.OrderStatusType).Include(o => o.User);
             return View(await rodContext.ToListAsync());
         }
 
@@ -38,6 +38,7 @@ namespace rodcon.Controllers
                 .Include(o => o.Customer)
                 .Include(o => o.Merchant)
                 .Include(o => o.OrderStatusType)
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (order == null)
             {
@@ -53,6 +54,7 @@ namespace rodcon.Controllers
             ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "Email");
             ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName");
             ViewData["OrderStatusTypeID"] = new SelectList(_context.OrderStatusTypes, "ID", "Description");
+            ViewData["UserID"] = new SelectList(_context.Users, "ID", "Email");
             return View();
         }
 
@@ -61,7 +63,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Note,Total,OrderStatusTypeID,MerchantID,CustomerID,ID,CreatedAt,Active,ModifiedTime")] Order order)
+        public async Task<IActionResult> Create([Bind("Note,Total,OrderStatusTypeID,MerchantID,CustomerID,UserID,ID,CreatedAt,Active,ModifiedTime")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -72,6 +74,7 @@ namespace rodcon.Controllers
             ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "Email", order.CustomerID);
             ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName", order.MerchantID);
             ViewData["OrderStatusTypeID"] = new SelectList(_context.OrderStatusTypes, "ID", "Description", order.OrderStatusTypeID);
+            ViewData["UserID"] = new SelectList(_context.Users, "ID", "Email", order.UserID);
             return View(order);
         }
 
@@ -91,6 +94,7 @@ namespace rodcon.Controllers
             ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "Email", order.CustomerID);
             ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName", order.MerchantID);
             ViewData["OrderStatusTypeID"] = new SelectList(_context.OrderStatusTypes, "ID", "Description", order.OrderStatusTypeID);
+            ViewData["UserID"] = new SelectList(_context.Users, "ID", "Email", order.UserID);
             return View(order);
         }
 
@@ -99,7 +103,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Note,Total,OrderStatusTypeID,MerchantID,CustomerID,ID,CreatedAt,Active,ModifiedTime")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Note,Total,OrderStatusTypeID,MerchantID,CustomerID,UserID,ID,CreatedAt,Active,ModifiedTime")] Order order)
         {
             if (id != order.ID)
             {
@@ -129,6 +133,7 @@ namespace rodcon.Controllers
             ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "Email", order.CustomerID);
             ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName", order.MerchantID);
             ViewData["OrderStatusTypeID"] = new SelectList(_context.OrderStatusTypes, "ID", "Description", order.OrderStatusTypeID);
+            ViewData["UserID"] = new SelectList(_context.Users, "ID", "Email", order.UserID);
             return View(order);
         }
 
@@ -144,6 +149,7 @@ namespace rodcon.Controllers
                 .Include(o => o.Customer)
                 .Include(o => o.Merchant)
                 .Include(o => o.OrderStatusType)
+                .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (order == null)
             {

@@ -10,10 +10,13 @@ using rodcon.Models;
 using rod.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using rod.Utilities;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using rodcon.Constants;
 
 namespace rodcon.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly rodContext _context;
 
@@ -35,26 +38,30 @@ namespace rodcon.Controllers
         {
             if (ModelState.IsValid)
             {
-                int userId = 0;
-
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(m => m.Email == model.EmailAddress);
-
-                var decryptedPassword = "hotdog";
-
-                if(user.Password == decryptedPassword)
+                    .SingleOrDefaultAsync(m => m.Username == model.Username);
+                if(user != null && SecurePasswordHasher.Verify(model.Password, user.Password))
                 {
-                    userId = user.ID;
-                    HttpContext.Session.SetInt32("userId", userId);
+                    CreateUserSession(_context, user);
                     return RedirectToAction("Index");
                 }
+                else
+                {
 
+                }
             }
-            return View(model);
+            return View("Login", model);
         }
         public IActionResult SignUp()
         {
+            ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName");
             return View();
+        }
+
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -63,9 +70,41 @@ namespace rodcon.Controllers
         {
             if (ModelState.IsValid)
             {
+                try
+                {
+                    if (await _context.Users
+                        .SingleOrDefaultAsync(m => m.Username == model.Username) != null)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = $"The Username {model.Username} is already taken."
+                        });
+                    }
 
+                    var hashword = SecurePasswordHasher.Hash(model.Password);
+                    var user = new User
+                    {
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        MiddleName = model.MiddleName,
+                        LastName = model.LastName,
+                        Username = model.Username,
+                        Password = hashword.ToString(),
+                        CreatedAt = DateTime.Now,
+                        Active = true
+                    };
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync();
+                    CreateUserSession(_context, user);
+                    return RedirectToAction("Index");
+                }
+                catch(Exception ex)
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            return View(model);
+            return View("SignUp", model);
         }
         public IActionResult About()
         {

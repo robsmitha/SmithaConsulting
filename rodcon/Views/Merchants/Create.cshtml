@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
@@ -25,10 +26,6 @@
             <div class="form-group">
                 <label asp-for="MerchantTypeID" class="control-label"></label>
                 <select asp-for="MerchantTypeID" class ="form-control" asp-items="ViewBag.MerchantTypeID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="OwnerUserID" class="control-label"></label>
-                <select asp-for="OwnerUserID" class ="form-control" asp-items="ViewBag.OwnerUserID"></select>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">

@@ -8,13 +8,8 @@ namespace rod
     public class BaseModel
     {
         public int ID { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public bool Active { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool Active { get; set; } = true;
         public DateTime? ModifiedTime { get; set; }
-        public BaseModel()
-        {
-            CreatedAt = DateTime.Now;
-            Active = true;
-        }
     }
 }

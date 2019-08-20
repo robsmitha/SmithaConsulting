@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Edit</h1>
@@ -71,6 +72,16 @@
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsRevenue" /> @Html.DisplayNameFor(model => model.IsRevenue)
                 </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="LookupCode" class="control-label"></label>
+                <input asp-for="LookupCode" class="form-control" />
+                <span asp-validation-for="LookupCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Percentage" class="control-label"></label>
+                <input asp-for="Percentage" class="form-control" />
+                <span asp-validation-for="Percentage" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">

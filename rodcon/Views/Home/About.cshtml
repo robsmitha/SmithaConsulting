@@ -5,67 +5,77 @@
 <h3>@ViewData["Message"]</h3>
 
 @*<p>Use this area to provide additional information.</p>
-<h3 id="features">Features</h3>
+    <h3 id="features">Features</h3>
 
-<ul>
-    <li>Customer Profile</li>
+    <ul>
+        <li>Customer Profile</li>
 
-    <li>Administrative Management</li>
+        <li>Administrative Management</li>
 
-    <li>Administrative Roles and Permissions</li>
+        <li>Administrative Roles and Permissions</li>
 
-    <li>Communications</li>
+        <li>Communications</li>
 
-    <li>Online Shop</li>
-</ul>
+        <li>Online Shop</li>
+    </ul>
 
-<h3 id="frameworks">Frameworks</h3>
+    <h3 id="frameworks">Frameworks</h3>
 
-<ul>
-    <li>
-        .NET Core 2.2
-        <br />
-        <small class="text-black-50">*This release is not compatible with Visual Studio 2017. Please make sure you have 2019.</small>
-    </li>
+    <ul>
+        <li>
+            .NET Core 2.2
+            <br />
+            <small class="text-black-50">*This release is not compatible with Visual Studio 2017. Please make sure you have 2019.</small>
+        </li>
 
-    <li>
-        Entity Framework
-        <br />
-        <small class="text-black-50">Microsoft.EntityFrameworkCore</small>
-    </li>
+        <li>
+            Entity Framework
+            <br />
+            <small class="text-black-50">Microsoft.EntityFrameworkCore</small>
+        </li>
 
-    <li>bootstrap 4.3.1</li>
+        <li>bootstrap 4.3.1</li>
 
-    <li>jQuery 3.2.1</li>
+        <li>jQuery 3.2.1</li>
 
-    <li>Font Awesome 5</li>
-</ul>
+        <li>Font Awesome 5</li>
+    </ul>
 
-<h3 id="entities">Entities</h3>*@
+    <h3 id="entities">Entities</h3>*@
 <div class="row">
+    <div class="col-md-auto">
+        <div class="list-group">
+            @foreach (var e in ViewBag.entities)
+            {
+                <a class="list-group-item list-group-item-action" href="#@e.Name">
+                    @e.Name
+                </a>
+            }
+        </div>  
+    </div>
+    <div class="col-md">
     @foreach (var e in ViewBag.entities)
     {
         var className = e.Name;
-        <div class="col-12">
-            <div id="@e.Name" class="class-section p-2 mt-2">
-                <p class="lead mb-2">@className</p>
-                <div>
-                    <code>
-                        @foreach (var p in e.GetProperties())
-                        {
-                            <span>
-                                @Html.Raw(GetSimpleTypeName(p.PropertyType))
-                                <span class="text-black-50">
-                                    @p.Name
-                                </span>
+        <section id="@e.Name" class="class-section p-2 mt-2">
+            <p class="lead mb-2">@className</p>
+            <div>
+                <code>
+                    @foreach (var p in e.GetProperties())
+                    {
+                        <span>
+                            @Html.Raw(GetSimpleTypeName(p.PropertyType))
+                            <span class="text-black-50">
+                                @p.Name
                             </span>
-                            <br />
-                        }
-                    </code>
-                </div>
+                        </span>
+                        <br />
+                    }
+                </code>
             </div>
-        </div>
+        </section>
     }
+    </div>
 </div>
 
 @functions{

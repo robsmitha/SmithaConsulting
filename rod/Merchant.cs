@@ -20,18 +20,11 @@ namespace rod
         [Display(Name = "Merchant Type")]
         public int MerchantTypeID { get; set; }
 
-        [Required]
-        [Display(Name = "Owner")]
-        public int OwnerUserID { get; set; }
-
         public bool SelfBoardingApplication { get; set; }
 
         public bool IsBillable { get; set; }
 
         [ForeignKey("MerchantTypeID")]
         public MerchantType MerchantType { get; set; }
-
-        [ForeignKey("OwnerUserID")]
-        public User OwnerUser { get; set; }
     }
 }

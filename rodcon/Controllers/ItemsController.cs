@@ -10,7 +10,7 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class ItemsController : Controller
+    public class ItemsController : BaseController
     {
         private readonly rodContext _context;
 
@@ -63,7 +63,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemName,ItemDescription,ItemTypeID,MerchantID,Cost,Price,PriceTypeID,UnitTypeID,Code,Sku,DefaultTaxRates,IsRevenue,ID,CreatedAt,Active,ModifiedTime")] Item item)
+        public async Task<IActionResult> Create([Bind("ItemName,ItemDescription,ItemTypeID,MerchantID,Cost,Price,PriceTypeID,UnitTypeID,Code,Sku,DefaultTaxRates,IsRevenue,LookupCode,Percentage,ID,CreatedAt,Active,ModifiedTime")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -103,7 +103,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ItemName,ItemDescription,ItemTypeID,MerchantID,Cost,Price,PriceTypeID,UnitTypeID,Code,Sku,DefaultTaxRates,IsRevenue,ID,CreatedAt,Active,ModifiedTime")] Item item)
+        public async Task<IActionResult> Edit(int id, [Bind("ItemName,ItemDescription,ItemTypeID,MerchantID,Cost,Price,PriceTypeID,UnitTypeID,Code,Sku,DefaultTaxRates,IsRevenue,LookupCode,Percentage,ID,CreatedAt,Active,ModifiedTime")] Item item)
         {
             if (id != item.ID)
             {

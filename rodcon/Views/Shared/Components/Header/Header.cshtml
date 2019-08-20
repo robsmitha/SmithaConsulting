@@ -1,0 +1,176 @@
+﻿@model HeaderViewModel
+<header>
+    <div class="container">
+        <div class="col-lg-8 mx-auto">
+            <ul class="nav justify-content-end pt-1">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                        Home
+                    </a>
+                </li>
+                @if (!Model.IsLoggedIn)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">
+                            Sign in
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp">
+                            Sign up
+                        </a>
+                    </li>
+
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Details", "Users", new { id = Model.UserId })">
+                            @Model.Greeting
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignOut">
+                            Sign out
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</header>
+@*@if (Model.IsLoggedIn)
+{
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light shadow">
+        <div class="container">
+            <a class="navbar-brand mr-auto mr-lg-0" asp-area="" asp-controller="Home" asp-action="Index">rodcon</a>
+            <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse offcanvas-collapse bg-light">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">
+                            About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">
+                            Contact
+                        </a>
+                    </li>
+                    @if (Model.CanAccessFeatures)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="featuresDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Features
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="featuresDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="Index">
+                                    Users
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Merchants" asp-action="Index">
+                                    Merchants
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Items" asp-action="Index">
+                                    Items
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Orders" asp-action="Index">
+                                    Orders
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Payments" asp-action="Index">
+                                    Payments
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Customers" asp-action="Index">
+                                    Customers
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="MerchantUsers" asp-action="Index">
+                                    Merchant Users
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Roles" asp-action="Index">
+                                    Roles
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Permissions" asp-action="Index">
+                                    Permissions
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="RolePermissions" asp-action="Index">
+                                    Roles Permissions
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    @if (Model.CanAccessTypes)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="featuresDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Types
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="featuresDropdown">
+                                <a class="dropdown-item" asp-area="" asp-controller="MerchantTypes" asp-action="Index">
+                                    Merchant Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="ItemTypes" asp-action="Index">
+                                    Item Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="OrderStatusTypes" asp-action="Index">
+                                    Order Status Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="PaymentStatusTypes" asp-action="Index">
+                                    Payment Status Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="PaymentTypes" asp-action="Index">
+                                    Payment Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="PriceTypes" asp-action="Index">
+                                    Price Types
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="UnitTypes" asp-action="Index">
+                                    Unit Types
+                                </a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+
+                @{
+                    if (!Model.IsLoggedIn)
+                    {
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">
+                                    Sign in
+                                </a>
+                            </li>
+                        </ul>
+                        <form class="form-inline" asp-area="" asp-controller="Home" asp-action="SignUp">
+                            <button class="btn btn-outline-success">
+                                Sign up
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Details", "Users", new { id = Model.UserId })">
+                                    @Model.Greeting
+                                </a>
+                            </li>
+                        </ul>
+                        <form class="form-inline" asp-area="" asp-controller="Home" asp-action="SignOut">
+                            <button class="btn btn-outline-danger">
+                                Sign out
+                            </button>
+                        </form>
+                    }
+                }
+            </div>
+        </div>
+    </nav>
+}*@
+

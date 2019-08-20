@@ -12,7 +12,8 @@ namespace rod
         public decimal Total { get; set; }
         public int OrderStatusTypeID { get; set; }
         public int MerchantID { get; set; }
-        public int CustomerID { get; set; }
+        public int? CustomerID { get; set; }
+        public int? UserID { get; set; }
 
         [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
@@ -22,5 +23,8 @@ namespace rod
 
         [ForeignKey("OrderStatusTypeID")]
         public OrderStatusType OrderStatusType { get; set; }
+
+        [ForeignKey("UserID")]
+        public User User { get; set; }
     }
 }

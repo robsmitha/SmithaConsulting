@@ -1,46 +1,148 @@
-﻿
+﻿@using rod.Enums;
 @model rodcon.Models.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Index Page";
+    ViewData["Title"] = "Register Page";
+    var lineItems = Model.Order != null && Model.Order.LineItems != null ? Model.Order.LineItems : null;
+    var lineItemCount = lineItems?.Count ?? 0;
+    var registerItems = Model.Items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount);
 }
 
-<h1>Index</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                @foreach (var item in registerItems)
+                {
+                    <div class="col-md-4">
+                        <button type="button" onclick="AddLineItem(@item.ID)" class="btn btn-block card card-body py-4 h-100 w-100 font-weight-bold">
+                            @item.ItemName
+                            <span class="text-muted">
+                                @{
+                                    var priceDisplay = string.Empty;
+                                    switch (item.PriceTypeID)
+                                    {
+                                        case (int)PriceTypeEnums.Fixed:
+                                            priceDisplay = item.Price.HasValue ? item.Price.Value.ToString("C") : "FREE";
+                                            break;
+                                        case (int)PriceTypeEnums.Variable:
+                                            priceDisplay = "VARIABLE";
+                                            break;
+                                    }
+                                    @priceDisplay
+                                }
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted"><i class="fas fa-shopping-basket"></i> Cart</span>
+                <span class="badge badge-secondary badge-pill">@lineItemCount</span>
+            </h4>
+            <div class="list-group mb-3">
+                @if (lineItems != null)
+                {
 
-<div class="row">
-    <div class="col-auto">
-        <div class="list-group">
-            @foreach (var i in Model.Items)
-            {
-                <button type="button" class="list-group-item list-group-item-action" onclick="AddLineItem(@i.ID)">
-                    @i.ItemName
-                </button>
-            }
+                    foreach (var lineItem in lineItems)
+                    {
+                        switch (lineItem.Item.ItemTypeID)
+                        {
+                            case (int)ItemTypeEnums.Discount:
+                                <div class="list-group-item list-group-item-light">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="my-0">
+                                                @lineItem.Item.ItemName
+                                            </h6>
+                                            <small class="text-muted">@lineItem.Item.ItemDescription</small>
+                                        </div>
+                                        <div class="col-1">
+                                            <button class="btn btn-outline-secondary btn-sm border-0 p-1 float-right" type="button" onclick="RemoveLineItem(@lineItem.ID)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-3 text-right">
+                                            <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                break;
+                            default:
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="my-0">
+                                                @lineItem.Item.ItemName
+                                            </h6>
+                                            <small class="text-muted">@lineItem.Item.ItemDescription</small>
+                                        </div>
+                                        <div class="col-1">
+                                            <button class="btn btn-outline-secondary btn-sm border-0 p-1 float-right" type="button" onclick="RemoveLineItem(@lineItem.ID)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-3 text-right">
+                                            <span class="text-muted">@lineItem.ItemAmount.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                break;
+                        }
+
+                    }
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span>Total (USD)</span>
+                        <strong>@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
+                    </div>
+
+                    if (Model.CurrentOrderID != null && lineItemCount > 0)
+                    {
+                        <a href="@Url.Action("Payment", "Register", new { orderId = Model.CurrentOrderID })" class="list-group-item list-group-item-action text-uppercase text-center lead font-weight-bold">
+                            Checkout Now
+                        </a>
+                    }
+                }
+            </div>
         </div>
     </div>
 </div>
 
-@using (Html.BeginForm("AddLineItem", "Home", FormMethod.Post, new { id = "form_add_line_item" }))
+@using (Html.BeginForm("AddLineItem", "Register", FormMethod.Post, new { id = "form_add_line_item" }))
 {
     @Html.AntiForgeryToken();
-    @Html.HiddenFor(m => m.CustomerID)
+    @Html.HiddenFor(m => m.CurrentOrderID)
     @Html.HiddenFor(m => m.SelectedItemID)
+}
+@using (Html.BeginForm("RemoveLineItem", "Register", FormMethod.Post, new { id = "form_remove_line_item" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(m => m.CurrentOrderID)
+    @Html.HiddenFor(m => m.SelectedLineItemID)
 }
 <script>
     function AddLineItem(id) {
         $('#SelectedItemID').val(id)
-        var model = $('#form_add_line_item').serialize()
+        $('#form_add_line_item').submit()
+        @*var model = $('#form_add_line_item').serialize()
         $.ajax({
-            url: '@Url.Action("AddLineItem","Home")',
+                    url: '@Url.Action("AddLineItem","Register")',
             type: 'POST',
             data: model,
             success: function (data) {
-                console.log(data)
+                            console.log(data)
                 ShowFeedbackMessage(String(data.success))
             },
             error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
+                            console.log("Request: " + JSON.stringify(request));
+                        }
+                    });*@
     }
+                function RemoveLineItem(id) {
+        $('#SelectedLineItemID').val(id)
+                                    $('#form_remove_line_item').submit()
+                                }
 </script>

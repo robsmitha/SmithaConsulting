@@ -10,7 +10,7 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class PaymentsController : Controller
+    public class PaymentsController : BaseController
     {
         private readonly rodContext _context;
 
