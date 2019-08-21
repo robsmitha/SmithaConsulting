@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using rod.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using rodcon.Constants;
+using rod.Enums;
 
 namespace rodcon.Controllers
 {
@@ -96,6 +97,22 @@ namespace rodcon.Controllers
                     };
                     _context.Users.Add(user);
                     await _context.SaveChangesAsync();
+
+                    //Put User in Online Merchant
+                    var merchant = await _context.Merchants.FirstOrDefaultAsync(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active);
+                    if (merchant != null)
+                    {
+                        var userMerchant = new MerchantUser
+                        {
+                            Active = true,
+                            CreatedAt = DateTime.Now,
+                            MerchantID = merchant.ID,
+                            RoleID = (int)RoleEnums.OnlineSignUp,
+                            UserID = user.ID
+                        };
+                        await _context.MerchantUsers.AddAsync(userMerchant);
+                        await _context.SaveChangesAsync();
+                    }
                     CreateUserSession(_context, user);
                     return RedirectToAction("Index");
                 }

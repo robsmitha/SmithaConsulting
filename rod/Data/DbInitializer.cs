@@ -16,22 +16,24 @@ namespace rod.Data
                 return; //db was already created or error occurred
             }
 
+            var general = new MerchantType
+            {
+                Name = "General Merchant",
+                Description = "General Merchant Default Value",
+                CreatedAt = DateTime.UtcNow,
+                Active = true,
+            };
+            var online = new MerchantType
+            {
+                Name = "Online Merchant",
+                Description = "Online Merchant",
+                CreatedAt = DateTime.UtcNow,
+                Active = true,
+            };
             var merchantTypes = new List<MerchantType>
             {
-                new MerchantType
-                {
-                    Name = "General Merchant",
-                    Description = "General Merchant Default Value",
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true,
-                },
-                new MerchantType
-                {
-                    Name = "Online Merchant",
-                    Description = "Online Merchant",
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true,
-                }
+                general,
+                online
             };
 
             foreach(var merchantType in merchantTypes)
@@ -48,8 +50,17 @@ namespace rod.Data
                     CreatedAt = DateTime.UtcNow,
                     Active = true,
                     WebsiteUrl = string.Empty,
-                    MerchantType = merchantTypes.FirstOrDefault(),
-                    MerchantTypeID = merchantTypes.FirstOrDefault().ID
+                    MerchantType = general,
+                    MerchantTypeID = general.ID
+                },
+                new Merchant
+                {
+                    MerchantName = "Online Merchant",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    WebsiteUrl = string.Empty,
+                    MerchantType = online,
+                    MerchantTypeID = online.ID
                 }
             };
             context.Merchants.AddRange(merchants);
@@ -116,16 +127,24 @@ namespace rod.Data
             };
 
             context.UnitTypes.AddRange(unitTypes);
-
+            var owner = new Role
+            {
+                Name = "Owner",
+                Description = "Owner of the associated merchant",
+                CreatedAt = DateTime.UtcNow,
+                Active = true,
+            };
+            var onlineSignUp = new Role
+            {
+                Name = "Online User",
+                Description = "Online Sign up user",
+                CreatedAt = DateTime.UtcNow,
+                Active = true,
+            };
             var roles = new List<Role>
             {
-                new Role
-                {
-                    Name = "Owner",
-                    Description = "Owner of the associated merchant",
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true,
-                }
+                owner,
+                onlineSignUp
             };
 
             context.Roles.AddRange(roles);
