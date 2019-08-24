@@ -88,7 +88,7 @@
             </form>
         </div>
         <div class="col-md-8 order-md-1">
-            <h4 class="mb-3">Billing information</h4>
+            <h4 class="mb-3">Billing Info</h4>
             <form method="post" asp-action="Payment" asp-controller="Register">
                 <input type="hidden" asp-for="CurrentOrderID" />
                 @*<div class="row">
@@ -240,7 +240,7 @@
                 <hr class="mb-4">
                 @if (Model?.OrderViewModel != null)
                 {
-                <button class="btn btn-primary btn-lg btn-block" type="submit">
+                <button class="btn btn-outline-primary btn-lg btn-lg btn-block" type="submit">
                     <i class="far fa-check-circle"></i> Place Order
                 </button>
                 }

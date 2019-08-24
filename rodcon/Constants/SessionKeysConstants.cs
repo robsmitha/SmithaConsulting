@@ -12,5 +12,6 @@ namespace rodcon.Constants
         public const string USERNAME = "username";
         public const string PERMISSION_ID_LIST = "permissionIdList";
         public const string CUSTOMER_ID = "customerId";
+        public const string THEME_CDN = "themeCDN";
     }
 }

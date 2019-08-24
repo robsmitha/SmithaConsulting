@@ -10,17 +10,21 @@
 {
     <div id="cookieConsent" class="bg-dark p-2" role="alert">
         <div class="container">
-            <div class="form-row">
-                <div class="col-sm col-12">
-                    <p class="text-white">
-                        Use this space to summarize your privacy and cookie use policy.
-                    </p>
-                </div>
-                <div class="col-sm-auto-auto">
-                    <a asp-controller="Home" asp-action="Privacy" class="btn btn-info btn-sm">Learn More</a>
-                </div>
-                <div class="col-sm-auto col-auto">
-                    <button type="button" class="btn btn-secondary btn-sm" data-cookie-string="@cookieString">Accept</button>
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="form-row">
+                        <div class="col-sm col-12">
+                            <p class="text-white">
+                                This website uses cookies for user sessions, security mesaures, analytics and remembering your answer to this cookie policy.
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <a asp-controller="Home" asp-action="Privacy" class="btn btn-info btn-sm my-2">Learn More</a>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-secondary btn-sm my-2" data-cookie-string="@cookieString">Accept</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

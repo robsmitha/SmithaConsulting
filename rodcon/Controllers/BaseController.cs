@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ using rod;
 using rod.Data;
 using rod.Enums;
 using rodcon.Constants;
+using rodcon.Models;
 
 namespace rodcon.Controllers
 {
@@ -25,6 +28,7 @@ namespace rodcon.Controllers
         public int? CustomerID => UserID > 0 ? null : HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string Username => HttpContext.Session.GetString(SessionKeysConstants.USERNAME);
+        public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -32,6 +36,20 @@ namespace rodcon.Controllers
                 //TODO: Handle session timeout
                 return;
             }
+
+            //if(ThemeCDN == null)
+            //{
+            //    var themeModel = GetThemeList();
+            //    if (themeModel?.Result != null && themeModel.Result?.themes != null)
+            //    {
+            //        var themeList = themeModel.Result.themes.ToList();
+            //        Random rnd = new Random();
+            //        int themeIndex = rnd.Next(1, themeList.Count());
+            //        var theme = themeList[themeIndex];
+            //        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.cssCdn);
+            //    }
+            //}
+
             if (UserID == null && CustomerID == null)
             {
                 var customer = new Customer();
@@ -45,12 +63,13 @@ namespace rodcon.Controllers
             }
             var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
             var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about", "privacy", "contact", "payment", "details" };
+            string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about", "privacy", "contact", "payment", "details", "apply", "error" };
             switch (controllerName)
             {
                 case "home":
                 case "register":
                 case "orders":
+                case "theme":
                     if (Array.IndexOf(publicPages, actionName) != -1) return;
                     break;
             }
@@ -109,6 +128,38 @@ namespace rodcon.Controllers
             return _context.Orders.Where(x => x.UserID == UserID && x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                     .OrderByDescending(x => x.CreatedAt)
                     .FirstOrDefault();
+        }
+
+        public async Task<ThemeListViewModel> GetThemeList()
+        {
+            var model = new ThemeListViewModel();
+
+            using (var client = new HttpClient())
+            {
+                //Passing service base url  
+                client.BaseAddress = new Uri(ThemeViewModel.BaseUrl);
+
+                client.DefaultRequestHeaders.Clear();
+                //Define request data format  
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
+                HttpResponseMessage Res = await client.GetAsync(ThemeViewModel.BaseUrl);
+
+                //Checking the response is successful or not which is sent using HttpClient  
+                if (Res.IsSuccessStatusCode)
+                {
+                    //Storing the response details recieved from web api   
+                    var ThemeListResponse = Res.Content.ReadAsStringAsync().Result;
+
+                    //Deserializing the response recieved from web api and storing into the list  
+                    model = JsonConvert.DeserializeObject<ThemeListViewModel>(ThemeListResponse);
+                    model.CurrentTheme = ThemeCDN;
+
+                }
+                //returning the list to view  
+                return model;
+            }
         }
     }
 }

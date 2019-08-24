@@ -7,12 +7,12 @@
         <hr class="w-25" />
         <div class="form-row">
             <div class="col">
-                <button type="button" class="btn btn-outline-secondary btn-lg btn-block mb-2 quantity-counter" onclick="if (@Model.Quantity === 1) { RemoveItem(@Model.ItemID) } else { RemoveLineItem(@Model.ItemID) }">
+                <button type="button" class="btn btn-outline-primary btn-lg btn-block mb-2 quantity-counter" onclick="if (@Model.Quantity === 1) { RemoveItem(@Model.ItemID) } else { RemoveLineItem(@Model.ItemID) }">
                     <i class="fas fa-minus"></i>
                 </button>
             </div>
             <div class="col">
-                <button type="button" class="btn btn-outline-secondary btn-lg btn-block mb-2 quantity-counter" onclick="AddLineItem(@Model.ItemID, true)">
+                <button type="button" class="btn btn-outline-primary btn-lg btn-block mb-2 quantity-counter" onclick="AddLineItem(@Model.ItemID, true)">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
@@ -23,4 +23,7 @@
 <hr />
 <button type="button" class="btn btn-outline-danger btn-block btn-lg" onclick="RemoveItem(@Model.ItemID)">
     Remove
+</button>
+<button type="button" class="btn btn-outline-secondary btn-block btn-lg" data-dismiss="modal" aria-label="Close" onclick="$('#edit_register').html('')">
+    Close
 </button>
