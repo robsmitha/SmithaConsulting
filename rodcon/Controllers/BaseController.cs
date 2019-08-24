@@ -8,36 +8,68 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 using rod;
 using rod.Data;
+using rod.Enums;
 using rodcon.Constants;
 
 namespace rodcon.Controllers
 {
     public class BaseController : Controller
     {
+        private readonly rodContext _context;
+
+        public BaseController(rodContext context)
+        {
+            _context = context;
+        }
         public int? UserID => HttpContext.Session.GetInt32(SessionKeysConstants.USER_ID);
+        public int? CustomerID => UserID > 0 ? null : HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string Username => HttpContext.Session.GetString(SessionKeysConstants.USERNAME);
         public override void OnActionExecuted(ActionExecutedContext context)
         {
+            if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                //TODO: Handle session timeout
+                return;
+            }
+            if (UserID == null && CustomerID == null)
+            {
+                var customer = new Customer();
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+                CreateCustomerSession(customer);
+            }
+            else if(UserID > 0)
+            {
+                return;
+            }
             var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
             var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            if (UserID == null || UserID == 0)
+            string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about", "privacy", "contact", "payment", "details" };
+            switch (controllerName)
             {
-                string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about", "privacy", "content" };
-                if (controllerName == "home" && Array.IndexOf(publicPages, actionName) != -1)
-                {
-                    return;
-                }
-                else
-                {
-                    context.Result = new RedirectResult("/Home/Login");
-                    return;
-                }
+                case "home":
+                case "register":
+                case "orders":
+                    if (Array.IndexOf(publicPages, actionName) != -1) return;
+                    break;
+            }
+            context.Result = new RedirectResult("/Home/Login");
+            return;
+
+        }
+        public void CreateCustomerSession(Customer customer)
+        {
+            HttpContext.Session.SetInt32(SessionKeysConstants.CUSTOMER_ID, customer.ID);
+            var merchantId = _context.Merchants.FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
+            if (merchantId != null)
+            {
+                HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
             }
         }
-        public void CreateUserSession(rodContext context, User user)
+        public void CreateUserSession(User user)
         {
-            var merchantId = context.MerchantUsers.FirstOrDefault(x => x.UserID == user.ID)?.MerchantID;
+            var merchantId = _context.MerchantUsers.FirstOrDefault(x => x.UserID == user.ID)?.MerchantID;
             if (merchantId != null)
             {
                 HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
@@ -46,10 +78,10 @@ namespace rodcon.Controllers
             var username = user.Username;
             HttpContext.Session.SetInt32(SessionKeysConstants.USER_ID, userId);
             HttpContext.Session.SetString(SessionKeysConstants.USERNAME, username);
-            var merchantUser = context.MerchantUsers.SingleOrDefault(x => x.UserID == userId && x.MerchantID == merchantId);
+            var merchantUser = _context.MerchantUsers.SingleOrDefault(x => x.UserID == userId && x.MerchantID == merchantId);
             if(merchantUser != null)
             {
-                var rolePermissions = context.RolePermissions.Where(x => x.RoleID == merchantUser.RoleID);
+                var rolePermissions = _context.RolePermissions.Where(x => x.RoleID == merchantUser.RoleID);
                 var permissionIds = rolePermissions.Select(x => x.PermissionID);
                 if (permissionIds.Any())
                 {
@@ -66,6 +98,17 @@ namespace rodcon.Controllers
                 return permissionIds.Contains(permissionId);
             }
             return false;
+        }
+
+        public Order GetOrder(int? orderId = null)
+        {
+            if(orderId != null)
+            {
+                return _context.Orders.SingleOrDefault(x => x.ID == orderId);
+            }
+            return _context.Orders.Where(x => x.UserID == UserID && x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                    .OrderByDescending(x => x.CreatedAt)
+                    .FirstOrDefault();
         }
     }
 }

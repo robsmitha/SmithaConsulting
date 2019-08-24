@@ -14,7 +14,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public PriceTypesController(rodContext context)
+        public PriceTypesController(rodContext context) : base(context)
         {
             _context = context;
         }

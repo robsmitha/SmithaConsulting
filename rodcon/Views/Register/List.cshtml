@@ -1,0 +1,29 @@
+﻿@using rod.Enums;
+@model RegisterListViewModel
+
+<div class="row">
+    @foreach (var item in Model.Items)
+    {
+        <div class="col-md-4">
+            <button type="button" onclick="AddLineItem(@item.ID)" class="btn btn-block card card-body py-lg-4 py-1 h-100 w-100 font-weight-bold line-item">
+                @item.ItemName
+                <span class="text-muted">
+                    @{
+                        var priceDisplay = string.Empty;
+                        switch (item.PriceTypeID)
+                        {
+                            case (int)PriceTypeEnums.Fixed:
+                                priceDisplay = item.Price.HasValue ? item.Price.Value.ToString("C") : "FREE";
+                                break;
+                            case (int)PriceTypeEnums.Variable:
+                                priceDisplay = "VARIABLE";
+                                break;
+                        }
+                        @priceDisplay
+                    }
+                </span>
+            </button>
+        </div>
+    }
+</div>
+

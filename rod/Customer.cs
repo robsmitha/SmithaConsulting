@@ -9,23 +9,22 @@ namespace rod
     public class Customer : BaseModel
     {
         [Required]
-        [Display( Name = "First Name")]
-        public string FirstName { get; set; }
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
 
-        [Required]
         [Display(Name = "Middle Name")]
-        public string MiddleName { get; set; }
+        public string MiddleName { get; set; } = string.Empty;
 
         [Required]
         [Display(Name = "Last Name")]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

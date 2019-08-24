@@ -14,7 +14,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public OrderStatusTypesController(rodContext context)
+        public OrderStatusTypesController(rodContext context) : base(context)
         {
             _context = context;
         }

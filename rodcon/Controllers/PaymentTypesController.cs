@@ -14,7 +14,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public PaymentTypesController(rodContext context)
+        public PaymentTypesController(rodContext context) : base(context)
         {
             _context = context;
         }

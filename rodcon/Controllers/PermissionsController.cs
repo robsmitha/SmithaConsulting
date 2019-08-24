@@ -14,7 +14,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public PermissionsController(rodContext context)
+        public PermissionsController(rodContext context) : base(context)
         {
             _context = context;
         }

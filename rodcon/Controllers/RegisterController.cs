@@ -14,96 +14,172 @@ namespace rodcon.Controllers
     public class RegisterController : BaseController
     {
         private readonly rodContext _context;
-        public RegisterController(rodContext context)
+        public RegisterController(rodContext context) : base(context)
         {
             _context = context;
         }
-        public IActionResult Index(int? orderId)
+        public IActionResult Index()
         {
-            Order order = null;
-            OrderViewModel orderViewModel = null;
+            Order order = GetOrder();
+            var model = new RegisterViewModel(order);
+            return View(model);
+        }
+        public IActionResult List(int? orderId)
+        {
+            Order order = GetOrder(orderId);
             var items = new List<Item>();
             if (MerchantID > 0)
             {
+                items = _context.Items.Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
+            }
+            var model = new RegisterListViewModel(items);
+            return PartialView(model);
+        }
+        public IActionResult LoadCart(int? orderId)
+        {
+            var order = GetOrder(orderId);
+            OrderViewModel orderViewModel = null;
+            if (MerchantID > 0)
+            {
                 var payments = new List<Payment>();
-                var lineItems = new List<LineItem>();
-                items = _context.Items.Where(x => x.MerchantID == MerchantID).ToList();
-                order = orderId != null
-                    ? _context.Orders.SingleOrDefault(x => x.ID == orderId)     //get passed order
-                    : _context.Orders.FirstOrDefault(x => x.UserID == UserID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);  //get users last pending order
+                var lineItems = new List<LineItem>();         
                 if (order != null)
                 {
                     payments = _context.Payments.Where(x => x.OrderID == order.ID)
                        .ToList();
                     lineItems = _context.LineItems.Where(x => x.OrderID == order.ID)
                     .ToList();
+                    var lineItemIds = _context.LineItems.Where(x => x.OrderID == order.ID)
+                    .Select(x => x.ItemID);
+                    var items = _context.Items.Where(x => lineItemIds.Contains(x.ID)).ToList();
                 }
                 orderViewModel = new OrderViewModel(order, lineItems, payments);
             }
-
-            var model = new RegisterViewModel(items, orderViewModel);
-            return View(model);
+            var model = new RegisterCartViewModel(orderViewModel);
+            return PartialView("Cart", model);
         }
-
+        protected bool AddLineItem(int itemId, int? orderId = null)
+        {
+            var item = _context.Items.SingleOrDefault(x => x.ID == itemId);
+            if (item != null)
+            {
+                var lineItem = new LineItem
+                {
+                    ItemAmount = item.Price ?? 0M,
+                    ItemID = item.ID,
+                };
+                //Create Order if needed
+                var order = _context.Orders.SingleOrDefault(x => x.ID == orderId);
+                if (order == null)
+                {
+                    order = new Order
+                    {
+                        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
+                        MerchantID = MerchantID.Value,
+                        UserID = UserID,
+                        CustomerID = CustomerID
+                    };
+                    _context.Orders.Add(order);
+                    _context.SaveChanges();
+                }
+                lineItem.OrderID = order.ID;
+                _context.LineItems.Add(lineItem);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddLineItem(RegisterViewModel model)
         {
-            User user = null;
-            Order order = null;
-            if (UserID > 0 && MerchantID > 0)
+            var msg = string.Empty;
+            var success = true;
+            var order = GetOrder(model.CurrentOrderID);
+            if (MerchantID > 0)
             {
                 var item = _context.Items.SingleOrDefault(x => x.ID == model.SelectedItemID);
-                if(item != null)
+                if (item != null)
                 {
-                    user = _context.Users.SingleOrDefault(x => x.ID == UserID);
-                    order = _context.Orders.SingleOrDefault(x => x.ID == model.CurrentOrderID);
                     var lineItem = new LineItem
                     {
                         ItemAmount = item.Price.Value,
                         ItemID = item.ID,
                     };
+                    //Create Order if needed
                     if (order == null)
                     {
                         order = new Order
                         {
                             OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
                             MerchantID = MerchantID.Value,
-                            UserID = user.ID,
-                            //TODO: add customerid
+                            UserID = UserID,
+                            CustomerID = CustomerID
                         };
                         _context.Orders.Add(order);
-                        _context.SaveChanges(); //generate orderId
+                        _context.SaveChanges();
                     }
                     lineItem.OrderID = order.ID;
+
                     _context.LineItems.Add(lineItem);
-                    _context.SaveChanges(); //save order
+                    _context.SaveChanges();
+                    success = true;
                 }
             }
-            return RedirectToAction("Index");
+            return Json(new { success, msg, orderId = order?.ID });
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult RemoveLineItem(RegisterViewModel model)
         {
-            var lineItem = _context.LineItems.SingleOrDefault(x => x.ID == model.SelectedLineItemID);
-            if(lineItem != null)
+            var msg = string.Empty;
+            var success = false;
+            var order = GetOrder(model.CurrentOrderID);
+            try
             {
-                var orderId = lineItem.OrderID;
-                _context.LineItems.Remove(lineItem);
-                _context.SaveChanges();
-                var lineItems = _context.LineItems.Where(x => x.OrderID == orderId);
-                var discounts = lineItems.Where(x => x.Item.ItemTypeID == (int)ItemTypeEnums.Discount && x.ID != lineItem.ID);
-                var order = _context.Orders.SingleOrDefault(x => x.ID == orderId);
-                UpdateDiscounts(order);
+                var lineItem = _context.LineItems.LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
+                if (lineItem != null)
+                {
+                    _context.LineItems.Remove(lineItem);
+                    _context.SaveChanges();
+                    UpdateDiscounts(order);
+                }
             }
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                success = false;
+            }
+            return Json(new { success, msg, orderId = order?.ID });
         }
-        public IActionResult Payment(int orderId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveItem(RegisterViewModel model)
         {
-            var order = _context.Orders.SingleOrDefault(x => x.ID == orderId);
+            var msg = string.Empty;
+            var success = false;
+            var order = GetOrder(model.CurrentOrderID);
+            try
+            {
+                var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
+                if (lineItems != null)
+                {
+                    _context.LineItems.RemoveRange(lineItems);
+                    _context.SaveChanges();
+                    UpdateDiscounts(order);
+                }
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                success = false;
+            }
+            return Json(new { success, msg, orderId = order?.ID });
+        }
+        public IActionResult Payment()
+        {
+            var order = GetOrder();
             if(order != null)
             {
                 var payments = _context.Payments.Where(x => x.OrderID == order.ID)
@@ -165,11 +241,10 @@ namespace rodcon.Controllers
                 var amount = 0M;
                 switch (discount.PriceTypeID)
                 {
-                    case (int)PriceTypeEnums.Fixed: //fixed
-                        if (discount.Price == null) return false;
-                        amount = discount.Price.Value;
+                    case (int)PriceTypeEnums.Fixed: 
+                        amount = discount.Price ?? 0;
                         break;
-                    case (int)PriceTypeEnums.Variable: //variable
+                    case (int)PriceTypeEnums.Variable:
                         var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID);
                         amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
                         break;
@@ -205,11 +280,11 @@ namespace rodcon.Controllers
                         switch (discount.PriceTypeID)
                         {
                             case (int)PriceTypeEnums.Fixed: //fixed
-                                amount = discount.Price.Value;
+                                amount = discount.Price ?? 0;
                                 break;
                             case (int)PriceTypeEnums.Variable: //variable
                                 var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
-                                amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
+                                amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
                                 break;
                         }
 
@@ -242,6 +317,59 @@ namespace rodcon.Controllers
                 return RedirectToAction("Payment", new { orderId = model.CurrentOrderID });
             }
             return RedirectToAction("Error");
+        }
+        public IActionResult Edit(int itemId, int orderId)
+        {
+            var model = new RegisterEditViewModel();
+            var lineItems = _context.LineItems.Where(x => x.OrderID == orderId && x.ItemID == itemId);
+            var lineItem = lineItems.FirstOrDefault();
+            if(lineItem != null)
+            {
+                model.OrderID = lineItem.OrderID;
+                model.ItemID = lineItem.ItemID;
+                model.Quantity = lineItems.Count();
+            }
+            return PartialView(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(RegisterEditViewModel model)
+        {
+            var success = true;
+            var msg = string.Empty;
+            try
+            { 
+                var lineItems = _context.LineItems.Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
+
+                var itemCount = lineItems.Count;
+                if (itemCount > 0)
+                {
+                    if (model.Quantity > itemCount)
+                    {
+                        // add
+                        for (int i = 0; i < model.Quantity - itemCount; i++)
+                        {
+                            success &= AddLineItem(model.ItemID, model.OrderID);
+                        }
+                    }
+                    else if (model.Quantity < itemCount)
+                    {
+                        // remove
+                        for (int i = 0; i < itemCount - model.Quantity && i < lineItems.Count; i++)
+                        {
+                            _context.LineItems.Remove(lineItems[i]);
+                        }
+                        _context.SaveChanges();
+                    }
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                msg = ex.Message;
+                success = false;
+            }
+            return Json(new { success, msg, orderId = model.OrderID });
         }
     }
 }

@@ -13,7 +13,7 @@ namespace rod
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
-        [Required]
+
         [Display(Name = "Middle Name")]
         public string MiddleName { get; set; }
 

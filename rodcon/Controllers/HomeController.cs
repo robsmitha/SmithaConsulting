@@ -21,7 +21,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public HomeController(rodContext context)
+        public HomeController(rodContext context) : base(context)
         {
             _context = context;
         }
@@ -43,7 +43,7 @@ namespace rodcon.Controllers
                     .SingleOrDefaultAsync(m => m.Username == model.Username);
                 if(user != null && SecurePasswordHasher.Verify(model.Password, user.Password))
                 {
-                    CreateUserSession(_context, user);
+                    CreateUserSession(user);
                     return RedirectToAction("Index");
                 }
                 else
@@ -113,7 +113,7 @@ namespace rodcon.Controllers
                         await _context.MerchantUsers.AddAsync(userMerchant);
                         await _context.SaveChangesAsync();
                     }
-                    CreateUserSession(_context, user);
+                    CreateUserSession(user);
                     return RedirectToAction("Index");
                 }
                 catch(Exception ex)

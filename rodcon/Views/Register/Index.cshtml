@@ -1,148 +1,150 @@
-﻿@using rod.Enums;
-@model rodcon.Models.RegisterViewModel
+﻿@model rodcon.Models.RegisterViewModel
 
 @{
     ViewData["Title"] = "Register Page";
-    var lineItems = Model.Order != null && Model.Order.LineItems != null ? Model.Order.LineItems : null;
-    var lineItemCount = lineItems?.Count ?? 0;
-    var registerItems = Model.Items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount);
 }
 
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <div class="row">
-                @foreach (var item in registerItems)
-                {
-                    <div class="col-md-4">
-                        <button type="button" onclick="AddLineItem(@item.ID)" class="btn btn-block card card-body py-4 h-100 w-100 font-weight-bold">
-                            @item.ItemName
-                            <span class="text-muted">
-                                @{
-                                    var priceDisplay = string.Empty;
-                                    switch (item.PriceTypeID)
-                                    {
-                                        case (int)PriceTypeEnums.Fixed:
-                                            priceDisplay = item.Price.HasValue ? item.Price.Value.ToString("C") : "FREE";
-                                            break;
-                                        case (int)PriceTypeEnums.Variable:
-                                            priceDisplay = "VARIABLE";
-                                            break;
-                                    }
-                                    @priceDisplay
-                                }
-                            </span>
-                        </button>
-                    </div>
-                }
-            </div>
+            <div id="div_list"></div>
         </div>
         <div class="col-md-4">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted"><i class="fas fa-shopping-basket"></i> Cart</span>
-                <span class="badge badge-secondary badge-pill">@lineItemCount</span>
-            </h4>
-            <div class="list-group mb-3">
-                @if (lineItems != null)
-                {
-
-                    foreach (var lineItem in lineItems)
-                    {
-                        switch (lineItem.Item.ItemTypeID)
-                        {
-                            case (int)ItemTypeEnums.Discount:
-                                <div class="list-group-item list-group-item-light">
-                                    <div class="row">
-                                        <div class="col">
-                                            <h6 class="my-0">
-                                                @lineItem.Item.ItemName
-                                            </h6>
-                                            <small class="text-muted">@lineItem.Item.ItemDescription</small>
-                                        </div>
-                                        <div class="col-1">
-                                            <button class="btn btn-outline-secondary btn-sm border-0 p-1 float-right" type="button" onclick="RemoveLineItem(@lineItem.ID)">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-3 text-right">
-                                            <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                break;
-                            default:
-                                <div class="list-group-item">
-                                    <div class="row">
-                                        <div class="col">
-                                            <h6 class="my-0">
-                                                @lineItem.Item.ItemName
-                                            </h6>
-                                            <small class="text-muted">@lineItem.Item.ItemDescription</small>
-                                        </div>
-                                        <div class="col-1">
-                                            <button class="btn btn-outline-secondary btn-sm border-0 p-1 float-right" type="button" onclick="RemoveLineItem(@lineItem.ID)">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-3 text-right">
-                                            <span class="text-muted">@lineItem.ItemAmount.ToString("C")</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                break;
-                        }
-
-                    }
-                    <div class="list-group-item d-flex justify-content-between">
-                        <span>Total (USD)</span>
-                        <strong>@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
-                    </div>
-
-                    if (Model.CurrentOrderID != null && lineItemCount > 0)
-                    {
-                        <a href="@Url.Action("Payment", "Register", new { orderId = Model.CurrentOrderID })" class="list-group-item list-group-item-action text-uppercase text-center lead font-weight-bold">
-                            Checkout Now
-                        </a>
-                    }
-                }
+            <div id="div_cart"></div>
+        </div>
+    </div>
+</div>
+<div id="modal_edit_register" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Register</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#edit_register').html('')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="div_edit_register"></div>
             </div>
         </div>
     </div>
 </div>
-
-@using (Html.BeginForm("AddLineItem", "Register", FormMethod.Post, new { id = "form_add_line_item" }))
+@using (Html.BeginForm("AddLineItem", "Register", FormMethod.Post, new { id = "form_add_item" }))
 {
-    @Html.AntiForgeryToken();
-    @Html.HiddenFor(m => m.CurrentOrderID)
-    @Html.HiddenFor(m => m.SelectedItemID)
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
+    @Html.HiddenFor(m => m.SelectedItemID, new { id = "add_item_id" })
+}
+@using (Html.BeginForm("RemoveItem", "Register", FormMethod.Post, new { id = "form_remove_item" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
+    @Html.HiddenFor(m => m.SelectedItemID, new { id = "remove_item_id" })
 }
 @using (Html.BeginForm("RemoveLineItem", "Register", FormMethod.Post, new { id = "form_remove_line_item" }))
 {
-    @Html.AntiForgeryToken();
-    @Html.HiddenFor(m => m.CurrentOrderID)
-    @Html.HiddenFor(m => m.SelectedLineItemID)
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
+    @Html.HiddenFor(m => m.SelectedItemID, new { id = "remove_line_item_id" })
 }
+
 <script>
-    function AddLineItem(id) {
-        $('#SelectedItemID').val(id)
-        $('#form_add_line_item').submit()
-        @*var model = $('#form_add_line_item').serialize()
+    $(function () {
+        ListRegister(@Model.CurrentOrderID)
+        LoadCart(@Model.CurrentOrderID)
+    })
+    function LoadCart(orderId) {
+        $.get('@Url.Action("LoadCart","Register")', { orderId: orderId }, function (data) {
+            $('#div_cart').html(data)
+        })
+    }
+    function ListRegister(orderId) {
+        $.get('@Url.Action("List","Register")', { orderId: orderId }, function (data) {
+            $('#div_list').html(data)
+        })
+    }
+    function EditRegister(itemId, orderId) {
+        $.get('@Url.Action("Edit","Register")', { itemId: itemId, orderId: orderId }, function (data) {
+            $('#div_edit_register').html(data)
+        })
+    }
+    function SaveRegister() {
+        var model = $('#form_edit_register').serialize()
         $.ajax({
-                    url: '@Url.Action("AddLineItem","Register")',
+            url: '@Url.Action("Edit","Register")',
             type: 'POST',
             data: model,
             success: function (data) {
-                            console.log(data)
+                console.log(data)
+                $('#modal_edit_register').modal('hide')
+                LoadCart(data.orderId)
+                ListRegister(data.orderId)
                 ShowFeedbackMessage(String(data.success))
             },
             error: function (request, error) {
-                            console.log("Request: " + JSON.stringify(request));
-                        }
-                    });*@
+                console.log("Request: " + JSON.stringify(request));
+            }
+        });
     }
-                function RemoveLineItem(id) {
-        $('#SelectedLineItemID').val(id)
-                                    $('#form_remove_line_item').submit()
-                                }
+    function AddLineItem(id, edit) {
+        $('.line-item').prop('disabled', true)
+        $('#add_item_id').val(id)
+        var model = $('#form_add_item').serialize()
+        $.ajax({
+            url: '@Url.Action("AddLineItem","Register")',
+            type: 'POST',
+            data: model,
+            success: function (data) {
+                console.log(data)
+                $('.current-order-id').val(data.orderId)
+                if (edit) {
+                    EditRegister(id, data.orderId)
+                }
+                else {
+                    $('#modal_edit_register').modal('hide')
+                }
+                LoadCart(data.orderId)
+                ListRegister(data.orderId)
+                
+            },
+            error: function (request, error) {
+                console.log("Request: " + JSON.stringify(request));
+            }
+        });
+    }
+    function RemoveItem(id) {
+        $('#remove_item_id').val(id)
+        var model = $('#form_remove_item').serialize()
+        $.ajax({
+            url: '@Url.Action("RemoveItem","Register")',
+            type: 'POST',
+            data: model,
+            success: function (data) {
+                console.log(data)
+                $('#modal_edit_register').modal('hide')
+                LoadCart(data.orderId)
+            },
+            error: function (request, error) {
+                console.log("Request: " + JSON.stringify(request));
+            }
+        });
+    }
+    function RemoveLineItem(id) {
+        $('.quantity-counter').prop('disabled', true)
+        $('#remove_line_item_id').val(id)
+        var model = $('#form_remove_line_item').serialize()
+        $.ajax({
+            url: '@Url.Action("RemoveLineItem","Register")',
+            type: 'POST',
+            data: model,
+            success: function (data) {
+                console.log(data)
+                LoadCart(data.orderId)
+                EditRegister(id, data.orderId)
+            },
+            error: function (request, error) {
+                console.log("Request: " + JSON.stringify(request));
+            }
+        });
+    }
 </script>

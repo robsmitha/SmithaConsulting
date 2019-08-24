@@ -10,20 +10,12 @@ namespace rodcon.Models
         public int SelectedItemID { get; set; }
         public int SelectedLineItemID { get; set; }
         public int? CurrentOrderID { get; set; }
-        public List<Item> Items { get; set; }
-        public OrderViewModel Order { get; set; }
+        public Order Order { get; set; }
         public RegisterViewModel() { }
-        public RegisterViewModel(List<Item> items)
+        public RegisterViewModel(Order order)
         {
-            Items = items;
-        }
-        public RegisterViewModel(List<Item> items, OrderViewModel order)
-        {
-            Items = items;
             Order = order;
-            CurrentOrderID = order != null && order?.Order != null
-                    ? order?.Order.ID
-                    : null;
+            CurrentOrderID = order?.ID;
         }
     }
 }

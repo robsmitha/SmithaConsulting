@@ -14,7 +14,7 @@ namespace rodcon.Controllers
     {
         private readonly rodContext _context;
 
-        public CustomersController(rodContext context)
+        public CustomersController(rodContext context) : base(context)
         {
             _context = context;
         }
