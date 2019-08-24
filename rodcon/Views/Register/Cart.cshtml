@@ -1,20 +1,18 @@
 ﻿@using rod.Enums;
 @model RegisterCartViewModel
 
-@{ 
+@{
     var lineItems = Model.Order != null && Model.Order.LineItems != null ? Model.Order.LineItems : null;
     var lineItemCount = lineItems?.Count ?? 0;
     var distinctLineItems = lineItems.GroupBy(x => x.ItemID).Select(g => g.First()).ToList();
     var orderId = lineItems.FirstOrDefault()?.OrderID;
 }
 
-<h4 class="d-flex justify-content-between align-items-center mb-3">
-    <span class="text-muted"><i class="fas fa-shopping-basket"></i> Cart</span>
-    <span class="badge badge-secondary badge-pill">@lineItemCount</span>
-</h4>
-
+<div class="text-center my-3">
+    <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-store-alt"></i> Store</h1>
+</div>
 <div class="list-group mb-3">
-    @{ 
+    @{
         foreach (var lineItem in distinctLineItems)
         {
             var qty = lineItems.Where(x => x.ItemID == lineItem.ItemID).Count();
@@ -24,10 +22,10 @@
                     <button type="button" class="list-group-item list-group-item-action list-group-item-light" disabled>
                         <div class="row">
                             <div class="col">
-                                <h6 class="my-0">
+                                <h6 class="my-0 lead">
                                     @lineItem.Item.ItemName
                                 </h6>
-                                <small class="text-muted">@lineItem.Item.ItemDescription</small>
+                                <small class="text-muted font-weight-light">@lineItem.Item.ItemDescription</small>
                             </div>
                             <div class="col-auto text-right">
                                 <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
@@ -39,13 +37,13 @@
                     <button class="list-group-item list-group-item-action" onclick="EditRegister(@lineItem.ItemID, @lineItem.OrderID)" data-toggle="modal" data-target="#modal_edit_register">
                         <div class="row">
                             <div class="col">
-                                <h6 class="my-0">
+                                <h6 class="my-0 lead">
                                     @lineItem.Item.ItemName
                                 </h6>
                                 <small class="text-muted">@lineItem.Item.ItemDescription</small>
                             </div>
                             <div class="col-auto text-right">
-                                <span class="text-muted">
+                                <span class="text-muted font-weight-light">
                                     @lineItem.ItemAmount.ToString("C")
                                     <br />
                                     QTY. @qty
@@ -58,14 +56,14 @@
 
         }
         <div class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
+            <span class="lead">Total (USD)</span>
+            <strong class="lead">@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
         </div>
 
         if (lineItemCount > 0 && orderId > 0)
         {
-            <a href="@Url.Action("Payment", "Register")" class="list-group-item list-group-item-action text-uppercase text-center lead font-weight-bold">
-                Checkout Now
+            <a href="@Url.Action("Payment", "Register")" class="list-group-item list-group-item-action text-uppercase text-center lead">
+                <i class="far fa-arrow-alt-circle-right"></i> Checkout Now
             </a>
         }
     }
