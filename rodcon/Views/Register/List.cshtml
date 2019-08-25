@@ -4,9 +4,9 @@
 <div class="row">
     @foreach (var item in Model.Items)
     {
-        <div class="col-md-4 col-sm-4 col-12">
-            <button type="button" onclick="AddLineItem(@item.ID)" class="btn btn-block h-100 w-100 line-item p-0">
-                <div class="card">
+        <div class="col-md-4 col-sm-4 col-12 mb-3">
+            <button type="button" onclick="AddLineItem(@item.ID)" class="btn btn-block line-item p-0 h-100">
+                <div class="card h-100">
                     <img class="card-img-bottom" src="https://via.placeholder.com/350x200" />
                     <div class="card-body p-2">
                         <div class="row">

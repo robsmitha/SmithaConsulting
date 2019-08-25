@@ -1,6 +1,7 @@
 ﻿$(function () {
     var hfooter = $('footer').height()
-    $('main').css('padding-bottom', hfooter +'px')
+    $('main').css('padding-bottom', hfooter + 'px')
+    InitSolomentoUno()
 })
 function InitSolomentoUno() {
     var navHeight = $('.navbar').outerHeight()
