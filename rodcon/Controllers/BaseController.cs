@@ -13,6 +13,7 @@ using rod.Data;
 using rod.Enums;
 using rodcon.Constants;
 using rodcon.Models;
+using rodcon.Utilities;
 
 namespace rodcon.Controllers
 {
@@ -24,6 +25,10 @@ namespace rodcon.Controllers
         {
             _context = context;
         }
+        public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
+        public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
+        public string ConversationStirng => HttpContext.Session.GetString("Conversation") ?? string.Empty;
+        public bool HasSessionConversation => !string.IsNullOrEmpty(ConversationStirng);
         public int? UserID => HttpContext.Session.GetInt32(SessionKeysConstants.USER_ID);
         public int? CustomerID => UserID > 0 ? null : HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
@@ -63,13 +68,15 @@ namespace rodcon.Controllers
             }
             var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
             var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about", "privacy", "contact", "payment", "details", "apply", "error" };
+            string[] publicPages = { "index", "login", "loginasync", "signout", "signup", "signupasync", "about",
+                "privacy", "contact", "payment", "details", "apply", "error" };
             switch (controllerName)
             {
                 case "home":
                 case "register":
                 case "orders":
                 case "theme":
+                case "chat":
                     if (Array.IndexOf(publicPages, actionName) != -1) return;
                     break;
             }

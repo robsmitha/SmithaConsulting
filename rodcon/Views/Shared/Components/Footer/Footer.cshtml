@@ -49,71 +49,76 @@
                 <small class="d-block mb-3 text-muted">
                     <i class="fas fa-layer-group"></i> Features
                 </small>
-                    <ul class="list-unstyled text-small">
+                <ul class="list-unstyled text-small">
+                    <li>
+                        <a class="text-muted" asp-area="" asp-controller="Register" asp-action="Index">
+                            <i class="fas fa-store-alt"></i> Store
+                        </a>
+                    </li>
+                    <li>
+                        <a class="text-muted" asp-area="" asp-controller="Chat" asp-action="Index">
+                            <i class="fas fa-comments"></i> Chat
+                        </a>
+                    </li>
+                    <li>
+                        <a class="text-muted" asp-area="" asp-controller="Theme" asp-action="Index">
+                            <i class="fas fa-palette"></i> Themes
+                        </a>
+                    </li>
+                    @if (Model.CanAccessFeatures)
+                    {
                         <li>
-                            <a class="text-muted" asp-area="" asp-controller="Register" asp-action="Index">
-                                <i class="fas fa-store-alt"></i> Store
+                            <a class="text-muted" asp-area="" asp-controller="Users" asp-action="Index">
+                                Users
                             </a>
                         </li>
                         <li>
-                            <a class="text-muted" asp-area="" asp-controller="Theme" asp-action="Index">
-                                <i class="fas fa-palette"></i> Themes
+                            <a class="text-muted" asp-area="" asp-controller="Merchants" asp-action="Index">
+                                Merchants
                             </a>
                         </li>
-                        @if (Model.CanAccessFeatures)
-                        {
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Users" asp-action="Index">
-                                    Users
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Merchants" asp-action="Index">
-                                    Merchants
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Items" asp-action="Index">
-                                    Items
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Orders" asp-action="Index">
-                                    Orders
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Payments" asp-action="Index">
-                                    Payments
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Customers" asp-action="Index">
-                                    Customers
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="MerchantUsers" asp-action="Index">
-                                    Merchant Users
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Roles" asp-action="Index">
-                                    Roles
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="Permissions" asp-action="Index">
-                                    Permissions
-                                </a>
-                            </li>
-                            <li>
-                                <a class="text-muted" asp-area="" asp-controller="RolePermissions" asp-action="Index">
-                                    Roles Permissions
-                                </a>
-                            </li>
-                        }
-                    </ul>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Items" asp-action="Index">
+                                Items
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Orders" asp-action="Index">
+                                Orders
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Payments" asp-action="Index">
+                                Payments
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Customers" asp-action="Index">
+                                Customers
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="MerchantUsers" asp-action="Index">
+                                Merchant Users
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Roles" asp-action="Index">
+                                Roles
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="Permissions" asp-action="Index">
+                                Permissions
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-muted" asp-area="" asp-controller="RolePermissions" asp-action="Index">
+                                Roles Permissions
+                            </a>
+                        </li>
+                    }
+                </ul>
 </div>
             @if (Model.CanAccessTypes)
             {
