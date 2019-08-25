@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using rod;
 using rod.Data;
@@ -42,19 +43,6 @@ namespace rodcon.Controllers
                 return;
             }
 
-            //if(ThemeCDN == null)
-            //{
-            //    var themeModel = GetThemeList();
-            //    if (themeModel?.Result != null && themeModel.Result?.themes != null)
-            //    {
-            //        var themeList = themeModel.Result.themes.ToList();
-            //        Random rnd = new Random();
-            //        int themeIndex = rnd.Next(1, themeList.Count());
-            //        var theme = themeList[themeIndex];
-            //        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.cssCdn);
-            //    }
-            //}
-
             if (UserID == null && CustomerID == null)
             {
                 var customer = new Customer();
@@ -83,6 +71,21 @@ namespace rodcon.Controllers
             context.Result = new RedirectResult("/Home/Login");
             return;
 
+        }
+        public void GenerateRandomTheme()
+        {
+            if(ThemeCDN == null)
+            {
+                var themeModel = GetThemeList();
+                if (themeModel?.Result != null && themeModel.Result?.themes != null)
+                {
+                    var themeList = themeModel.Result.themes.ToList();
+                    Random rnd = new Random();
+                    int themeIndex = rnd.Next(1, themeList.Count());
+                    var theme = themeList[themeIndex];
+                    HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.cssCdn);
+                }
+            }
         }
         public void CreateCustomerSession(Customer customer)
         {
@@ -130,41 +133,56 @@ namespace rodcon.Controllers
         {
             if(orderId != null)
             {
-                return _context.Orders.SingleOrDefault(x => x.ID == orderId);
+                return _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Merchant)
+                .Include(o => o.OrderStatusType)
+                .Include(o => o.User)
+                .SingleOrDefault(x => x.ID == orderId);
             }
-            return _context.Orders.Where(x => x.UserID == UserID && x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
-                    .OrderByDescending(x => x.CreatedAt)
-                    .FirstOrDefault();
+            return _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Merchant)
+                .Include(o => o.OrderStatusType)
+                .Include(o => o.User)
+                .Where(x => x.UserID == UserID && x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                .OrderByDescending(x => x.CreatedAt)
+                .FirstOrDefault();
+        }
+
+        public OrderViewModel GetOrderViewModel(Order order)
+        {
+            var payments = new List<Payment>();
+            var lineItems = new List<LineItem>();
+            if (order != null)
+            {
+                payments = _context.Payments
+                    .Include(p => p.Authorization)
+                    .Include(p => p.PaymentStatusType)
+                    .Include(p => p.PaymentType)
+                    .Where(x => x.OrderID == order.ID)
+                   .ToList();
+                lineItems = _context.LineItems.Include(l => l.Item).Where(x => x.OrderID == order.ID)
+                .ToList();
+            }
+            return new OrderViewModel(order, lineItems, payments);
         }
 
         public async Task<ThemeListViewModel> GetThemeList()
         {
             var model = new ThemeListViewModel();
-
             using (var client = new HttpClient())
             {
-                //Passing service base url  
                 client.BaseAddress = new Uri(ThemeViewModel.BaseUrl);
-
                 client.DefaultRequestHeaders.Clear();
-                //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                HttpResponseMessage Res = await client.GetAsync(ThemeViewModel.BaseUrl);
-
-                //Checking the response is successful or not which is sent using HttpClient  
-                if (Res.IsSuccessStatusCode)
+                HttpResponseMessage response = await client.GetAsync(ThemeViewModel.BaseUrl);
+                if (response.IsSuccessStatusCode)
                 {
-                    //Storing the response details recieved from web api   
-                    var ThemeListResponse = Res.Content.ReadAsStringAsync().Result;
-
-                    //Deserializing the response recieved from web api and storing into the list  
-                    model = JsonConvert.DeserializeObject<ThemeListViewModel>(ThemeListResponse);
+                    var result = response.Content.ReadAsStringAsync().Result;  
+                    model = JsonConvert.DeserializeObject<ThemeListViewModel>(result);
                     model.CurrentTheme = ThemeCDN;
-
                 }
-                //returning the list to view  
                 return model;
             }
         }

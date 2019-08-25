@@ -4,24 +4,24 @@
     ViewData["Title"] = "Register Page";
 }
 
-    <div class="container">
-        <div class="text-center my-3">
-            <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-store-alt"></i> Store</h1>
+<div class="container">
+    <div class="text-md-center my-3">
+        <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-store-alt"></i> Store</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-4 order-md-2 mb-2">
+            <div id="div_cart"></div>
         </div>
-        <div class="row">
-            <div class="col-md-4 order-md-2 mb-2">
-                <div id="div_cart"></div>
-            </div>
-            <div class="col-md-8 order-md-1">
-                <div id="div_list"></div>
-            </div>
-        </div>
-        <div class="my-5 text-center">
-            <p class="lead">
-                Feel free to create as many fake orders as you want!
-            </p>
+        <div class="col-md-8 order-md-1">
+            <div id="div_list"></div>
         </div>
     </div>
+    <div class="my-5 text-center">
+        <p class="lead">
+            Feel free to create as many fake orders as you want!
+        </p>
+    </div>
+</div>
 <div id="modal_edit_register" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -56,103 +56,4 @@
     @Html.HiddenFor(m => m.SelectedItemID, new { id = "remove_line_item_id" })
 }
 
-<script>
-    $(function () {
-        ListRegister(@Model.CurrentOrderID)
-        LoadCart(@Model.CurrentOrderID)
-    })
-    function LoadCart(orderId) {
-        $.get('@Url.Action("LoadCart","Register")', { orderId: orderId }, function (data) {
-            $('#div_cart').html(data)
-        })
-    }
-    function ListRegister(orderId) {
-        $.get('@Url.Action("List","Register")', { orderId: orderId }, function (data) {
-            $('#div_list').html(data)
-        })
-    }
-    function EditRegister(itemId, orderId) {
-        $.get('@Url.Action("Edit","Register")', { itemId: itemId, orderId: orderId }, function (data) {
-            $('#div_edit_register').html(data)
-        })
-    }
-    function SaveRegister() {
-        var model = $('#form_edit_register').serialize()
-        $.ajax({
-            url: '@Url.Action("Edit","Register")',
-            type: 'POST',
-            data: model,
-            success: function (data) {
-                console.log(data)
-                $('#modal_edit_register').modal('hide')
-                LoadCart(data.orderId)
-                ListRegister(data.orderId)
-                ShowFeedbackMessage(String(data.success))
-            },
-            error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
-    }
-    function AddLineItem(id, edit) {
-        $('.line-item').prop('disabled', true)
-        $('#add_item_id').val(id)
-        var model = $('#form_add_item').serialize()
-        $.ajax({
-            url: '@Url.Action("AddLineItem","Register")',
-            type: 'POST',
-            data: model,
-            success: function (data) {
-                console.log(data)
-                $('.current-order-id').val(data.orderId)
-                if (edit) {
-                    EditRegister(id, data.orderId)
-                }
-                else {
-                    $('#modal_edit_register').modal('hide')
-                }
-                LoadCart(data.orderId)
-                ListRegister(data.orderId)
-                
-            },
-            error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
-    }
-    function RemoveItem(id) {
-        $('#remove_item_id').val(id)
-        var model = $('#form_remove_item').serialize()
-        $.ajax({
-            url: '@Url.Action("RemoveItem","Register")',
-            type: 'POST',
-            data: model,
-            success: function (data) {
-                console.log(data)
-                $('#modal_edit_register').modal('hide')
-                LoadCart(data.orderId)
-            },
-            error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
-    }
-    function RemoveLineItem(id) {
-        $('.quantity-counter').prop('disabled', true)
-        $('#remove_line_item_id').val(id)
-        var model = $('#form_remove_line_item').serialize()
-        $.ajax({
-            url: '@Url.Action("RemoveLineItem","Register")',
-            type: 'POST',
-            data: model,
-            success: function (data) {
-                console.log(data)
-                LoadCart(data.orderId)
-                EditRegister(id, data.orderId)
-            },
-            error: function (request, error) {
-                console.log("Request: " + JSON.stringify(request));
-            }
-        });
-    }
-</script>
+<script src="~/js/Register/Index.cshtml.js"></script>

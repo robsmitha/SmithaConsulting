@@ -38,23 +38,7 @@ namespace rodcon.Controllers
         public IActionResult LoadCart(int? orderId)
         {
             var order = GetOrder(orderId);
-            OrderViewModel orderViewModel = null;
-            if (MerchantID > 0)
-            {
-                var payments = new List<Payment>();
-                var lineItems = new List<LineItem>();         
-                if (order != null)
-                {
-                    payments = _context.Payments.Where(x => x.OrderID == order.ID)
-                       .ToList();
-                    lineItems = _context.LineItems.Where(x => x.OrderID == order.ID)
-                    .ToList();
-                    var lineItemIds = _context.LineItems.Where(x => x.OrderID == order.ID)
-                    .Select(x => x.ItemID);
-                    var items = _context.Items.Where(x => lineItemIds.Contains(x.ID)).ToList();
-                }
-                orderViewModel = new OrderViewModel(order, lineItems, payments);
-            }
+            var orderViewModel = GetOrderViewModel(order);
             var model = new RegisterCartViewModel(orderViewModel);
             return PartialView("Cart", model);
         }
@@ -182,14 +166,7 @@ namespace rodcon.Controllers
             var order = GetOrder();
             if(order != null)
             {
-                var payments = _context.Payments.Where(x => x.OrderID == order.ID)
-                    .ToList();
-                var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID)
-                    .ToList();
-                var lineItemIds = _context.LineItems.Where(x => x.OrderID == order.ID)
-                    .Select(x => x.ItemID);
-                var items = _context.Items.Where(x => lineItemIds.Contains(x.ID)).ToList();
-                var orderViewModel = new OrderViewModel(order, lineItems, payments);
+                var orderViewModel = GetOrderViewModel(order);
                 var model = new PaymentViewModel(orderViewModel, order.ID);
                 return View(model);
 
@@ -238,31 +215,35 @@ namespace rodcon.Controllers
             try
             {
                 var discount = _context.Items.FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
-                var amount = 0M;
-                switch (discount.PriceTypeID)
+                if(discount != null)
                 {
-                    case (int)PriceTypeEnums.Fixed: 
-                        amount = discount.Price ?? 0;
-                        break;
-                    case (int)PriceTypeEnums.Variable:
-                        var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID);
-                        amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
-                        break;
+                    var amount = 0M;
+                    switch (discount.PriceTypeID)
+                    {
+                        case (int)PriceTypeEnums.Fixed:
+                            amount = discount.Price ?? 0;
+                            break;
+                        case (int)PriceTypeEnums.Variable:
+                            var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID);
+                            amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
+                            break;
+                    }
+                    var lineItem = new LineItem
+                    {
+                        ItemAmount = amount > 0 ? amount * -1 : amount,
+                        ItemID = discount.ID,
+                        OrderID = order.ID
+                    };
+                    _context.LineItems.Add(lineItem);
+                    _context.SaveChanges();
+                    return true;
                 }
-                var lineItem = new LineItem
-                {
-                    ItemAmount = amount > 0 ? amount * -1 : amount,
-                    ItemID = discount.ID,
-                    OrderID = order.ID
-                };
-                _context.LineItems.Add(lineItem);
-                _context.SaveChanges();
-                return true;
             }
             catch
             {
-                return false;
+
             }
+            return false;
 
         }
         protected bool UpdateDiscounts(Order order)
@@ -287,16 +268,17 @@ namespace rodcon.Controllers
                                 amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
                                 break;
                         }
-
-                        var lineItem = new LineItem
-                        {
-                            ItemAmount = amount > 0 ? amount * -1 : amount,
-                            ItemID = discount.ID,
-                            OrderID = order.ID
-                        };
-
                         _context.LineItems.Remove(lineItemDiscount);
-                        _context.LineItems.Add(lineItem);
+                        if (amount != 0)
+                        {
+                            var lineItem = new LineItem
+                            {
+                                ItemAmount = amount > 0 ? amount * -1 : amount,
+                                ItemID = discount.ID,
+                                OrderID = order.ID
+                            };
+                            _context.LineItems.Add(lineItem);
+                        }
                     }
                 }
                 _context.SaveChanges();
@@ -314,9 +296,9 @@ namespace rodcon.Controllers
             var order = _context.Orders.SingleOrDefault(x => x.ID == model.CurrentOrderID);
             if (AddDiscount(order, model.PromoCode))
             {
-                return RedirectToAction("Payment", new { orderId = model.CurrentOrderID });
+
             }
-            return RedirectToAction("Error");
+            return RedirectToAction("Payment", new { orderId = model.CurrentOrderID });
         }
         public IActionResult Edit(int itemId, int orderId)
         {

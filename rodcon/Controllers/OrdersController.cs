@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using rod;
 using rod.Data;
+using rodcon.Models;
 
 namespace rodcon.Controllers
 {
@@ -40,12 +41,14 @@ namespace rodcon.Controllers
                 .Include(o => o.OrderStatusType)
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            var orderViewModel = GetOrderViewModel(order);
+            return View(orderViewModel);
         }
 
         // GET: Orders/Create
