@@ -44,7 +44,7 @@
                 <td class="d-none d-sm-table-cell">
                     TOTAL
                 </td>
-                <td class="d-none d-sm-table-cell">
+                <td>
                     @if (item?.Customer != null && !string.IsNullOrWhiteSpace(item.Customer.Email))
                     {
                         @item.Customer.Email
@@ -58,7 +58,7 @@
                         <span>Guest</span>
                     }
                 </td>
-                <td>
+                <td class="d-none d-sm-table-cell">
                     @item.Merchant.MerchantName
                 </td>
                 <td class="d-none d-sm-table-cell">

@@ -5,6 +5,7 @@
     var jqueryUiCss = !string.IsNullOrWhiteSpace(ViewBag.CDN) ? $"{ViewBag.CDN}/Content/jquery/jquery-ui/jquery-ui.min.css" : "//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css";
     var jqueryUiJs = !string.IsNullOrWhiteSpace(ViewBag.CDN) ? $"{ViewBag.CDN}/Content/jquery/jquery-ui/jquery-ui.min.js" : "https://code.jquery.com/ui/1.12.1/jquery-ui.js";
 }
+
 <!-- Custom styles for this page -->
 <link href="~/css/chat.css" rel="stylesheet">
 <link rel="stylesheet" href="@jqueryUiCss">
@@ -73,7 +74,7 @@
                     </small>
                 </li>
                 <li>
-                    Aplha Vantage -
+                    Alpha Vantage -
                     <small class="text-black-50">
                         This suite of APIs provide realtime and historical global equity data in 4 different temporal resolutions: (1) daily, (2) weekly, (3) monthly, and (4) intraday. Daily, weekly, and monthly time series contain 20+ years of historical data.
                         <a target="_blank" href="https://www.alphavantage.co/documentation/">

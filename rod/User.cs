@@ -32,5 +32,6 @@ namespace rod
         [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

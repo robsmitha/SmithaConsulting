@@ -13,6 +13,13 @@ namespace rod.Data
         public DbSet<AddressType> AddressTypes { get; set; }
         public DbSet<Authorization> Authorizations { get; set; }
         public DbSet<AuthorizationType> AuthorizationTypes { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogCategory> BlogCategories { get; set; }
+        public DbSet<BlogCategoryType> BlogCategoryTypes { get; set; }
+        public DbSet<BlogComment> BlogComments { get; set; }
+        public DbSet<BlogCommentReply> BlogCommentReplies { get; set; }
+        public DbSet<BlogCommentStatusType> BlogCommentStatusTypes { get; set; }
+        public DbSet<BlogStatusType> BlogStatusTypes { get; set; }
         public DbSet<CardType> CardTypes { get; set; }
         public DbSet<CashEvent> CashEvents { get; set; }
         public DbSet<CashEventType> CashEventTypes { get; set; }
@@ -59,6 +66,7 @@ namespace rod.Data
         public DbSet<TaxType> TaxTypes { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamType> TeamTypes { get; set; }
+        public DbSet<Theme> Themes { get; set; }
         public DbSet<UnitType> UnitTypes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<VoidReasonType> VoidReasonTypes { get; set; }
@@ -68,6 +76,13 @@ namespace rod.Data
             modelBuilder.Entity<AddressType>();
             modelBuilder.Entity<Authorization>();
             modelBuilder.Entity<AuthorizationType>();
+            modelBuilder.Entity<Blog>();
+            modelBuilder.Entity<BlogCategory>();
+            modelBuilder.Entity<BlogCategoryType>();
+            modelBuilder.Entity<BlogComment>();
+            modelBuilder.Entity<BlogCommentReply>();
+            modelBuilder.Entity<BlogCommentStatusType>();
+            modelBuilder.Entity<BlogStatusType>();
             modelBuilder.Entity<CardType>();
             modelBuilder.Entity<CashEvent>();
             modelBuilder.Entity<CashEventType>();
@@ -114,6 +129,7 @@ namespace rod.Data
             modelBuilder.Entity<TaxType>();
             modelBuilder.Entity<Team>();
             modelBuilder.Entity<TeamType>();
+            modelBuilder.Entity<Theme>();
             modelBuilder.Entity<UnitType>();
             modelBuilder.Entity<User>();
             modelBuilder.Entity<VoidReasonType>();
