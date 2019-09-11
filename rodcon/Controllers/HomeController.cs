@@ -14,6 +14,8 @@ using rod.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using rodcon.Constants;
 using rod.Enums;
+using System.Net.Mail;
+using System.Net;
 
 namespace rodcon.Controllers
 {
@@ -32,6 +34,36 @@ namespace rodcon.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Contact(ContactViewModel model)
+        {
+            var fromAddress = new MailAddress("wmcmailer@gmail.com", "Website Mailer");
+            var toAddress = new MailAddress("robsmitha94@gmail.com", "Rob Smitha");
+            const string fromPassword = "RvY0rIWyP2H6T29pZDtpOSTQ8l0218BX";
+            const string subject = "Website Mail";
+            string body = $"From: {model.Email}, {model.Name} message: {model.Message}";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+
+            return RedirectToAction("Index");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -8,11 +8,11 @@
     <partial name="_CookieConsentPartial" />
     @await Component.InvokeAsync("Header")
     <partial name="_SystemMessagePartial" />
-    <main class="mb-3 container">
+    <main>
         @RenderBody()
     </main>
     @await Component.InvokeAsync("Footer")
-    
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

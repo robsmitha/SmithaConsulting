@@ -10,23 +10,23 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class BlogsController : Controller
+    public class BlogController : BaseController
     {
         private readonly rodContext _context;
 
-        public BlogsController(rodContext context)
+        public BlogController(rodContext context) : base(context)
         {
             _context = context;
         }
 
-        // GET: Blogs
+        // GET: Blog
         public async Task<IActionResult> Index()
         {
             var rodContext = _context.Blogs.Include(b => b.BlogStatusType).Include(b => b.User);
             return View(await rodContext.ToListAsync());
         }
 
-        // GET: Blogs/Details/5
+        // GET: Blog/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,7 +46,7 @@ namespace rodcon.Controllers
             return View(blog);
         }
 
-        // GET: Blogs/Create
+        // GET: Blog/Create
         public IActionResult Create()
         {
             ViewData["BlogStatusTypeID"] = new SelectList(_context.BlogStatusTypes, "ID", "ID");
@@ -54,12 +54,12 @@ namespace rodcon.Controllers
             return View();
         }
 
-        // POST: Blogs/Create
+        // POST: Blog/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Content,ImageUrl,BlogStatusTypeID,PublishDate,UserID,ID,CreatedAt,Active,ModifiedTime")] Blog blog)
+        public async Task<IActionResult> Create([Bind("Title,Subheading,Content,ImageUrl,BlogStatusTypeID,PublishDate,UserID,ID,CreatedAt,Active,ModifiedTime")] Blog blog)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +72,7 @@ namespace rodcon.Controllers
             return View(blog);
         }
 
-        // GET: Blogs/Edit/5
+        // GET: Blog/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,12 +90,12 @@ namespace rodcon.Controllers
             return View(blog);
         }
 
-        // POST: Blogs/Edit/5
+        // POST: Blog/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Content,ImageUrl,BlogStatusTypeID,PublishDate,UserID,ID,CreatedAt,Active,ModifiedTime")] Blog blog)
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Subheading,Content,ImageUrl,BlogStatusTypeID,PublishDate,UserID,ID,CreatedAt,Active,ModifiedTime")] Blog blog)
         {
             if (id != blog.ID)
             {
@@ -127,7 +127,7 @@ namespace rodcon.Controllers
             return View(blog);
         }
 
-        // GET: Blogs/Delete/5
+        // GET: Blog/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,7 +147,7 @@ namespace rodcon.Controllers
             return View(blog);
         }
 
-        // POST: Blogs/Delete/5
+        // POST: Blog/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

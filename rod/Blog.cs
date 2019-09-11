@@ -8,6 +8,7 @@ namespace rod
     public class Blog : BaseModel
     {
         public string Title { get; set; }
+        public string Subheading { get; set; }
         public string Content { get; set; }
         public string ImageUrl { get; set; }
         public int BlogStatusTypeID { get; set; }
