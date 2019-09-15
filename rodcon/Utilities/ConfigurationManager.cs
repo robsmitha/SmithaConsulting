@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace rodcon.Utilities
 {
-    static class ConfigurationManager
+    public static class ConfigurationManager
     {
         public static string ConfigurationsKey = "Configurations";
         public static string StringsKey = "Strings";
