@@ -60,17 +60,16 @@ namespace rodcon.Controllers
             string[] publicPages = {
                 "index", "login", "loginasync", "signout", "signup", "signupasync", "about",
                 "privacy", "contact",
-                //"payment", "details", "apply",
+                "payment", "details", "apply",
                 "error"
             };
             switch (controllerName)
             {
                 case "home":
-                case "blog":
-                //case "register":
-                //case "orders":
-                //case "theme":
-                //case "chat":
+                case "register":
+                case "orders":
+                case "theme":
+                case "chat":
                     if (Array.IndexOf(publicPages, actionName) != -1) return;
                     break;
             }

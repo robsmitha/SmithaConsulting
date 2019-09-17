@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rodcon", "rodcon\rodcon.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rod", "rod\rod.csproj", "{0254AEBA-99A7-4C92-8C33-2065690EB06C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "blog", "blog\blog.csproj", "{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "store", "store\store.csproj", "{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0254AEBA-99A7-4C92-8C33-2065690EB06C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0254AEBA-99A7-4C92-8C33-2065690EB06C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0254AEBA-99A7-4C92-8C33-2065690EB06C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

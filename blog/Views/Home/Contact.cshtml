@@ -1,0 +1,57 @@
+﻿@model ContactViewModel
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('https://smitha-cdn.s3.us-east-2.amazonaws.com/Content/images/contact-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Contact Me</h1>
+                    <span class="subheading">Have questions? I have answers.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as possible!</p>
+            
+            <form asp-controller="Home" asp-action="Contact" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-label-group">
+                    <input asp-for="Name" class="form-control" placeholder="Name" required />
+                    <label asp-for="Name"></label>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-label-group">
+                    <input asp-for="Email" class="form-control" placeholder="Email" required />
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-label-group">
+                    <input asp-for="Phone" class="form-control" placeholder="Phone (Optional)" />
+                    <label asp-for="Phone"></label>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+                <div class="form-label-group">
+                    <textarea asp-for="Message" class="form-control" placeholder="Message" required rows="4"></textarea>
+                    <label asp-for="Message"></label>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr>

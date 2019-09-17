@@ -16,6 +16,7 @@ using rodcon.Constants;
 using rod.Enums;
 using System.Net.Mail;
 using System.Net;
+using rodcon.Utilities;
 
 namespace rodcon.Controllers
 {
@@ -41,7 +42,7 @@ namespace rodcon.Controllers
         {
             var fromAddress = new MailAddress("wmcmailer@gmail.com", "Website Mailer");
             var toAddress = new MailAddress("robsmitha94@gmail.com", "Rob Smitha");
-            const string fromPassword = "RvY0rIWyP2H6T29pZDtpOSTQ8l0218BX";
+            var fromPassword = ConfigurationManager.GetString("GmailPassword");
             const string subject = "Website Mail";
             string body = $"From: {model.Email}, {model.Name} message: {model.Message}";
 

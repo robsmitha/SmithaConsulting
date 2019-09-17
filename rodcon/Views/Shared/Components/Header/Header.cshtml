@@ -1,160 +1,73 @@
 ﻿@model HeaderViewModel
-@*<header>
-            <div class="container">
-                <div class="col-lg-8 mx-auto">
-                    <ul class="nav justify-content-center nav-masthead nav-tabs border-0 pt-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
-                                <i class="fas fa-home"></i><span class="sr-only">Home</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Register" asp-action="Index" title="Store">
-                                <i class="fas fa-store-alt"></i><span class="sr-only">Store</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Theme" asp-action="Index" title="Store">
-                                <i class="fas fa-palette"></i><span class="sr-only">Theme</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index" title="Chat">
-                                <i class="fas fa-comments"></i><span class="sr-only">Chat</span>
-                            </a>
-                        </li>
-                        @if (!Model.IsLoggedIn)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp" title="Sign up">
-                                    <i class="fas fa-user-plus"></i><span class="sr-only">Sign up</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login" title="Sign in">
-                                    <i class="fas fa-sign-in-alt"></i><span class="sr-only">Sign in</span>
-                                </a>
-                            </li>
-
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Details", "Users", new { id = Model.UserId })" title="@Model.Greeting">
-                                    <i class="fas fa-user"></i>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignOut" title="Sign out">
-                                    <i class="fas fa-sign-out-alt"></i><span class="sr-only">Sign out</span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </header>
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark shadow">
-        <div class="container">
-            <a class="navbar-brand mr-auto mr-lg-0 lead" asp-area="" asp-controller="Home" asp-action="Index">
-                RS&nbsp;&nbsp;
-            </a>
-            <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse offcanvas-collapse bg-dark font-weight-light">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
-                            <i class="fas fa-home"></i><span class="sr-only">Home</span> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Blog" asp-action="Index" title="Blog">
-                            <i class="fas fa-list"></i> Blog
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Register" asp-action="Index" title="Store">
-                            <i class="fas fa-store-alt"></i><span class="sr-only">Store</span> Store
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index" title="Orders">
-                            <i class="fas fa-history"></i> Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Theme" asp-action="Index" title="Store">
-                            <i class="fas fa-palette"></i><span class="sr-only">Theme</span> Themes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index" title="Chat">
-                            <i class="fas fa-comments"></i><span class="sr-only">Chat</span> Chat
-                        </a>
-                    </li>
-                </ul>
-                @{
-                    if (!Model.IsLoggedIn)
-                    {
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">
-                                    <i class="fas fa-sign-in-alt"></i><span class="sr-only">Sign in</span> Sign in
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp" title="Sign up">
-                                    <i class="fas fa-user-plus"></i><span class="sr-only">Sign up</span> Sign up
-                                </a>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Details", "Users", new { id = Model.UserId })">
-                                    <i class="fas fa-user"></i> @Model.Greeting
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignOut" title="Sign out">
-                                    <i class="fas fa-sign-out-alt"></i><span class="sr-only">Sign out</span> Sign out
-                                </a>
-                            </li>
-                        </ul>
-                    }
-                }
-            </div>
-        </div>
-    </nav>*@
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark shadow">
     <div class="container">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Rob Smitha</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars"></i>
+        <a class="navbar-brand mr-auto mr-lg-0 lead" asp-area="" asp-controller="Home" asp-action="Index">
+            RS&nbsp;&nbsp;
+        </a>
+        <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+            <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+        <div class="navbar-collapse offcanvas-collapse bg-dark font-weight-light">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
+                        <i class="fas fa-home"></i><span class="sr-only">Home</span> Home
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
-                </li>
-                @*<li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Blog" asp-action="Index">Blog</a>
+                    <a class="nav-link" asp-area="" asp-controller="Register" asp-action="Index" title="Store">
+                        <i class="fas fa-store-alt"></i><span class="sr-only">Store</span> Store
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
-                </li>*@
+                    <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index" title="Orders">
+                        <i class="fas fa-history"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Theme" asp-action="Index" title="Store">
+                        <i class="fas fa-palette"></i><span class="sr-only">Theme</span> Themes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Chat" asp-action="Index" title="Chat">
+                        <i class="fas fa-comments"></i><span class="sr-only">Chat</span> Chat
+                    </a>
+                </li>
             </ul>
+            @{
+                if (!Model.IsLoggedIn)
+                {
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">
+                                <i class="fas fa-sign-in-alt"></i><span class="sr-only">Sign in</span> Sign in
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignUp" title="Sign up">
+                                <i class="fas fa-user-plus"></i><span class="sr-only">Sign up</span> Sign up
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Details", "Users", new { id = Model.UserId })">
+                                <i class="fas fa-user"></i> @Model.Greeting
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignOut" title="Sign out">
+                                <i class="fas fa-sign-out-alt"></i><span class="sr-only">Sign out</span> Sign out
+                            </a>
+                        </li>
+                    </ul>
+                }
+            }
         </div>
     </div>
 </nav>
