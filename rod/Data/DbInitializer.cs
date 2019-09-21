@@ -302,6 +302,25 @@ namespace rod.Data
                 context.MerchantUsers.Add(merchantUser);
                 context.SaveChanges();
             }
+
+            var blogStatusTypes = new List<BlogStatusType>
+            {
+                new BlogStatusType
+                {
+                    Name = "Drafted",
+                    Description = "Drafted",
+                    Active = true,
+                    CreatedAt = DateTime.Now
+                },
+                new BlogStatusType
+                {
+                    Name = "Published",
+                    Description = "Published",
+                    Active = true,
+                    CreatedAt = DateTime.Now
+                }
+            };
+            context.BlogStatusTypes.AddRange(blogStatusTypes);
         }
     }
 }

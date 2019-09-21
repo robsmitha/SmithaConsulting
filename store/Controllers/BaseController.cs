@@ -30,10 +30,8 @@ namespace store.Controllers
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
         public string ConversationStirng => HttpContext.Session.GetString("Conversation") ?? string.Empty;
         public bool HasSessionConversation => !string.IsNullOrEmpty(ConversationStirng);
-        public int? UserID => HttpContext.Session.GetInt32(SessionKeysConstants.USER_ID);
-        public int? CustomerID => UserID > 0 ? null : HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
+        public int? CustomerID => HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
-        public string Username => HttpContext.Session.GetString(SessionKeysConstants.USERNAME);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
         public override void OnActionExecuted(ActionExecutedContext context)
         {
@@ -43,16 +41,12 @@ namespace store.Controllers
                 return;
             }
 
-            if (UserID == null && CustomerID == null)
+            if (CustomerID == null)
             {
                 var customer = new Customer();
                 _context.Customers.Add(customer);
                 _context.SaveChanges();
                 CreateCustomerSession(customer);
-            }
-            else if(UserID > 0)
-            {
-                return;
             }
 
             var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
@@ -72,38 +66,6 @@ namespace store.Controllers
                 HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
             }
         }
-        public void CreateUserSession(User user)
-        {
-            var merchantId = _context.MerchantUsers.FirstOrDefault(x => x.UserID == user.ID)?.MerchantID;
-            if (merchantId != null)
-            {
-                HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
-            }
-            var userId = user.ID;
-            var username = user.Username;
-            HttpContext.Session.SetInt32(SessionKeysConstants.USER_ID, userId);
-            HttpContext.Session.SetString(SessionKeysConstants.USERNAME, username);
-            var merchantUser = _context.MerchantUsers.SingleOrDefault(x => x.UserID == userId && x.MerchantID == merchantId);
-            if(merchantUser != null)
-            {
-                var rolePermissions = _context.RolePermissions.Where(x => x.RoleID == merchantUser.RoleID);
-                var permissionIds = rolePermissions.Select(x => x.PermissionID);
-                if (permissionIds.Any())
-                {
-                    HttpContext.Session.SetString(SessionKeysConstants.PERMISSION_ID_LIST, JsonConvert.SerializeObject(permissionIds));
-                }
-            }
-        }
-        public bool HasPermission(int permissionId)
-        {
-            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_ID_LIST);
-            if (!string.IsNullOrEmpty(permissionIdString))
-            {
-                var permissionIds = JsonConvert.DeserializeObject<List<int>>(permissionIdString);
-                return permissionIds.Contains(permissionId);
-            }
-            return false;
-        }
 
         public Order GetOrder(int? orderId = null)
         {
@@ -121,7 +83,7 @@ namespace store.Controllers
                 .Include(o => o.Merchant)
                 .Include(o => o.OrderStatusType)
                 .Include(o => o.User)
-                .Where(x => x.UserID == UserID && x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                .Where(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                 .OrderByDescending(x => x.CreatedAt)
                 .FirstOrDefault();
         }

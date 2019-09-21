@@ -1,6 +1,6 @@
 ﻿$(function () { 
     InitHeader()
-    InitFooter
+    InitFooter()
 })
 function InitFooter() {
     var hfooter = $('footer').height()

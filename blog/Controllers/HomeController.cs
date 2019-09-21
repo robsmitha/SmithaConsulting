@@ -41,7 +41,7 @@ namespace blog.Controllers
         {
             var fromAddress = new MailAddress("wmcmailer@gmail.com", "Website Mailer");
             var toAddress = new MailAddress("robsmitha94@gmail.com", "Rob Smitha");
-            var fromPassword = ConfigurationManager.GetString("GmailPassword");
+            var fromPassword = ConfigurationManager.GetConfiguration("GmailPassword");
             const string subject = "Website Mail";
             string body = $"From: {model.Email}, {model.Name} message: {model.Message}";
 
@@ -57,7 +57,8 @@ namespace blog.Controllers
             using (var message = new MailMessage(fromAddress, toAddress)
             {
                 Subject = subject,
-                Body = body
+                Body = body,
+                Priority = MailPriority.High
             })
             {
                 smtp.Send(message);

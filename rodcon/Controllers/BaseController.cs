@@ -43,14 +43,7 @@ namespace rodcon.Controllers
                 return;
             }
 
-            if (UserID == null && CustomerID == null)
-            {
-                var customer = new Customer();
-                _context.Customers.Add(customer);
-                _context.SaveChanges();
-                CreateCustomerSession(customer);
-            }
-            else if(UserID > 0)
+            if(UserID > 0)
             {
                 return;
             }
@@ -58,18 +51,11 @@ namespace rodcon.Controllers
             var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
             var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
             string[] publicPages = {
-                "index", "login", "loginasync", "signout", "signup", "signupasync", "about",
-                "privacy", "contact",
-                "payment", "details", "apply",
-                "error"
+                /*"index",*/ "login", "loginasync", "signout", "signup", "signupasync"
             };
             switch (controllerName)
             {
                 case "home":
-                case "register":
-                case "orders":
-                case "theme":
-                case "chat":
                     if (Array.IndexOf(publicPages, actionName) != -1) return;
                     break;
             }
