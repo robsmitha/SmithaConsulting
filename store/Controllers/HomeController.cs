@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using rod;
 using rod.Data;
 using rod.Enums;
@@ -198,7 +199,7 @@ namespace store.Controllers
                         _context.Payments.Add(payment);
                         _context.Orders.Update(order);
                         _context.SaveChanges();
-                        return RedirectToAction("Details", "Orders", new { id = model.CurrentOrderID });
+                        return RedirectToAction("Details", "Home", new { id = model.CurrentOrderID });
                     }
                 }
                 return View(model);
@@ -208,6 +209,29 @@ namespace store.Controllers
                 return RedirectToAction("Error");
             }
 
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Merchant)
+                .Include(o => o.OrderStatusType)
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(m => m.ID == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var orderViewModel = GetOrderViewModel(order);
+            return View(orderViewModel);
         }
         protected bool AddDiscount(Order order, string lookupCode)
         {
