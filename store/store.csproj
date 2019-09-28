@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\rod\rod.csproj" />
+    <ProjectReference Include="..\Architecture\Architecture.csproj" />
   </ItemGroup>
   
 </Project>

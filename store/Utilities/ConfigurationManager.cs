@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace store.Utilities
+namespace Store.Utilities
 {
     public static class ConfigurationManager
     {

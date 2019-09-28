@@ -1,10 +1,10 @@
-﻿using rod;
+﻿using Architecture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace store.Models
+namespace Store.Models
 {
     public class RegisterCartViewModel
     {

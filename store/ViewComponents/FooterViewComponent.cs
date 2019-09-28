@@ -1,14 +1,14 @@
-﻿using store.Models;
+﻿using Store.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using rod.Enums;
+using Architecture.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace store.ViewComponents
+namespace Store.ViewComponents
 {
     public class FooterViewComponent : ViewComponent
     {

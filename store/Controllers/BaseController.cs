@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using rod;
-using rod.Data;
-using rod.Enums;
-using store.Constants;
-using store.Models;
-using store.Utilities;
+using Architecture;
+using Architecture.Data;
+using Architecture.Enums;
+using Store.Constants;
+using Store.Models;
+using Store.Utilities;
 
-namespace store.Controllers
+namespace Store.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly rodContext _context;
+        private readonly DbArchitecture _context;
 
-        public BaseController(rodContext context)
+        public BaseController(DbArchitecture context)
         {
             _context = context;
         }

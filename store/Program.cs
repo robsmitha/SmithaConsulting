@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using rod.Data;
+using Architecture.Data;
 
-namespace store
+namespace Store
 {
     public class Program
     {
@@ -23,7 +23,7 @@ namespace store
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<rodContext>();
+                    var context = services.GetRequiredService<DbArchitecture>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)

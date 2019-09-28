@@ -1,0 +1,40 @@
+﻿@model Architecture.Blog
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('https://smitha-cdn.s3.us-east-2.amazonaws.com/Content/images/post-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="post-heading">
+                    <h1>@Model.Title</h1>
+                    <h2 class="subheading">@Model.Subheading</h2>
+                    <span class="meta">
+                        Posted by
+                        <a href="#">@Model.User.Username</a>
+                        on @Model.PublishDate
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    </div>
+</article>
+
+<hr>

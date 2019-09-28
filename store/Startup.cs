@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using rod.Data;
+using Architecture.Data;
 
-namespace store
+namespace Store
 {
     public class Startup
     {
@@ -43,7 +43,7 @@ namespace store
             });
 
             //Register database context (dependency injection)
-            services.AddDbContext<rodContext>(options =>
+            services.AddDbContext<DbArchitecture>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

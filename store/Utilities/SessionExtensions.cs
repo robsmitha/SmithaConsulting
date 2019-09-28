@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using rod.Data;
+using Architecture.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace store.Utilities
+namespace Store.Utilities
 {
     public static class SessionExtensions
     {

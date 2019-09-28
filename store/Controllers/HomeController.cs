@@ -5,18 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using rod;
-using rod.Data;
-using rod.Enums;
-using store.Models;
+using Architecture;
+using Architecture.Data;
+using Architecture.Enums;
+using Store.Models;
 
-namespace store.Controllers
+namespace Store.Controllers
 {
     public class HomeController : BaseController
     {
 
-        private readonly rodContext _context;
-        public HomeController(rodContext context) : base(context)
+        private readonly DbArchitecture _context;
+        public HomeController(DbArchitecture context) : base(context)
         {
             _context = context;
         }

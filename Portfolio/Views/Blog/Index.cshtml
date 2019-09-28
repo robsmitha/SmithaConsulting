@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Architecture.Blog>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('https://smitha-cdn.s3.us-east-2.amazonaws.com/Content/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Life & Stuff</h1>
+                    <span class="subheading">Some thoughts..</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @if (Model?.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <div class="post-preview">
+
+                        <a asp-action="Details" asp-route-id="@item.ID">
+                            <h2 class="post-title">
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </h2>
+                            <h3 class="post-subtitle">
+                                @Html.DisplayFor(modelItem => item.Subheading)
+                            </h3>
+                        </a>
+                        <p class="post-meta">
+                            Posted by
+                            <a href="#">@Html.DisplayFor(modelItem => item.User.Email)</a>
+                            on @Html.DisplayFor(modelItem => item.PublishDate)
+                        </p>
+                    </div>
+                    <hr>
+                }
+            }
+            else
+            {
+                <h2 class="font-weight-light">Nothing to see here</h2>
+                <p class="lead">Check back soon</p>
+            }
+            <!-- Pager
+    <div class="clearfix">
+        <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
+    </div> -->
+        </div>
+    </div>
+</div>
+
+<hr>

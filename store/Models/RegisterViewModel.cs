@@ -1,7 +1,7 @@
-﻿using rod;
+﻿using Architecture;
 using System.Collections.Generic;
 
-namespace store.Models
+namespace Store.Models
 {
     public class RegisterViewModel
     {
