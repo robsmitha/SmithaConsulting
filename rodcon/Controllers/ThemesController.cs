@@ -13,11 +13,11 @@ using rodcon.Models;
 
 namespace rodcon.Controllers
 {
-    public class ThemeController : BaseController
+    public class ThemesController : BaseController
     {
         private readonly rodContext _context;
 
-        public ThemeController(rodContext context) : base(context)
+        public ThemesController(rodContext context) : base(context)
         {
             _context = context;
         }

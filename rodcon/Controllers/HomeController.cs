@@ -30,7 +30,20 @@ namespace rodcon.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var model = new HomeViewModel
+            {
+                AccessBlog = CheckPermission(permissionName: "AccessBlog"),
+                AccessMerchants = CheckPermission(permissionName: "AccessMerchants"),
+                AccessOrders = CheckPermission(permissionName: "AccessOrders"),
+                AccessItems = CheckPermission(permissionName: "AccessItems"),
+                AccessCustomers = CheckPermission(permissionName: "AccessCustomers"),
+                AccessRoles = CheckPermission(permissionName: "AccessRoles"),
+                AccessPermissions = CheckPermission(permissionName: "AccessPermissions"),
+                AccessRolePermissions = CheckPermission(permissionName: "AccessRolePermissions"),
+                AccessThemes = CheckPermission(permissionName: "AccessThemes")
+            };
+                //new HomeViewModel(UserPermissions.Where(x => !string.IsNullOrEmpty(x.Controller) && !string.IsNullOrEmpty(x.Action) && x.Action == "Index"));
+            return View(model);
         }
         public IActionResult Login()
         {

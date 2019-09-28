@@ -1,33 +1,110 @@
-﻿
+﻿@model HomeViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 
 
     <ul class="list-unstyled mt-2">
-        <li>
-            <a asp-action="Index" asp-controller="Blog">
-                Blog
-            </a>
-        </li>
-        <li>
-            <a asp-action="Index" asp-controller="Merchants">
-                Merchants
-            </a>
-        </li>
-        <li>
-            <a asp-action="Index" asp-controller="Orders">
-                Orders
-            </a>
-        </li>
-        <li>
-            <a asp-action="Index" asp-controller="Items">
-                Items
-            </a>
-        </li>
-        <li>
-            <a asp-action="Index" asp-controller="Customers">
-                Customers
-            </a>
-        </li>
+        @if (Model.AccessBlog)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Blog">
+                    Blog
+                </a>
+            </li>
+        }
+        @if (Model.AccessMerchants)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Merchants">
+                    Merchants
+                </a>
+            </li>
+        }
+
+        @if (Model.AccessOrders)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Orders">
+                    Orders
+                </a>
+            </li>
+        }
+        @if (Model.AccessItems)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Items">
+                    Items
+                </a>
+            </li>
+        }
+        @if (Model.AccessCustomers)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Customers">
+                    Customers
+                </a>
+            </li>
+        }
+        @if (Model.AccessRoles)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Roles">
+                    Roles
+                </a>
+            </li>
+        }
+        @if (Model.AccessPermissions)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Permissions">
+                    Permissions
+                </a>
+            </li>
+        }
+
+        @if (Model.AccessRolePermissions)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="RolePermissions">
+                    Role Permissions
+                </a>
+            </li>
+        }
+        @if (Model.AccessThemes)
+        {
+            <li>
+                <a asp-action="Index" asp-controller="Themes">
+                    Theme
+                </a>
+            </li>
+        }
     </ul>
+@*<div class="row">
+    <div class="col">
+        <h3>Entities</h3>
+        <ul class="list-unstyled mt-2">
+            @foreach (var controllerActionPermission in Model.UserPermissions.Where(x => !x.Controller.Contains("Types")))
+            {
+                <li>
+                    <a asp-action="Index" asp-controller="@controllerActionPermission.Controller">
+                        @controllerActionPermission.Controller
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col">
+        <h3>Types</h3>
+        <ul class="list-unstyled mt-2">
+            @foreach (var controllerActionPermission in Model.UserPermissions.Where(x => x.Controller.Contains("Types")))
+            {
+                <li>
+                    <a asp-action="Index" asp-controller="@controllerActionPermission.Controller">
+                        @controllerActionPermission.Controller
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>*@

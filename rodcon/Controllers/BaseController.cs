@@ -35,6 +35,31 @@ namespace rodcon.Controllers
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string Username => HttpContext.Session.GetString(SessionKeysConstants.USERNAME);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
+
+        #region Permissions
+        public List<Permission> UserPermissions
+        {
+            get
+            {
+                var permissions = new List<Permission>();
+                var permissionsString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_LIST);
+                if (!string.IsNullOrEmpty(permissionsString))
+                {
+                    permissions = JsonConvert.DeserializeObject<List<Permission>>(permissionsString);
+                }
+                return permissions;
+            }
+        }
+        public bool CheckPermission(string permissionName = null, string controller = null, string action = "Index")
+        {
+            return !string.IsNullOrEmpty(permissionName)
+                ? UserPermissions.Any(x => x.Name == permissionName)
+                : UserPermissions
+                .Where(x => !string.IsNullOrEmpty(x.Controller) && !string.IsNullOrEmpty(x.Action))
+                .Any(x => x.Controller == controller && x.Action == action);
+        }
+        #endregion
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -43,25 +68,40 @@ namespace rodcon.Controllers
                 return;
             }
 
-            if(UserID > 0)
+            var action = ControllerContext.RouteData.Values["action"].ToString().ToLower();
+            var controller = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
+            string[] publicPages = { "login", "loginasync", "signout", "signup", "signupasync" };
+
+            if(controller == "home" && Array.IndexOf(publicPages, action) != -1)
             {
+                //this is a public page
                 return;
             }
-
-            var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
-            var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            string[] publicPages = {
-                /*"index",*/ "login", "loginasync", "signout", "signup", "signupasync"
-            };
-            switch (controllerName)
+            else
             {
-                case "home":
-                    if (Array.IndexOf(publicPages, actionName) != -1) return;
-                    break;
-            }
-            context.Result = new RedirectResult("/Home/Login");
-            return;
+                if(UserID > 0)
+                {
+                    var controllerActionPermissions = _context.Permissions.Where(x => x.Controller == controller && x.Action == action);
 
+                    if (controllerActionPermissions != null)
+                    {
+                        //this controller action has some required permissions
+                        foreach (var controllerActionPermission in controllerActionPermissions)
+                        {
+                            if (!UserPermissions.Select(x => x.ID).Contains(controllerActionPermission.ID))
+                            {
+                                //TODO: permission denied message
+                                context.Result = new RedirectResult("/Home/Index");
+                                return;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    context.Result = new RedirectResult("/Home/Login");
+                }          
+            }
         }
         public void GenerateRandomTheme()
         {
@@ -78,15 +118,7 @@ namespace rodcon.Controllers
                 }
             }
         }
-        public void CreateCustomerSession(Customer customer)
-        {
-            HttpContext.Session.SetInt32(SessionKeysConstants.CUSTOMER_ID, customer.ID);
-            var merchantId = _context.Merchants.FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
-            if (merchantId != null)
-            {
-                HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
-            }
-        }
+
         public void CreateUserSession(User user)
         {
             var merchantId = _context.MerchantUsers.FirstOrDefault(x => x.UserID == user.ID)?.MerchantID;
@@ -103,15 +135,16 @@ namespace rodcon.Controllers
             {
                 var rolePermissions = _context.RolePermissions.Where(x => x.RoleID == merchantUser.RoleID);
                 var permissionIds = rolePermissions.Select(x => x.PermissionID);
-                if (permissionIds.Any())
+                var permissions = _context.Permissions.Where(x => permissionIds.Contains(x.ID));
+                if (permissions.Any())
                 {
-                    HttpContext.Session.SetString(SessionKeysConstants.PERMISSION_ID_LIST, JsonConvert.SerializeObject(permissionIds));
+                    HttpContext.Session.SetString(SessionKeysConstants.PERMISSION_LIST, JsonConvert.SerializeObject(permissions));
                 }
             }
         }
         public bool HasPermission(int permissionId)
         {
-            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_ID_LIST);
+            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_LIST);
             if (!string.IsNullOrEmpty(permissionIdString))
             {
                 var permissionIds = JsonConvert.DeserializeObject<List<int>>(permissionIdString);

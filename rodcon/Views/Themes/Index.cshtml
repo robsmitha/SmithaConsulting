@@ -15,8 +15,8 @@
                 <div class="list-group">
                     @foreach (var item in Model.themes)
                     {
-                        var active = item.cssCdn == Model.CurrentTheme ? "bg-primary" : string.Empty;
-                        <form method="post" asp-action="Apply" asp-controller="Theme" id="apply-form">
+                        var active = item.cssCdn == Model.CurrentTheme ? "active" : string.Empty;
+                        <form method="post" asp-action="Apply" asp-controller="Themes" id="apply-form">
                             @Html.AntiForgeryToken()
                             @Html.Hidden("cssCdn", item.cssCdn)
                             <button type="submit" class="list-group-item list-group-item-action @active">

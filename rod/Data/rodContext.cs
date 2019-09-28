@@ -11,6 +11,8 @@ namespace rod.Data
     {
         public rodContext(DbContextOptions<rodContext> options) : base(options) { }
         public DbSet<AddressType> AddressTypes { get; set; }
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<ApplicationType> ApplicationTypes { get; set; }
         public DbSet<Authorization> Authorizations { get; set; }
         public DbSet<AuthorizationType> AuthorizationTypes { get; set; }
         public DbSet<Blog> Blogs { get; set; }
@@ -74,6 +76,8 @@ namespace rod.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AddressType>();
+            modelBuilder.Entity<Application>();
+            modelBuilder.Entity<ApplicationType>();
             modelBuilder.Entity<Authorization>();
             modelBuilder.Entity<AuthorizationType>();
             modelBuilder.Entity<Blog>();

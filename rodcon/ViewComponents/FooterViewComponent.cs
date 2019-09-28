@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using rod;
 using rod.Enums;
 using rodcon.Constants;
 using rodcon.Models;
@@ -40,11 +41,11 @@ namespace rodcon.ViewComponents
         }
         public bool HasPermission(int permissionId)
         {
-            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_ID_LIST);
+            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_LIST);
             if (!string.IsNullOrEmpty(permissionIdString))
             {
-                var permissionIds = JsonConvert.DeserializeObject<List<int>>(permissionIdString);
-                return permissionIds.Contains(permissionId);
+                var permissions = JsonConvert.DeserializeObject<List<Permission>>(permissionIdString);
+                return permissions.Select(x => x.ID).Contains(permissionId);
             }
             return false;
         }

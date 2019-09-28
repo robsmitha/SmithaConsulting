@@ -239,42 +239,99 @@ namespace rod.Data
             var user = new User
             {
                 Username = "rob.smitha",
-                Email = "rob@rob.com",
-                Password = "$RODHASH$V1$10000$lWhmzFsHcZTJElQhnfRBJoDWbMxIbf9uyak+WkG0fVDXyvdX",
+                Email = "robsmitha94@gmail.com",
+                Password = "$RODHASH$V1$10000$3uUrCcaVxkjPFv6ZodK6vMchU8v5P8cuL4U0A2c/Rvxypb3l",
                 Active = true,
                 CreatedAt = DateTime.Now,
                 FirstName = "Rob",
                 MiddleName = "Wayne",
                 LastName = "Smitha",
-
             };
             context.Users.Add(user);
 
-            var permissions = new List<Permission>
+            var @namespace = "rod";
+            var entities = AppDomain.CurrentDomain.GetAssemblies()
+                       .SelectMany(t => t.GetTypes())
+                       .Where(t => t.IsClass && t.Namespace == @namespace 
+                       && t.Name != "BaseModel");
+            var entityList = new List<string>();
+
+
+            var permissions = new List<Permission>();
+            foreach (var entity in entities)
             {
-                new Permission
+                var contollerName = entity.Name;
+                if(contollerName != "Blog")
                 {
-                     Name = "AccessFeatures",
-                    Description = "Can Access Features",
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true,
-                },
-                new Permission
-                {
-                     Name = "AccessTypes",
-                    Description = "Can Access Types",
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true,
+                    var lastLetter = contollerName.Substring(contollerName.Length - 1);
+                    switch (lastLetter)
+                    {
+                        case "y":
+                            contollerName = $"{entity.Name.TrimEnd('y')}ies";
+                            break;
+                        case "s":
+                            contollerName = $"{entity.Name}es";
+                            break;
+                        default:
+                            contollerName = $"{entity.Name}s";
+                            break;
+                    }
                 }
-            };
-
-            foreach (var permission in permissions)
-            {
-                context.Permissions.Add(permission);
-                context.SaveChanges();
+                var access = new Permission
+                {
+                    Name = $"Access{contollerName}",
+                    Description = $"Can Access List {contollerName}",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    Controller = contollerName,
+                    Action = "Index"
+                };
+                permissions.Add(access);
+                var create = new Permission
+                {
+                    Name = $"Create{contollerName}",
+                    Description = $"Can Create {contollerName}",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    Controller = contollerName,
+                    Action = "Create"
+                };
+                permissions.Add(create);
+                var edit = new Permission
+                {
+                    Name = $"Edit{contollerName}",
+                    Description = $"Can Edit {contollerName}",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    Controller = contollerName,
+                    Action = "Edit"
+                };
+                permissions.Add(edit);
+                var details = new Permission
+                {
+                    Name = $"Details{contollerName}",
+                    Description = $"Can Access Details {contollerName}",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    Controller = contollerName,
+                    Action = "Details"
+                };
+                permissions.Add(details);
+                var delete = new Permission
+                {
+                    Name = $"Delete{contollerName}",
+                    Description = $"Can Delete {contollerName}",
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true,
+                    Controller = contollerName,
+                    Action = "Delete"
+                };
+                permissions.Add(delete);
             }
+            context.Permissions.AddRange(permissions);
+            context.SaveChanges();
 
-            var roleId = roles.FirstOrDefault().ID;
+            var roleId = roles.FirstOrDefault(x => x.Name == "Owner").ID;
             var rolePermissions = new List<RolePermission>();
             foreach (var permission in permissions)
             {

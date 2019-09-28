@@ -10,11 +10,11 @@ using rod.Data;
 
 namespace rodcon.Controllers
 {
-    public class PermissionsController : BaseController
+    public class PermissionsController : Controller
     {
         private readonly rodContext _context;
 
-        public PermissionsController(rodContext context) : base(context)
+        public PermissionsController(rodContext context)
         {
             _context = context;
         }
@@ -54,7 +54,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,ID,CreatedAt,Active,ModifiedTime")] Permission permission)
+        public async Task<IActionResult> Create([Bind("Name,Description,Controller,Action,ID,CreatedAt,Active,ModifiedTime")] Permission permission)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace rodcon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ID,CreatedAt,Active,ModifiedTime")] Permission permission)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Controller,Action,ID,CreatedAt,Active,ModifiedTime")] Permission permission)
         {
             if (id != permission.ID)
             {
