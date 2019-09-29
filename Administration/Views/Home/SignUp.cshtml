@@ -6,9 +6,10 @@
 <!-- Custom styles for this page -->
 <link href="~/css/signup.css" rel="stylesheet">
 
-<form class="form-signup" method="post" asp-controller="Home" asp-action="SignUpAsync">
-    <div class="text-center-md mb-4">
+<form class="form-signup" method="post" asp-controller="Home" asp-action="SignUp">
+    <div class="text-md-center mb-4">
         <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-user-plus"></i>  Sign Up</h1>
+        @Html.ValidationMessage("CustomError")
     </div>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-label-group">

@@ -86,7 +86,7 @@ namespace Administration.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -96,23 +96,26 @@ namespace Administration.Controllers
                 {
                     if(model.NewPassword == model.ConfirmPassword)
                     {
-
+                        user.Password = model.NewPassword;
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
                         //passwords did not match
+                        ModelState.AddModelError("CustomError", $"Passwords did not match.");
                     }
                 }
                 else
                 {
                     //old password was not correct
+                    ModelState.AddModelError("CustomError", $"Password was not correct.");
                 }
             }
             return View("Login", model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginAsync(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -126,6 +129,7 @@ namespace Administration.Controllers
                 else
                 {
                     //password was not correct
+                    ModelState.AddModelError("CustomError", "Username or password was not correct.");
                 }
             }
             return View("Login", model);
@@ -144,54 +148,59 @@ namespace Administration.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUpAsync(SignUpViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (await _context.Users
-                        .SingleOrDefaultAsync(m => m.Username == model.Username) != null)
+                        .SingleOrDefaultAsync(m => m.Username == model.Username) == null)
                     {
-                        return Json(new
+                        if(model.Password == model.ConfirmPassword)
                         {
-                            success = false,
-                            message = $"The Username {model.Username} is already taken."
-                        });
-                    }
+                            var hashword = SecurePasswordHasher.Hash(model.Password);
+                            var user = new User
+                            {
+                                Email = model.Email,
+                                FirstName = model.FirstName,
+                                MiddleName = model.MiddleName,
+                                LastName = model.LastName,
+                                Username = model.Username,
+                                Password = hashword.ToString(),
+                                CreatedAt = DateTime.Now,
+                                Active = true
+                            };
+                            _context.Users.Add(user);
+                            await _context.SaveChangesAsync();
 
-                    var hashword = SecurePasswordHasher.Hash(model.Password);
-                    var user = new User
-                    {
-                        Email = model.Email,
-                        FirstName = model.FirstName,
-                        MiddleName = model.MiddleName,
-                        LastName = model.LastName,
-                        Username = model.Username,
-                        Password = hashword.ToString(),
-                        CreatedAt = DateTime.Now,
-                        Active = true
-                    };
-                    _context.Users.Add(user);
-                    await _context.SaveChangesAsync();
-
-                    //Put User in Online Merchant
-                    var merchant = await _context.Merchants.FirstOrDefaultAsync(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active);
-                    if (merchant != null)
-                    {
-                        var userMerchant = new MerchantUser
+                            //Put User in Online Merchant
+                            var merchant = await _context.Merchants.FirstOrDefaultAsync(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active);
+                            if (merchant != null)
+                            {
+                                var userMerchant = new MerchantUser
+                                {
+                                    Active = true,
+                                    CreatedAt = DateTime.Now,
+                                    MerchantID = merchant.ID,
+                                    RoleID = (int)RoleEnums.OnlineSignUp,
+                                    UserID = user.ID
+                                };
+                                await _context.MerchantUsers.AddAsync(userMerchant);
+                                await _context.SaveChangesAsync();
+                            }
+                            CreateUserSession(user);
+                            return RedirectToAction("Index");
+                        }
+                        else
                         {
-                            Active = true,
-                            CreatedAt = DateTime.Now,
-                            MerchantID = merchant.ID,
-                            RoleID = (int)RoleEnums.OnlineSignUp,
-                            UserID = user.ID
-                        };
-                        await _context.MerchantUsers.AddAsync(userMerchant);
-                        await _context.SaveChangesAsync();
+                            ModelState.AddModelError("CustomError", $"Passwords did not match.");
+                        }
                     }
-                    CreateUserSession(user);
-                    return RedirectToAction("Index");
+                    else
+                    {
+                        ModelState.AddModelError("CustomError", $"The Username {model.Username} is already taken.");
+                    }                 
                 }
                 catch(Exception ex)
                 {
@@ -202,7 +211,7 @@ namespace Administration.Controllers
         }
         public IActionResult About()
         {
-            var @namespace = "rod";
+            var @namespace = "Architecture";
             
 
             var entities = AppDomain.CurrentDomain.GetAssemblies()
