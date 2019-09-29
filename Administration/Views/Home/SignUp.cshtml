@@ -1,55 +1,68 @@
 ﻿@model SignUpViewModel
 @{
     ViewData["Title"] = "Sign Up";
+    Layout = "_NoNavLayout";
 }
 
-<!-- Custom styles for this page -->
+<!-- Custom styles for this page
 <link href="~/css/signup.css" rel="stylesheet">
-
-<form class="form-signup" method="post" asp-controller="Home" asp-action="SignUp">
-    <div class="text-md-center mb-4">
-        <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-user-plus"></i>  Sign Up</h1>
-        @Html.ValidationMessage("CustomError")
+-->
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <form class="form-signup" method="post" asp-controller="Home" asp-action="SignUp">
+                            <div class="text-md-center mb-4">
+                                <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-user-plus"></i>  Sign Up</h1>
+                                @Html.ValidationMessage("CustomError")
+                            </div>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-label-group">
+                                <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                                <label asp-for="FirstName"></label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-label-group">
+                                <input asp-for="MiddleName" class="form-control" placeholder="Middle Name" />
+                                <label asp-for="MiddleName"></label>
+                                <span asp-validation-for="MiddleName" class="text-danger"></span>
+                            </div>
+                            <div class="form-label-group">
+                                <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                                <label asp-for="LastName"></label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-label-group">
+                                <input asp-for="Email" class="form-control" placeholder="Email Address" required />
+                                <label asp-for="Email"></label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <hr />
+                            <div class="form-label-group">
+                                <input asp-for="Username" class="form-control" placeholder="Username" />
+                                <label asp-for="Username"></label>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                            <div class="form-label-group">
+                                <input type="password" asp-for="Password" class="form-control" placeholder="Password" required />
+                                <label asp-for="Password"></label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-label-group">
+                                <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required />
+                                <label asp-for="ConfirmPassword"></label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+                            <a asp-action="Login" asp-controller="Home" class="btn btn-lg btn-secondary btn-block">
+                                Cancel
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-label-group">
-        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
-        <label asp-for="FirstName"></label>
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-    <div class="form-label-group">
-        <input asp-for="MiddleName" class="form-control" placeholder="Middle Name" />
-        <label asp-for="MiddleName"></label>
-        <span asp-validation-for="MiddleName" class="text-danger"></span>
-    </div>
-    <div class="form-label-group">
-        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
-        <label asp-for="LastName"></label>
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-    <div class="form-label-group">
-        <input asp-for="Email" class="form-control" placeholder="Email Address" required />
-        <label asp-for="Email"></label>
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <hr />
-    <div class="form-label-group">
-        <input asp-for="Username" class="form-control" placeholder="Username" />
-        <label asp-for="Username"></label>
-        <span asp-validation-for="Username" class="text-danger"></span>
-    </div>
-    <div class="form-label-group">
-        <input type="password" asp-for="Password" class="form-control" placeholder="Password" required />
-        <label asp-for="Password"></label>
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-label-group">
-        <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" required />
-        <label asp-for="ConfirmPassword"></label>
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-    <a asp-action="Login" asp-controller="Home" class="btn btn-lg btn-secondary btn-block">
-        Cancel
-    </a>
-</form>

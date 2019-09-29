@@ -81,8 +81,8 @@ namespace Administration.Controllers
         }
         public IActionResult ChangePassword()
         {
-
-            return RedirectToAction("Index");
+            var model = new ChangePasswordViewModel();
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -94,10 +94,16 @@ namespace Administration.Controllers
                     .SingleOrDefaultAsync(m => m.ID == UserID);
                 if (user != null && SecurePasswordHasher.Verify(model.OldPassword, user.Password))
                 {
-                    if(model.NewPassword == model.ConfirmPassword)
+                    if (model.NewPassword == model.OldPassword)
                     {
-                        user.Password = model.NewPassword;
+                        //New password must be different that current password
+                        ModelState.AddModelError("CustomError", $"New password must be different that current password.");
+                    }
+                    else if (model.NewPassword == model.ConfirmPassword)
+                    {
+                        user.Password = SecurePasswordHasher.Hash(model.NewPassword);
                         await _context.SaveChangesAsync();
+                        return RedirectToAction("Index");
                     }
                     else
                     {
@@ -111,7 +117,7 @@ namespace Administration.Controllers
                     ModelState.AddModelError("CustomError", $"Password was not correct.");
                 }
             }
-            return View("Login", model);
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -132,7 +138,7 @@ namespace Administration.Controllers
                     ModelState.AddModelError("CustomError", "Username or password was not correct.");
                 }
             }
-            return View("Login", model);
+            return View(model);
         }
         public IActionResult SignUp()
         {
@@ -159,7 +165,6 @@ namespace Administration.Controllers
                     {
                         if(model.Password == model.ConfirmPassword)
                         {
-                            var hashword = SecurePasswordHasher.Hash(model.Password);
                             var user = new User
                             {
                                 Email = model.Email,
@@ -167,7 +172,7 @@ namespace Administration.Controllers
                                 MiddleName = model.MiddleName,
                                 LastName = model.LastName,
                                 Username = model.Username,
-                                Password = hashword.ToString(),
+                                Password = SecurePasswordHasher.Hash(model.Password),
                                 CreatedAt = DateTime.Now,
                                 Active = true
                             };
@@ -207,7 +212,7 @@ namespace Administration.Controllers
                     return RedirectToAction("Error");
                 }
             }
-            return View("SignUp", model);
+            return View(model);
         }
         public IActionResult About()
         {

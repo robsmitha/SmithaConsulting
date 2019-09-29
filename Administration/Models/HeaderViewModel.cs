@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace Administration.Models
 {
     public class HeaderViewModel : LayoutViewModel
-    { 
+    {
+        public bool CanShowAlerts { get; set; } = false;
+        public bool CanShowMessages { get; set; } = false;
         public HeaderViewModel() { }
         public HeaderViewModel(int? userId, string username)
         {

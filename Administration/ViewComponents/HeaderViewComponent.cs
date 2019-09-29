@@ -20,22 +20,8 @@ namespace Administration.ViewComponents
         {
             var userId = HttpContext.Session?.GetInt32("userId");
             var username = HttpContext.Session?.GetString("username");
-            var header = new HeaderViewModel(userId, username)
-            {
-                CanAccessFeatures = HasPermission((int)PermissionEnums.CanAccessFeatures),
-                CanAccessTypes = HasPermission((int)PermissionEnums.CanAccessTypes)
-            };
+            var header = new HeaderViewModel(userId, username);
             return View("Header", header);
-        }
-        public bool HasPermission(int permissionId)
-        {
-            var permissionIdString = HttpContext.Session.GetString(SessionKeysConstants.PERMISSION_LIST);
-            if (!string.IsNullOrEmpty(permissionIdString))
-            {
-                var permissions = JsonConvert.DeserializeObject<List<Permission>>(permissionIdString);
-                return permissions.Select(x => x.ID).Contains(permissionId);
-            }
-            return false;
         }
     }
 }

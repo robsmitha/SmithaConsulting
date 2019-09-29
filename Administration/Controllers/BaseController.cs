@@ -81,7 +81,8 @@ namespace Administration.Controllers
             {
                 if(UserID > 0)
                 {
-                    var controllerActionPermissions = _context.Permissions.Where(x => x.Controller == controller && x.Action == action);
+                    var controllerActionPermissions = _context.Permissions
+                        .Where(x => !string.IsNullOrEmpty(x.Controller) && !string.IsNullOrEmpty(x.Action) && x.Controller == controller && x.Action == action);
 
                     if (controllerActionPermissions != null)
                     {
