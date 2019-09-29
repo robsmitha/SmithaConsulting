@@ -13,5 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Architecture\Architecture.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
   
 </Project>

@@ -79,6 +79,37 @@ namespace Administration.Controllers
 
             return RedirectToAction("Index");
         }
+        public IActionResult ChangePassword()
+        {
+
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users
+                    .SingleOrDefaultAsync(m => m.ID == UserID);
+                if (user != null && SecurePasswordHasher.Verify(model.OldPassword, user.Password))
+                {
+                    if(model.NewPassword == model.ConfirmPassword)
+                    {
+
+                    }
+                    else
+                    {
+                        //passwords did not match
+                    }
+                }
+                else
+                {
+                    //old password was not correct
+                }
+            }
+            return View("Login", model);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginAsync(LoginViewModel model)
@@ -94,7 +125,7 @@ namespace Administration.Controllers
                 }
                 else
                 {
-
+                    //password was not correct
                 }
             }
             return View("Login", model);
