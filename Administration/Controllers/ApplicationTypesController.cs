@@ -7,26 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Architecture;
 using Architecture.Data;
-using Administration.Models;
 
 namespace Administration.Controllers
 {
-    public class ThemesController : BaseController
+    public class ApplicationTypesController : BaseController
     {
         private readonly DbArchitecture _context;
 
-        public ThemesController(DbArchitecture context) : base(context)
+        public ApplicationTypesController(DbArchitecture context) : base(context)
         {
             _context = context;
         }
 
-        // GET: Themes
+        // GET: ApplicationTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Themes.ToListAsync());
+            return View(await _context.ApplicationTypes.ToListAsync());
         }
 
-        // GET: Themes/Details/5
+        // GET: ApplicationTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,51 +33,39 @@ namespace Administration.Controllers
                 return NotFound();
             }
 
-            var theme = await _context.Themes
+            var applicationType = await _context.ApplicationTypes
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (theme == null)
+            if (applicationType == null)
             {
                 return NotFound();
             }
 
-            return View(theme);
+            return View(applicationType);
         }
 
-        // GET: Themes/Create
-        public async Task<IActionResult> Create()
+        // GET: ApplicationTypes/Create
+        public IActionResult Create()
         {
-            var model = new ThemeCreateViewModel();
-            var themeList = await GetThemeList();
-            ViewData["Themes"] = new SelectList(themeList.themes, "cssCdn", "name");
-            return View(model);
+            return View();
         }
 
-        // POST: Themes/Create
+        // POST: ApplicationTypes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,StyleSheetCDN")] ThemeCreateViewModel model)
+        public async Task<IActionResult> Create([Bind("Name,Description,ID,CreatedAt,Active,ModifiedTime")] ApplicationType applicationType)
         {
             if (ModelState.IsValid)
             {
-                var theme = new Theme
-                {
-                    Name = model.Name,
-                    StyleSheetCDN = model.StyleSheetCDN,
-                    CreatedAt = DateTime.Now,
-                    Active = true
-                };
-                _context.Add(theme);
+                _context.Add(applicationType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            var themeList = await GetThemeList();
-            ViewData["Themes"] = new SelectList(themeList.themes, "cssCdn", "name");
-            return View(model);
+            return View(applicationType);
         }
 
-        // GET: Themes/Edit/5
+        // GET: ApplicationTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,22 +73,22 @@ namespace Administration.Controllers
                 return NotFound();
             }
 
-            var theme = await _context.Themes.FindAsync(id);
-            if (theme == null)
+            var applicationType = await _context.ApplicationTypes.FindAsync(id);
+            if (applicationType == null)
             {
                 return NotFound();
             }
-            return View(theme);
+            return View(applicationType);
         }
 
-        // POST: Themes/Edit/5
+        // POST: ApplicationTypes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,StyleSheetCDN,ID,CreatedAt,Active,ModifiedTime")] Theme theme)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,ID,CreatedAt,Active,ModifiedTime")] ApplicationType applicationType)
         {
-            if (id != theme.ID)
+            if (id != applicationType.ID)
             {
                 return NotFound();
             }
@@ -110,12 +97,12 @@ namespace Administration.Controllers
             {
                 try
                 {
-                    _context.Update(theme);
+                    _context.Update(applicationType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ThemeExists(theme.ID))
+                    if (!ApplicationTypeExists(applicationType.ID))
                     {
                         return NotFound();
                     }
@@ -126,10 +113,10 @@ namespace Administration.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(theme);
+            return View(applicationType);
         }
 
-        // GET: Themes/Delete/5
+        // GET: ApplicationTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,30 +124,30 @@ namespace Administration.Controllers
                 return NotFound();
             }
 
-            var theme = await _context.Themes
+            var applicationType = await _context.ApplicationTypes
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (theme == null)
+            if (applicationType == null)
             {
                 return NotFound();
             }
 
-            return View(theme);
+            return View(applicationType);
         }
 
-        // POST: Themes/Delete/5
+        // POST: ApplicationTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var theme = await _context.Themes.FindAsync(id);
-            _context.Themes.Remove(theme);
+            var applicationType = await _context.ApplicationTypes.FindAsync(id);
+            _context.ApplicationTypes.Remove(applicationType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ThemeExists(int id)
+        private bool ApplicationTypeExists(int id)
         {
-            return _context.Themes.Any(e => e.ID == id);
+            return _context.ApplicationTypes.Any(e => e.ID == id);
         }
     }
 }

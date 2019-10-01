@@ -2,13 +2,13 @@
 
 
 <!-- Sidebar -->
-    <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <li>
             <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-area="" asp-controller="Home" asp-action="Index">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-rocket"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">Admin</div>
             </a>
@@ -32,11 +32,103 @@
         <li>
             <!-- Heading -->
             <div class="sidebar-heading">
-                Interface
+                Features
             </div>
         </li>
-        <!-- Nav Item - Pages Collapse Menu -->
+        @if (Model.AccessBlog)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Blog">
+                    <i class="fas fa-fw fa-rss-square"></i>
+                    <span>Blog</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessMerchants)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Merchants">
+                    <i class="fas fa-fw fa-building"></i>
+                    <span>Merchants</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessOrders)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Orders">
+                    <i class="fas fa-fw fa-list"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+        }
+
+
+        @if (Model.AccessItems)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Items">
+                    <i class="fas fa-fw fa-gifts"></i>
+                    <span>Items</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessCustomers)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Customers">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Customers</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessRoles)
+        {
+            <li class="nav-item">
+
+                <a class="nav-link" asp-action="Index" asp-controller="Roles">
+                    <i class="fas fa-fw fa-user-tie"></i>
+                    <span>Roles</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessPermissions)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Permissions">
+                    <i class="fas fa-fw fa-lock"></i>
+                    <span>Permissions</span>
+                </a>
+            </li>
+        }
+
+        @if (Model.AccessRolePermissions)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="RolePermissions">
+                    <i class="fas fa-fw fa-user-lock"></i>
+                    <span>Role Permissions</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessThemes)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Themes">
+                    <i class="fas fa-fw fa-palette"></i>
+                    <span>Themes</span>
+                </a>
+            </li>
+        }
         <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Applications">
+                <i class="fas fa-fw fa-sitemap"></i>
+                <span>Applications</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        @*<li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Features</span>
@@ -102,10 +194,24 @@
                     }
                 </div>
             </div>
+        </li>*@
+
+        @*<li>
+            <hr class="sidebar-divider">
         </li>
 
-        <!-- Nav Item - Utilities Collapse Menu -->
+        <li>
+            <div class="sidebar-heading">
+                More
+            </div>
+        </li>
         <li class="nav-item">
+            <a class="nav-link" asp-action="Index" asp-controller="Themes">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Types</span>
+            </a>
+        </li>*@
+        @*<li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                 <i class="fas fa-fw fa-wrench"></i>
                 <span>Types</span>
@@ -168,16 +274,6 @@
                         </a>
                     }
                 </div>
-            </div>
-        </li>
-
-        @*<li>
-            <hr class="sidebar-divider">
-        </li>
-
-        <li>
-            <div class="sidebar-heading">
-                Addons
             </div>
         </li>
 

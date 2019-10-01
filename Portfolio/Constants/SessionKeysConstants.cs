@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Administration.Constants
+namespace Portfolio.Constants
 {
     public static class SessionKeysConstants
     {

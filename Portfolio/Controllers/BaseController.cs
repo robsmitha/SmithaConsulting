@@ -14,6 +14,7 @@ using Architecture.Data;
 using Architecture.Enums;
 using Portfolio.Models;
 using Portfolio.Utilities;
+using Portfolio.Constants;
 
 namespace Portfolio.Controllers
 {
@@ -27,6 +28,8 @@ namespace Portfolio.Controllers
         }
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
+        public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
+        public int? ApplicationID => HttpContext.Session.GetInt32(SessionKeysConstants.APPLICATION_ID);
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -35,27 +38,31 @@ namespace Portfolio.Controllers
                 return;
             }
 
-            var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
-            var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            string[] publicPages = {
-                "index", "login", "loginasync", "signout", "signup", "signupasync", "about",
-                "privacy", "contact",
-                //"payment", "details", "apply",
-                "error"
-            };
-            switch (controllerName)
+            #region Session State
+            if (ApplicationID == null)
             {
-                case "home":
-                case "blog":
-                //case "register":
-                //case "orders":
-                //case "theme":
-                //case "chat":
-                    if (Array.IndexOf(publicPages, actionName) != -1) return;
-                    break;
+                if (!string.IsNullOrEmpty(ConfigurationManager.GetConfiguration("ApplicationID"))
+                    && int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var applicationId))
+                {
+                    //set ApplicationID
+                    HttpContext.Session.SetInt32(SessionKeysConstants.APPLICATION_ID, applicationId);
+                }
             }
-            context.Result = new RedirectResult("/Home/Login");
-            return;
+
+            if (ThemeCDN == null && ApplicationID > 0)
+            {
+                var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);
+                if (application != null)
+                {
+                    var theme = _context.Themes.SingleOrDefault(t => t.ID == application.ThemeID);
+                    if (theme != null)
+                    {
+                        //Set theme
+                        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
+                    }
+                }
+            }
+            #endregion
 
         }
     }

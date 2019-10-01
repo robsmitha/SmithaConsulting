@@ -35,6 +35,7 @@ namespace Administration.Controllers
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string Username => HttpContext.Session.GetString(SessionKeysConstants.USERNAME);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
+        public int? ApplicationID => HttpContext.Session.GetInt32(SessionKeysConstants.APPLICATION_ID);
 
         #region Permissions
         public List<Permission> UserPermissions
@@ -64,13 +65,40 @@ namespace Administration.Controllers
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                //TODO: Handle session timeout
+                //TODO: Handle session timeout with ajax requests
                 return;
             }
 
+            #region Session State
+            if (ApplicationID == null)
+            {
+                if (!string.IsNullOrEmpty(ConfigurationManager.GetConfiguration("ApplicationID"))
+                    && int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var applicationId))
+                {
+                    //set ApplicationID
+                    HttpContext.Session.SetInt32(SessionKeysConstants.APPLICATION_ID, applicationId);
+                }
+            }
+
+            if (ThemeCDN == null && ApplicationID > 0)
+            {
+                var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);
+                if (application != null)
+                {
+                    var theme = _context.Themes.SingleOrDefault(t => t.ID == application.ThemeID);
+                    if (theme != null)
+                    {
+                        //Set theme
+                        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
+                    }
+                }
+            }
+            #endregion
+
+
             var action = ControllerContext.RouteData.Values["action"].ToString().ToLower();
             var controller = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            string[] publicPages = { "login", "loginasync", "signout", "signup", "signupasync" };
+            string[] publicPages = { "login", "signout", "signup" };
 
             if(controller == "home" && Array.IndexOf(publicPages, action) != -1)
             {
@@ -82,7 +110,10 @@ namespace Administration.Controllers
                 if(UserID > 0)
                 {
                     var controllerActionPermissions = _context.Permissions
-                        .Where(x => !string.IsNullOrEmpty(x.Controller) && !string.IsNullOrEmpty(x.Action) && x.Controller == controller && x.Action == action);
+                        .Where(x => !string.IsNullOrEmpty(x.Controller) 
+                        && !string.IsNullOrEmpty(x.Action) 
+                        && x.Controller == controller
+                        && x.Action == action);
 
                     if (controllerActionPermissions != null)
                     {

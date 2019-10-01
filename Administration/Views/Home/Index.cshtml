@@ -3,82 +3,87 @@
     ViewData["Title"] = "Home Page";
 }
 
-    <ul class="list-unstyled mt-2">
+    <div class="row mt-2">
         @if (Model.AccessBlog)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Blog">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Blog" class="btn btn-outline-primary btn-lg btn-block">
                     Blog
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessMerchants)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Merchants">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Merchants" class="btn btn-outline-primary btn-lg btn-block">
                     Merchants
                 </a>
-            </li>
+            </div>
         }
 
         @if (Model.AccessOrders)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Orders">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Orders" class="btn btn-outline-primary btn-lg btn-block">
                     Orders
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessItems)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Items">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Items" class="btn btn-outline-primary btn-lg btn-block">
                     Items
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessCustomers)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Customers">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Customers" class="btn btn-outline-primary btn-lg btn-block">
                     Customers
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessRoles)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Roles">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Roles" class="btn btn-outline-primary btn-lg btn-block">
                     Roles
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessPermissions)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Permissions">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Permissions" class="btn btn-outline-primary btn-lg btn-block">
                     Permissions
                 </a>
-            </li>
+            </div>
         }
 
         @if (Model.AccessRolePermissions)
         {
-            <li>
-                <a asp-action="Index" asp-controller="RolePermissions">
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="RolePermissions" class="btn btn-outline-primary btn-lg btn-block">
                     Role Permissions
                 </a>
-            </li>
+            </div>
         }
         @if (Model.AccessThemes)
         {
-            <li>
-                <a asp-action="Index" asp-controller="Themes">
-                    Theme
+            <div class="col-md-3 mb-4">
+                <a asp-action="Index" asp-controller="Themes" class="btn btn-outline-primary btn-lg btn-block">
+                    Themes
                 </a>
-            </li>
+            </div>
         }
-    </ul>
+        <div class="col-md-3 mb-4">
+            <a asp-action="Index" asp-controller="Applications" class="btn btn-outline-primary btn-lg btn-block">
+                Applications
+            </a>
+        </div>
+    </div>
 @*<div class="row">
     <div class="col">
         <h3>Entities</h3>
