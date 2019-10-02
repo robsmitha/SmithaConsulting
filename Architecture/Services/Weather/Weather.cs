@@ -1,16 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Administration.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace Administration.Models
+namespace Architecture.Services.Weather
 {
-    public class WeatherModel
+    public class Weather
     {
-        public WeatherModel(string jsonPayload)
+        public Weather(string jsonPayload)
         {
             dynamic forecast = JsonConvert.DeserializeObject(jsonPayload);
             if (forecast != null)

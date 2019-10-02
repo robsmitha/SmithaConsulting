@@ -7,7 +7,6 @@ namespace Administration.Models
 {
     public class FooterViewModel : LayoutViewModel
     {
-        public List<string> Entities { get; set; }
         public FooterViewModel() { }
         public FooterViewModel(int? userId, string username)
         {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Administration.Models
+namespace Architecture.Services.LanguageUnderstanding
 {
-    public class ChatEntityViewModel
+    public class Entity
     {
         public string entity { get; set; }
         public string type { get; set; }

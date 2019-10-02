@@ -1,27 +1,28 @@
-﻿using Administration.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Administration.Services
+namespace Architecture.Services.Weather
 {
     public class WeatherService
     {
-        private static readonly string WeatherApiEndpoint = ConfigurationManager.AppSetting["Configurations:DarkSkyEndpoint"];
-        private static readonly string WeatherSecretKey = ConfigurationManager.AppSetting["Configurations:DarkSkySecretKey"];
-        public static async Task<dynamic> GetAsync(double latitude, double longitude)
+        public string ApiKey { get; set; }
+        public string Endpoint { get; set; }
+        public WeatherService(string apiKey, string endpoint)
+        {
+            ApiKey = apiKey;
+            Endpoint = endpoint;
+        }
+        public async Task<dynamic> GetAsync(double latitude, double longitude)
         {
             // Variable to hold result
             var response = string.Empty;
             var success = true;
 
-            var missingConfigurations = string.IsNullOrWhiteSpace(WeatherApiEndpoint)
-                || string.IsNullOrWhiteSpace(WeatherSecretKey);
+            var missingConfigurations = string.IsNullOrWhiteSpace(Endpoint)
+                || string.IsNullOrWhiteSpace(ApiKey);
             if (!missingConfigurations)
             {
-                var url = $"{WeatherApiEndpoint}{WeatherSecretKey}/{latitude},{longitude}";
+                var url = $"{Endpoint}{ApiKey}/{latitude},{longitude}";
                 // Create a New HttpClient object and dispose it when done, so the app doesn't leak resources
                 using (HttpClient client = new HttpClient())
                 {

@@ -17,10 +17,5 @@ namespace Administration.Models
         public bool AccessPermissions { get; set; }
         public bool AccessRolePermissions { get; set; }
         public bool AccessThemes { get; set; }
-        //public IEnumerable<Permission> UserPermissions { get; set; }
-        //public HomeViewModel(IEnumerable<Permission> userPermissions)
-        //{
-        //    UserPermissions = userPermissions;
-        //}
     }
 }

@@ -1,16 +1,11 @@
-﻿using Newtonsoft.Json;
-using Administration.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using Architecture.Constants;
+using Newtonsoft.Json;
 
-namespace Administration.Models
+namespace Architecture.Services.GoogleGeocode
 {
-    public class LocationViewModel
+    public class Location
     {
-        public LocationViewModel(string jsonPayload)
+        public Location(string jsonPayload)
         {
             dynamic location = JsonConvert.DeserializeObject(jsonPayload);
             if (location?.status == "OK")
@@ -24,29 +19,29 @@ namespace Administration.Models
                     {
                         switch (t.ToString())
                         {
-                            case "street_number":
+                            case GoogleGeocodeConstants.STREET_NUMBER:
                                 Street1Number = c.long_name;
                                 break;
-                            case "political":
+                            case GoogleGeocodeConstants.POLITICAL:
                                 break;
-                            case "locality":
+                            case GoogleGeocodeConstants.LOCALITY:
                                 City = c.long_name;
                                 break;
-                            case "administrative_area_level_2":
+                            case GoogleGeocodeConstants.ADMINISTRATIVE_AREA_LEVEL_2:
                                 County = c.long_name;
                                 break;
-                            case "administrative_area_level_1":
+                            case GoogleGeocodeConstants.ADMINISTRATIVE_AREA_LEVEL_1:
                                 State = c.long_name;
                                 StateAbbreviation = c.short_name;
                                 break;
-                            case "country":
+                            case GoogleGeocodeConstants.COUNTRY:
                                 Country = c.long_name;
                                 CountryAbbreviation = c.short_name;
                                 break;
-                            case "postal_code":
+                            case GoogleGeocodeConstants.POSTAL_CODE:
                                 Zip = c.long_name;
                                 break;
-                            case "":
+                            case GoogleGeocodeConstants.STREET_1:
                                 Street1 = c.long_name;
                                 break;
                         }
@@ -56,7 +51,6 @@ namespace Administration.Models
                 Latitude = latLng.lat;
                 Longitude = latLng.lng;
             }
-
         }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
@@ -71,6 +65,5 @@ namespace Administration.Models
         public string Country { get; set; }
         public string CountryAbbreviation { get; set; }
         public string Zip { get; set; }
-
     }
 }

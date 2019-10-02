@@ -1,27 +1,33 @@
-﻿using Administration.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Administration.Services
+namespace Architecture.Services.LanguageUnderstanding
 {
-    public class LocationService
-    {
-        private static readonly string GeocodeApiEndpoint = ConfigurationManager.AppSetting["Configurations:GoogleGeocodeEndpoint"];
-        private static readonly string ApiKey = ConfigurationManager.AppSetting["Configurations:GoogleApiKey"];
-        public static async Task<dynamic> GetAsync(string address)
+    public class LanguageUnderstandingService
+    {        
+        public string AppKey { get; set; }
+        public string ApiKey { get; set; }
+        public string Endpoint { get; set; }
+        public LanguageUnderstandingService(string appKey, string apiKey, string endpoint)
+        {
+            AppKey = appKey;
+            ApiKey = apiKey;
+            Endpoint = endpoint;
+        }
+
+        public async Task<dynamic> GetAsync(string query)
         {
             // Variable to hold result
             var response = string.Empty;
             var success = true;
 
-            var missingConfigurations = string.IsNullOrWhiteSpace(GeocodeApiEndpoint)
+            var missingConfigurations = string.IsNullOrWhiteSpace(Endpoint)
+                || string.IsNullOrWhiteSpace(AppKey)
                 || string.IsNullOrWhiteSpace(ApiKey);
             if (!missingConfigurations)
             {
-                var url = $"{GeocodeApiEndpoint}{address}&key={ApiKey}";
+                var url = $"{Endpoint}{AppKey}?timezoneOffset=-360&subscription-key={ApiKey}&q={query}";
+
                 // Create a New HttpClient object and dispose it when done, so the app doesn't leak resources
                 using (HttpClient client = new HttpClient())
                 {
@@ -42,6 +48,7 @@ namespace Administration.Services
                 response = $"Missing Configurations. Please review setup documentation on the about page.";
                 success = false;
             }
+
             return new { response, success };
         }
     }

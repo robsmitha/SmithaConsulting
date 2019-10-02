@@ -42,20 +42,6 @@
                             </small>
                             <br />
                             @item.reply.message
-
-                            @switch (item.topScoringIntent.intent)
-                            {
-                                case Administration.Services.LanguageUnderstandingService.INTENT_CHECK_STOCK:
-                                    break;
-                                case Administration.Services.LanguageUnderstandingService.INTENT_CHECK_WEATHER:
-                                    break;
-                                case Administration.Services.LanguageUnderstandingService.INTENT_GREETING:
-                                    break;
-                                case Administration.Services.LanguageUnderstandingService.INTENT_NONE:
-                                    break;
-                                default:
-                                    break;
-                            }
                         </div>
                     </div>
                 </div>

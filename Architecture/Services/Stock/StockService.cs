@@ -1,29 +1,28 @@
-﻿using Administration.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Administration.Services
+namespace Architecture.Services.Stock
 {
     public class StockService
     {
-        private static readonly string AplhaAdvantageApiKey = ConfigurationManager.AppSetting["Configurations:AplhaAdvantageApiKey"];
-        private static readonly string AplhaAdvantageApiEndPoint = ConfigurationManager.AppSetting["Configurations:AplhaAdvantageApiEndPoint"];
-        private static readonly string TIME_SERIES_INTRADAY = ConfigurationManager.AppSetting["Configurations:AplhaAdvantageTIME_SERIES_INTRADAY"];
-        public static async Task<dynamic> GetAsync(string symbol)
+        public string ApiKey { get; set; }
+        public string Endpoint { get; set; }
+        public StockService(string apiKey, string endpoint)
+        {
+            ApiKey = apiKey;
+            Endpoint = endpoint;
+        }
+        public async Task<dynamic> GetAsync(string symbol, string function)
         {
             // Variable to hold result
             var response = string.Empty;
             var success = true;
 
-            var missingConfigurations = string.IsNullOrWhiteSpace(AplhaAdvantageApiEndPoint)
-                || string.IsNullOrWhiteSpace(AplhaAdvantageApiKey)
-                || string.IsNullOrWhiteSpace(TIME_SERIES_INTRADAY);
+            var missingConfigurations = string.IsNullOrWhiteSpace(Endpoint)
+                || string.IsNullOrWhiteSpace(ApiKey);
             if (!missingConfigurations)
             {
-                var url = $"{AplhaAdvantageApiEndPoint}function={TIME_SERIES_INTRADAY}&symbol={symbol}&interval=5min&apikey={AplhaAdvantageApiKey}";
+                var url = $"{Endpoint}function={function}&symbol={symbol}&interval=5min&apikey={ApiKey}";
 
                 // Create a New HttpClient object and dispose it when done, so the app doesn't leak resources
                 using (HttpClient client = new HttpClient())

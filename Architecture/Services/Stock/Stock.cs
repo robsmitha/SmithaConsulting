@@ -1,17 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Administration.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace Administration.Models
+namespace Architecture.Services.Stock
 {
-    public class StockViewModel
+    public class Stock
     {
-        
-        public StockViewModel(string jsonPayload)
+        public Stock(string jsonPayload)
         {
             dynamic stock = JsonConvert.DeserializeObject(jsonPayload);
             var information = stock["Meta Data"]["1. Information"];
