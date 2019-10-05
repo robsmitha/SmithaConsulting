@@ -1,0 +1,27 @@
+﻿@model RevenueSourcesViewModel
+
+<div class="chart-pie">
+    <canvas id="myPieChart"></canvas>
+</div>
+
+<div class="mt-4 text-center small">
+    @{
+        var labels = Model.Labels.ToArray();
+        var colors = Model.Colors.ToArray();
+
+        var labelsAndColors = labels.Zip(colors, (l, c) => new { label = l, color = c });
+        foreach (var labelColor in labelsAndColors)
+        {
+            <span class="mr-2">
+                <i class="fas fa-circle" style="color: @labelColor.color"></i> @labelColor.label
+            </span>
+        }
+    }
+</div>
+
+<script>
+    var pie_labels = JSON.parse('@Html.Raw(Model.LabelsJSON)')
+    var pie_colors = JSON.parse('@Html.Raw(Model.ColorsJSON)')
+    var pie_data = JSON.parse('@Model.RevenueSourcesJSON')
+</script>
+<script src="~/js/Home/RevenueSources.cshtml.js" asp-append-version="true"></script>

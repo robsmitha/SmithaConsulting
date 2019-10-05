@@ -2,113 +2,146 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+</div>
 
-    <div class="row mt-2">
-        @if (Model.AccessBlog)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Blog" class="btn btn-outline-primary btn-lg btn-block">
-                    Blog
-                </a>
-            </div>
-        }
-        @if (Model.AccessMerchants)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Merchants" class="btn btn-outline-primary btn-lg btn-block">
-                    Merchants
-                </a>
-            </div>
-        }
+<!-- Content Row -->
+<div class="row">
 
-        @if (Model.AccessOrders)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Orders" class="btn btn-outline-primary btn-lg btn-block">
-                    Orders
-                </a>
+    <!-- Monthly Earnings -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Monthly Earnings</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.MonthEarnings.ToString("C")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
             </div>
-        }
-        @if (Model.AccessItems)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Items" class="btn btn-outline-primary btn-lg btn-block">
-                    Items
-                </a>
-            </div>
-        }
-        @if (Model.AccessCustomers)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Customers" class="btn btn-outline-primary btn-lg btn-block">
-                    Customers
-                </a>
-            </div>
-        }
-        @if (Model.AccessRoles)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Roles" class="btn btn-outline-primary btn-lg btn-block">
-                    Roles
-                </a>
-            </div>
-        }
-        @if (Model.AccessPermissions)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Permissions" class="btn btn-outline-primary btn-lg btn-block">
-                    Permissions
-                </a>
-            </div>
-        }
-
-        @if (Model.AccessRolePermissions)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="RolePermissions" class="btn btn-outline-primary btn-lg btn-block">
-                    Role Permissions
-                </a>
-            </div>
-        }
-        @if (Model.AccessThemes)
-        {
-            <div class="col-md-3 mb-4">
-                <a asp-action="Index" asp-controller="Themes" class="btn btn-outline-primary btn-lg btn-block">
-                    Themes
-                </a>
-            </div>
-        }
-        <div class="col-md-3 mb-4">
-            <a asp-action="Index" asp-controller="Applications" class="btn btn-outline-primary btn-lg btn-block">
-                Applications
-            </a>
         </div>
     </div>
-@*<div class="row">
-    <div class="col">
-        <h3>Entities</h3>
-        <ul class="list-unstyled mt-2">
-            @foreach (var controllerActionPermission in Model.UserPermissions.Where(x => !x.Controller.Contains("Types")))
-            {
-                <li>
-                    <a asp-action="Index" asp-controller="@controllerActionPermission.Controller">
-                        @controllerActionPermission.Controller
-                    </a>
-                </li>
-            }
-        </ul>
+
+    <!-- Yearly Earnings -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Yearly Earnings</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.YearEarnings.ToString("C")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col">
-        <h3>Types</h3>
-        <ul class="list-unstyled mt-2">
-            @foreach (var controllerActionPermission in Model.UserPermissions.Where(x => x.Controller.Contains("Types")))
-            {
-                <li>
-                    <a asp-action="Index" asp-controller="@controllerActionPermission.Controller">
-                        @controllerActionPermission.Controller
-                    </a>
-                </li>
-            }
-        </ul>
+
+    <!-- Monthly Order Count -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Order Count (Monthly)</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.MonthOrderCount</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>*@
+
+    <!-- Yearly Order Count -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Order Count (Year)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.YearOrderCount</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-globe fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row -->
+
+<div class="row">
+
+    <!-- Area Chart -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Intervals:</div>
+                        <a class="dropdown-item" href="#" onclick="Earnings('hourly')">Hourly</a>
+                        <a class="dropdown-item" href="#" onclick="Earnings('daily')">Daily</a>
+                        <a class="dropdown-item" href="#" onclick="Earnings('monthly')">Monthly</a>
+                        <a class="dropdown-item" href="#" onclick="Earnings('yearly')">Yearly</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div id="earnings"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Intervals:</div>
+                        <a class="dropdown-item" href="#" onclick="RevenueSources('hourly')">Hourly</a>
+                        <a class="dropdown-item" href="#" onclick="RevenueSources('daily')">Daily</a>
+                        <a class="dropdown-item" href="#" onclick="RevenueSources('monthly')">Monthly</a>
+                        <a class="dropdown-item" href="#" onclick="RevenueSources('yearly')">Yearly</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div id="revenue_sources" class="pt-4 pb-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/chart.js/Chart.min.js"></script>
+    <script src="~/js/Home/Index.cshtml.js" asp-append-version="true"></script>
+}

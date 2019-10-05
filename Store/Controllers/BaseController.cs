@@ -33,6 +33,7 @@ namespace Store.Controllers
         public int? CustomerID => HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
+        public int? ApplicationID = int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -49,12 +50,21 @@ namespace Store.Controllers
                 CreateCustomerSession(customer);
             }
 
-            var actionName = ControllerContext.RouteData.Values["action"].ToString().ToLower();
-            var controllerName = ControllerContext.RouteData.Values["controller"].ToString().ToLower();
-            
-            //context.Result = new RedirectResult("/Home/Login");
-            return;
-
+            #region Set Theme in Session
+            if (ThemeCDN == null && ApplicationID > 0)
+            {
+                var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);
+                if (application != null)
+                {
+                    var theme = _context.Themes.SingleOrDefault(t => t.ID == application.ThemeID);
+                    if (theme != null)
+                    {
+                        //Set theme
+                        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
+                    }
+                }
+            }
+            #endregion
         }
 
         public void CreateCustomerSession(Customer customer)

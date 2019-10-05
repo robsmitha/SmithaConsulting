@@ -11,13 +11,13 @@
     });
 
     // Close any open menu accordions when window is resized below 768px
-    $(window).resize(function () {
-        if ($(window).width() < 768) {
-            $('.sidebar .collapse').collapse('hide');
-            $('#accordionSidebar').addClass('toggled');
-            $('body').addClass('sidebar-toggled');
-        };
-    });
+    //$(window).resize(function () {
+    //    if ($(window).width() < 768) {
+    //        $('.sidebar .collapse').collapse('hide');
+    //        $('#accordionSidebar').addClass('toggled');
+    //        $('body').addClass('sidebar-toggled');
+    //    };
+    //});
 
     // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
     $('body.fixed-nav .sidebar').on('mousewheel DOMMouseScroll wheel', function (e) {
@@ -47,8 +47,8 @@
         }, 1000, 'easeInOutExpo');
         e.preventDefault();
     });
-    if ($(window).width() < 768) {
-        $('#accordionSidebar').addClass('toggled');
-        $('body').addClass('sidebar-toggled');
-    };
+    //if ($(window).width() < 768) {
+    //    $('#accordionSidebar').addClass('toggled');
+    //    $('body').addClass('sidebar-toggled');
+    //};
 })(jQuery); // End of use strict

@@ -4,23 +4,21 @@
     ViewData["Title"] = "Register Page";
 }
 
-<div class="container">
-    <div class="text-md-center my-3">
-        <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-store-alt"></i> Store</h1>
+<div class="text-md-center my-3">
+    <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-store-alt"></i> Store</h1>
+</div>
+<div class="row">
+    <div class="col-md-4 order-md-2 mb-2">
+        <div id="div_cart"></div>
     </div>
-    <div class="row">
-        <div class="col-md-4 order-md-2 mb-2">
-            <div id="div_cart"></div>
-        </div>
-        <div class="col-md-8 order-md-1">
-            <div id="div_list"></div>
-        </div>
+    <div class="col-md-8 order-md-1">
+        <div id="div_list"></div>
     </div>
-    <div class="my-5 text-center">
-        <p class="lead">
-            Feel free to create as many fake orders as you want!
-        </p>
-    </div>
+</div>
+<div class="my-5 text-center">
+    <p class="lead">
+        Feel free to create as many fake orders as you want!
+    </p>
 </div>
 <div id="modal_edit_register" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -56,4 +54,8 @@
     @Html.HiddenFor(m => m.SelectedItemID, new { id = "remove_line_item_id" })
 }
 
-<script src="~/js/Register/Index.cshtml.js"></script>
+@section Scripts{
+
+    <script src="~/js/Register/Index.cshtml.js"></script>
+
+}

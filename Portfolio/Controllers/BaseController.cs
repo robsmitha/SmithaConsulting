@@ -29,7 +29,7 @@ namespace Portfolio.Controllers
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
-        public int? ApplicationID => HttpContext.Session.GetInt32(SessionKeysConstants.APPLICATION_ID);
+        public int? ApplicationID = int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -38,17 +38,7 @@ namespace Portfolio.Controllers
                 return;
             }
 
-            #region Session State
-            if (ApplicationID == null)
-            {
-                if (!string.IsNullOrEmpty(ConfigurationManager.GetConfiguration("ApplicationID"))
-                    && int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var applicationId))
-                {
-                    //set ApplicationID
-                    HttpContext.Session.SetInt32(SessionKeysConstants.APPLICATION_ID, applicationId);
-                }
-            }
-
+            #region Set Theme in Session
             if (ThemeCDN == null && ApplicationID > 0)
             {
                 var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);

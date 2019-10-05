@@ -17,6 +17,9 @@ using Architecture.Enums;
 using System.Net.Mail;
 using System.Net;
 using Administration.Utilities;
+using System.Globalization;
+using Newtonsoft.Json;
+using System.Drawing;
 
 namespace Administration.Controllers
 {
@@ -30,20 +33,177 @@ namespace Administration.Controllers
         }
         public IActionResult Index()
         {
+            var lineItems = _context.LineItems
+                .Include(o => o.Order)
+                .Where(x => x.Order.CreatedAt.Year == DateTime.Now.Year && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+            var yearEarnings = lineItems.Sum(x => x.ItemAmount);
+            var monthEarnings = lineItems.Where(x => x.CreatedAt.Month == DateTime.Now.Month).Sum(x => x.ItemAmount);
+            var yearOrderCount = lineItems.GroupBy(x => x.OrderID).Count();
+            var monthOrderCount = lineItems.Where(x => x.CreatedAt.Month == DateTime.Now.Month).GroupBy(x => x.OrderID).Count();
+
             var model = new HomeViewModel
             {
-                AccessBlog = CheckPermission(permissionName: "AccessBlog"),
-                AccessMerchants = CheckPermission(permissionName: "AccessMerchants"),
-                AccessOrders = CheckPermission(permissionName: "AccessOrders"),
-                AccessItems = CheckPermission(permissionName: "AccessItems"),
-                AccessCustomers = CheckPermission(permissionName: "AccessCustomers"),
-                AccessRoles = CheckPermission(permissionName: "AccessRoles"),
-                AccessPermissions = CheckPermission(permissionName: "AccessPermissions"),
-                AccessRolePermissions = CheckPermission(permissionName: "AccessRolePermissions"),
-                AccessThemes = CheckPermission(permissionName: "AccessThemes")
+                YearEarnings = yearEarnings,
+                MonthEarnings = monthEarnings,
+                YearOrderCount = yearOrderCount,
+                MonthOrderCount = monthOrderCount,
             };
-                //new HomeViewModel(UserPermissions.Where(x => !string.IsNullOrEmpty(x.Controller) && !string.IsNullOrEmpty(x.Action) && x.Action == "Index"));
             return View(model);
+        }
+
+        public IActionResult Earnings(string interval)
+        {
+            var year = DateTime.Now.Year;
+            var month = DateTime.Now.Month;
+
+            IQueryable<LineItem> lineItems = null;
+
+            var earnings = new List<decimal>();
+            var labels = new List<string>();
+
+            DateTime startDate = DateTime.MinValue;
+
+            switch (interval)
+            {
+                case "hourly":
+                    startDate = DateTime.Now.Date;
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .Where(x => x.Order.CreatedAt.Date == startDate.Date && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    for (int i = 0; i < 24; i++)
+                    {
+                        var currentHour = startDate.AddHours(i);
+                        var label = currentHour.ToShortTimeString();
+                        var sales = lineItems.Where(x => x.Order.CreatedAt.Hour == currentHour.Hour).Sum(x => x.ItemAmount);
+                        earnings.Add(sales);
+                        labels.Add(label);
+                    }
+                    break;
+                case "daily":
+                    int diff = (7 + ((int)DateTime.Now.DayOfWeek - 1)) % 7;
+                    startDate = DateTime.Now.AddDays(-1 * diff).Date;
+                    lineItems = _context.LineItems
+                        .Include(o => o.Order)
+                        .Where(x => x.Order.CreatedAt >= startDate && x.Order.CreatedAt <= startDate.AddDays(7) 
+                        && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+
+                    for (var i = 0; i < 7; i++)
+                    {
+                        var currentDay = startDate.AddDays(i);
+                        var label = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedDayName(currentDay.DayOfWeek);
+                        var sales = lineItems.Where(x => x.Order.CreatedAt.Date == currentDay.Date).Sum(x => x.ItemAmount);
+                        earnings.Add(sales);
+                        labels.Add(label);
+                    }
+                    break;
+                case "monthly":
+                    int daysInMonth = DateTime.DaysInMonth(year, month);
+                    startDate = DateTime.Parse($"{month}/1/{year}");
+                    var endDate = DateTime.Parse($"{month}/{daysInMonth}/{year}");
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .Where(x => x.Order.CreatedAt.Month == startDate.Month && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    while (startDate <= endDate)
+                    {
+                        var label = startDate.ToShortDateString();
+                        var sales = lineItems.Where(x => x.Order.CreatedAt.Date == startDate.Date).Sum(x => x.ItemAmount);
+                        earnings.Add(sales);
+                        labels.Add(label);
+                        startDate = startDate.AddDays(1);
+                    }
+                    break;
+                case "yearly":
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .Where(x => x.Order.CreatedAt.Year == DateTime.Now.Year && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    for (var i = 1; i <= 12; i++)
+                    {
+                        var label = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(i);
+                        var sales = lineItems.Where(x => x.Order.CreatedAt.Month == i).Sum(x => x.ItemAmount);
+                        earnings.Add(sales);
+                        labels.Add(label);
+                    }
+                    break;
+            }
+
+
+            var model = new EarningsViewModel
+            {
+                EarningsJSON = JsonConvert.SerializeObject(earnings),
+                LabelsJSON = JsonConvert.SerializeObject(labels),
+            };
+
+            return PartialView("_Earnings", model);
+        }
+        public IActionResult RevenueSources(string interval)
+        {
+            var year = DateTime.Now.Year;
+            var month = DateTime.Now.Month;
+
+            IQueryable<LineItem> lineItems = null;
+            IQueryable<LineItem> merchantLineItems = null;
+
+            var earnings = new List<decimal>();
+            var labels = new List<string>();
+            var colors = new List<string>();
+
+            DateTime startDate = DateTime.MinValue;
+
+            switch (interval)
+            {
+                case "hourly":
+                    startDate = DateTime.Now.Date;
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o.Merchant)
+                    .Where(x => x.Order.CreatedAt.Date == startDate.Date && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    break;
+                case "daily":
+                    int diff = (7 + ((int)DateTime.Now.DayOfWeek - 1)) % 7;
+                    startDate = DateTime.Now.AddDays(-1 * diff).Date;
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o.Merchant)
+                    .Where(x => x.Order.CreatedAt >= startDate && x.Order.CreatedAt <= startDate.AddDays(7) && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    break;
+                case "monthly":
+                    int daysInMonth = DateTime.DaysInMonth(year, month);
+                    startDate = DateTime.Parse($"{month}/1/{year}");
+                    var endDate = DateTime.Parse($"{month}/{daysInMonth}/{year}");
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o.Merchant)
+                    .Where(x => x.Order.CreatedAt.Month == startDate.Month && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    break;
+                case "yearly":
+                    lineItems = _context.LineItems
+                    .Include(o => o.Order)
+                    .ThenInclude(o => o.Merchant)
+                    .Where(x => x.Order.CreatedAt.Year == DateTime.Now.Year && x.Order.OrderStatusTypeID == (int)OrderStatusTypeEnums.Paid);
+                    break;
+            }
+            merchantLineItems = lineItems.GroupBy(x => x.Order.MerchantID).Select(f => f.FirstOrDefault());
+            var rnd = new Random();
+            foreach (var item in merchantLineItems)
+            {
+                Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+                var merchantName = item.Order.Merchant.MerchantName;
+                var sales = lineItems.Where(x => x.Order.MerchantID == item.Order.MerchantID).Sum(x => x.ItemAmount);
+                labels.Add(merchantName);
+                earnings.Add(sales);
+                colors.Add("#" + randomColor.R.ToString("X2") + randomColor.G.ToString("X2") + randomColor.B.ToString("X2"));
+            }
+
+            var model = new RevenueSourcesViewModel
+            {
+                RevenueSourcesJSON = JsonConvert.SerializeObject(earnings),
+                LabelsJSON = JsonConvert.SerializeObject(labels),
+                ColorsJSON = JsonConvert.SerializeObject(colors),
+                Colors = colors,
+                Labels = labels
+            };
+
+            return PartialView("_RevenueSources", model);
         }
         public IActionResult Login()
         {
