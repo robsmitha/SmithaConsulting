@@ -169,21 +169,26 @@ namespace Store.Controllers
                 var orderViewModel = GetOrderViewModel(order);
                 var model = new PaymentViewModel(orderViewModel, order.ID);
                 return View(model);
-
             }
             return RedirectToAction("Error");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Payment(PaymentViewModel model)
+        public async Task<IActionResult> Payment(PaymentViewModel model)
         {
             try
             {
-                if (ModelState.IsValid)
+                var order = await _context.Orders.SingleOrDefaultAsync(x => x.ID == model.CurrentOrderID);
+                if (order != null)
                 {
-                    var order = _context.Orders.SingleOrDefault(x => x.ID == model.CurrentOrderID);
-                    if (order != null)
+                    if (ModelState.IsValid)
                     {
+                        var customer = await _context.Customers.SingleOrDefaultAsync(x => x.ID == CustomerID.Value);
+                        customer.Email = model.Email;
+                        customer.FirstName = model.FirstName;
+                        customer.LastName = model.LastName;
+                        _context.Update(customer);
+                        await _context.SaveChangesAsync();
                         var amount = _context.LineItems.Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
                         //Create payment on order.
                         var payment = new Payment
@@ -202,6 +207,13 @@ namespace Store.Controllers
                         return RedirectToAction("Details", "Home", new { id = model.CurrentOrderID });
                     }
                 }
+                else
+                {
+                    ModelState.AddModelError("CustomError", $"Order not found.");
+                }
+                
+                var orderViewModel = GetOrderViewModel(order);
+                model = new PaymentViewModel(orderViewModel, order.ID);
                 return View(model);
             }
             catch
