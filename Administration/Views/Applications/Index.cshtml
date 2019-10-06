@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<Architecture.Application>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Applications";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="row mb-2">
+    <div class="col-md">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="col-md-auto">
+        <a class="btn btn-primary btn-block" asp-action="Create">Create New</a>
+    </div>
+</div>
+<table class="table table-striped bg-white">
     <thead>
         <tr>
             <th>
@@ -25,47 +28,39 @@
                 @Html.DisplayNameFor(model => model.Theme)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Active)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedTime)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationType.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Theme.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Active)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationType.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Theme.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@section Scripts{
+    <script src="~/js/Applications/Index.cshtml.js"></script>
+}

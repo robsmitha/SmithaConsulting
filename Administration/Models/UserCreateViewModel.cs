@@ -1,13 +1,8 @@
-﻿using Architecture;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Administration.Models
 {
-    public class SignUpViewModel
+    public class UserCreateViewModel
     {
         [Required]
         [Display(Name = "First Name")]
@@ -25,15 +20,10 @@ namespace Administration.Models
         public string Email { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        public string ConfirmPassword { get; set; }
-
-        [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }
+
+        [Display(Name = "Active")]
+        public bool Active { get; set; }
     }
 }

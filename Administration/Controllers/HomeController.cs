@@ -219,7 +219,7 @@ namespace Administration.Controllers
             const string subject = "Website Mail";
             string body = $"From: {model.Email}, {model.Name} message: {model.Message}";
 
-            var smtp = new SmtpClient
+            using (var smtp = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
@@ -227,14 +227,16 @@ namespace Administration.Controllers
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
             })
             {
-                smtp.Send(message);
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send(message);
+                }
             }
 
             return RedirectToAction("Index");
@@ -289,6 +291,11 @@ namespace Administration.Controllers
                     .SingleOrDefaultAsync(m => m.Username == model.Username);
                 if(user != null && SecurePasswordHasher.Verify(model.Password, user.Password))
                 {
+                    if (!user.Active)
+                    {
+                        //user has not been approved by an admin yet
+                        ModelState.AddModelError("CustomError", "Your account is inactive until an admin activates it.");
+                    }
                     CreateUserSession(user);
                     return RedirectToAction("Index");
                 }
@@ -334,7 +341,7 @@ namespace Administration.Controllers
                                 Username = model.Username,
                                 Password = SecurePasswordHasher.Hash(model.Password),
                                 CreatedAt = DateTime.Now,
-                                Active = true
+                                Active = false //Leave online sign ups inactive until appoved by admin
                             };
                             _context.Users.Add(user);
                             await _context.SaveChangesAsync();

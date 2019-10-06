@@ -1,16 +1,21 @@
 ﻿@model IEnumerable<Merchant>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Merchants";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="row mb-2">
+    <div class="col-md">
+        <h1>
+            @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-md-auto">
+        <a class="btn btn-primary btn-block" asp-action="Create">Create New</a>
+    </div>
+</div>
+<table class="table table-striped bg-white">
     <thead>
         <tr>
             <th>
@@ -28,51 +33,38 @@
             <th>
                 @Html.DisplayNameFor(model => model.MerchantType)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Active)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedTime)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MerchantName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WebsiteUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SelfBoardingApplication)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsBillable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MerchantType.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Active)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MerchantName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WebsiteUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SelfBoardingApplication)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsBillable)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MerchantType.Description)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts{
+    <script src="~/js/Merchants/Index.cshtml.js"></script>
+}

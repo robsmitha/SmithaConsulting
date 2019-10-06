@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Architecture;
 using Architecture.Data;
+using Administration.Models;
+using Architecture.Utilities;
 
 namespace Administration.Controllers
 {
@@ -46,7 +48,8 @@ namespace Administration.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new UserCreateViewModel();
+            return View(model);
         }
 
         // POST: Users/Create
@@ -54,15 +57,33 @@ namespace Administration.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,MiddleName,LastName,Email,Password,Username,ID,CreatedAt,Active,ModifiedTime")] User user)
+        public async Task<IActionResult> Create(UserCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if(await _context.Users.SingleOrDefaultAsync(x => x.Username == model.Username) == null)
+                {
+
+                    var user = new User();
+                    user.FirstName = model.FirstName;
+                    user.MiddleName = model.MiddleName;
+                    user.LastName = model.LastName;
+                    user.Email = model.Email;
+                    user.Active = model.Active;
+                    user.CreatedAt = DateTime.Now;
+
+                    //TODO: implement pw reset email
+                    user.Password = SecurePasswordHasher.Hash("password");
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("CustomError", $"The username {model.Username} is already taken");
+                }
             }
-            return View(user);
+            return View(model);
         }
 
         // GET: Users/Edit/5
@@ -78,7 +99,8 @@ namespace Administration.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+            var model = new UserEditViewModel(user);
+            return View(model);
         }
 
         // POST: Users/Edit/5
@@ -86,34 +108,52 @@ namespace Administration.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FirstName,MiddleName,LastName,Email,Password,Username,ID,CreatedAt,Active,ModifiedTime")] User user)
+        public async Task<IActionResult> Edit(UserEditViewModel model)
         {
-            if (id != user.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.ID == model.UserID);
+
+                if (user == null)
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                if(model.Username != user.Username && await _context.Users.SingleOrDefaultAsync(x => x.Username == model.Username) != null)
                 {
-                    if (!UserExists(user.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //username is not available
+                    ModelState.AddModelError("CustomError", $"The username {model.Username} is already taken");
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    user.FirstName = model.FirstName;
+                    user.MiddleName = model.MiddleName;
+                    user.LastName = model.LastName;
+                    user.Email = model.Email;
+                    user.Username = model.Username;
+                    user.Active = model.Active;
+                    user.ModifiedTime = DateTime.Now;
+                    try
+                    {
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!UserExists(user.ID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
-            return View(user);
+
+            return View(model);
         }
 
         // GET: Users/Delete/5

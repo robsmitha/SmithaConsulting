@@ -1,14 +1,12 @@
 ﻿using Architecture;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Administration.Models
 {
-    public class SignUpViewModel
+    public class UserEditViewModel
     {
+        [Required]
+        public int UserID { get; set; }
         [Required]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
@@ -25,15 +23,21 @@ namespace Administration.Models
         public string Email { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        public string ConfirmPassword { get; set; }
-
-        [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }
+
+        [Display(Name = "Active")]
+        public bool Active { get; set; }
+        public UserEditViewModel() { }
+        public UserEditViewModel(User user)
+        {
+            UserID = user.ID;
+            FirstName = user.FirstName;
+            MiddleName = user.MiddleName;
+            LastName = user.LastName;
+            Email = user.Email;
+            Username = user.Username;
+            Active = user.Active;
+        }
     }
 }

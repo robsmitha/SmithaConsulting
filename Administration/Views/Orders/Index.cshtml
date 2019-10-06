@@ -1,31 +1,34 @@
 ﻿@model IEnumerable<Order>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Orders";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-<div class="text-md-center my-3">
-    <h1 class="h3 mb-3 font-weight-light"><i class="fas fa-history"></i> Orders</h1>
+<div class="row mb-2">
+    <div class="col-md">
+        <h1>
+            @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-md-auto">
+        <a class="btn btn-primary btn-block" asp-action="Create">Create New</a>
+    </div>
 </div>
 
-<table id="table_orders" class="table table-striped table-bordered">
+<table class="table table-striped bg-white">
     <thead>
         <tr>
-            <th class="d-none d-sm-table-cell">
+            <th>
                 Order ID
             </th>
-            <th class="d-none d-sm-table-cell">
-                Total
-            </th>
-            <th class="d-none d-sm-table-cell">
+            <th>
                 Placed By
             </th>
             <th>
                 Merchant
             </th>
-            <th class="d-none d-sm-table-cell">
+            <th>
                 Order Status
             </th>
             <th>
@@ -38,11 +41,8 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td class="d-none d-sm-table-cell">
+                <td>
                     @item.ID
-                </td>
-                <td class="d-none d-sm-table-cell">
-                    TOTAL
                 </td>
                 <td>
                     @if (item?.Customer != null && !string.IsNullOrWhiteSpace(item.Customer.Email))
@@ -58,10 +58,10 @@
                         <span>Guest</span>
                     }
                 </td>
-                <td class="d-none d-sm-table-cell">
+                <td>
                     @item.Merchant.MerchantName
                 </td>
-                <td class="d-none d-sm-table-cell">
+                <td>
                     @item.OrderStatusType.Description
                 </td>
                 <td>
@@ -69,19 +69,14 @@
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-outline-primary btn-sm">
-                        Detail
+                        Details
                     </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<script>
-    $(document).ready(function () {
-        $('#table_orders').DataTable(
-            {
-                responsive: true,
-                "order": [0, 'desc']
-            })
-    })
-</script>
+
+@section Scripts{
+    <script src="~/js/Orders/Index.cshtml.js"></script>
+}
