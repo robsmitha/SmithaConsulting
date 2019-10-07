@@ -15,7 +15,6 @@
                 </div>
             </a>
         </li>
-
         <li>
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -37,13 +36,16 @@
                 Features
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-action="Index" asp-controller="Register">
-                <i class="fas fa-fw fa-store-alt"></i>
-                <span>Store</span>
-            </a>
-        </li>
-        @if (Model.AccessOrders)
+        @if (Model.AccessStore || true)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Register">
+                    <i class="fas fa-fw fa-store-alt"></i>
+                    <span>Store</span>
+                </a>
+            </li>
+        }
+        @if (Model.AccessOrders || true)
         {
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Orders">
@@ -52,7 +54,7 @@
                 </a>
             </li>
         }
-        @if (Model.AccessItems)
+        @if (Model.AccessItems || true)
         {
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Items">
@@ -61,7 +63,7 @@
                 </a>
             </li>
         }
-        @if (Model.AccessCustomers)
+        @if (Model.AccessCustomers || true)
         {
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Customers">
@@ -79,12 +81,16 @@
                 Admin
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-action="Index" asp-controller="Users">
-                <i class="fas fa-fw fa-user-lock"></i>
-                <span>Users</span>
-            </a>
-        </li>
+        @if (Model.AccessUsers || true)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Users">
+                    <i class="fas fa-fw fa-user-lock"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+        }
+
         @if (Model.AccessMerchants)
         {
             <li class="nav-item">
@@ -103,12 +109,15 @@
                 </a>
             </li>
         }
-        <li class="nav-item">
-            <a class="nav-link" asp-action="Index" asp-controller="Applications">
-                <i class="fas fa-fw fa-sitemap"></i>
-                <span>Applications</span>
-            </a>
-        </li>
+        @if (Model.AccessApplications)
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="Applications">
+                    <i class="fas fa-fw fa-sitemap"></i>
+                    <span>Applications</span>
+                </a>
+            </li>
+        }
         @if (Model.AccessBlog)
         {
             <li class="nav-item">

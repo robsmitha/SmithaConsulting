@@ -22,9 +22,11 @@ namespace Administration.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? merchantId)
         {
-            return View(await _context.Users.ToListAsync());
+            merchantId = merchantId ?? MerchantID;
+            var merchantUsers = _context.MerchantUsers.Where(x => x.MerchantID == merchantId).Include(o => o.User);
+            return View(await merchantUsers.Select(x => x.User).ToListAsync());
         }
 
         // GET: Users/Details/5

@@ -25,6 +25,9 @@ namespace Administration.Models
         public bool AccessPaymentTypes { get; set; }
         public bool AccessPriceTypes { get; set; }
         public bool AccessUnitTypes { get; set; }
+        public bool AccessUsers { get; set; }
+        public bool AccessApplications { get; set; }
+        public bool AccessStore { get; set; }
 
         public SidebarViewModel() { }
         public SidebarViewModel(int? userId, string username)

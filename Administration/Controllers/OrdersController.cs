@@ -21,10 +21,16 @@ namespace Administration.Controllers
         }
 
         // GET: Orders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? merchantId)
         {
-            var DbArchitecture = _context.Orders.Include(o => o.Customer).Include(o => o.Merchant).Include(o => o.OrderStatusType).Include(o => o.User);
-            return View(await DbArchitecture.ToListAsync());
+            merchantId = merchantId ?? MerchantID;
+            var merchantOrders = _context.Orders
+                .Where(x => x.MerchantID == merchantId)
+                .Include(o => o.Customer)
+                .Include(o => o.Merchant)
+                .Include(o => o.OrderStatusType)
+                .Include(o => o.User);
+            return View(await merchantOrders.ToListAsync());
         }
 
         // GET: Orders/Details/5

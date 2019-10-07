@@ -9,6 +9,7 @@ namespace Administration.Models
 {
     public class SignUpViewModel
     {
+        //User info
         [Required]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
@@ -27,6 +28,7 @@ namespace Administration.Models
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm Password")]
@@ -35,5 +37,13 @@ namespace Administration.Models
         [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }
+
+        //Merchant info
+        [Required]
+        [Display(Name = "Business Name")]
+        public string MerchantName { get; set; }
+
+        [Display(Name = "Website Url")]
+        public string WebsiteUrl { get; set; }
     }
 }

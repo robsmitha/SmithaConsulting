@@ -33,7 +33,9 @@ namespace Administration.ViewComponents
                 AccessPaymentStatusTypes = CheckPermission(permissionName: "AccessPaymentStatusTypes"),
                 AccessPaymentTypes = CheckPermission(permissionName: "AccessPaymentTypes"),
                 AccessPriceTypes = CheckPermission(permissionName: "AccessPriceTypes"),
-                AccessUnitTypes = CheckPermission(permissionName: "AccessUnitTypes")
+                AccessUnitTypes = CheckPermission(permissionName: "AccessUnitTypes"),
+                AccessUsers = CheckPermission(permissionName: "AccessUsers"),
+                AccessApplications = CheckPermission(permissionName: "AccessApplications")
             };
             return View("Sidebar", header);
         }

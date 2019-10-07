@@ -8,6 +8,7 @@ using Architecture;
 using Architecture.Data;
 using Architecture.Enums;
 using Administration.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administration.Controllers
 {
@@ -175,7 +176,7 @@ namespace Administration.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Payment(PaymentViewModel model)
+        public async Task<IActionResult> Payment(PaymentViewModel model)
         {
             try
             {
@@ -184,6 +185,20 @@ namespace Administration.Controllers
                     var order = _context.Orders.SingleOrDefault(x => x.ID == model.CurrentOrderID);
                     if(order != null)
                     {
+                        if (!string.IsNullOrWhiteSpace(model.Email))
+                        {
+
+                            var customer = new Customer();
+                            customer.Email = model.Email;
+                            customer.FirstName = model.FirstName;
+                            customer.LastName = model.LastName;
+                            customer.Active = true;
+                            customer.CreatedAt = DateTime.Now;
+                            await _context.AddAsync(customer);
+                            await _context.SaveChangesAsync();
+                            order.CustomerID = customer.ID;
+                        }
+
                         var amount = _context.LineItems.Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
                         //Create payment on order.
                         var payment = new Payment
@@ -196,9 +211,9 @@ namespace Administration.Controllers
                             CreatedAt = DateTime.Now
                         };
                         order.OrderStatusTypeID = (int)OrderStatusTypeEnums.Paid;
-                        _context.Payments.Add(payment);
-                        _context.Orders.Update(order);
-                        _context.SaveChanges();
+                        await _context.AddAsync(payment);
+                        _context.Update(order);
+                        await _context.SaveChangesAsync();
                         return RedirectToAction("Details", "Orders", new { id = model.CurrentOrderID });
                     }
                 }

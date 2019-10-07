@@ -20,10 +20,16 @@ namespace Administration.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? merchantId)
         {
-            var DbArchitecture = _context.Items.Include(i => i.ItemType).Include(i => i.Merchant).Include(i => i.PriceType).Include(i => i.UnitType);
-            return View(await DbArchitecture.ToListAsync());
+            merchantId = merchantId ?? MerchantID;
+            var merchantItems = _context.Items
+                .Where(x => x.MerchantID == merchantId)
+                .Include(i => i.ItemType)
+                .Include(i => i.Merchant)
+                .Include(i => i.PriceType)
+                .Include(i => i.UnitType);
+            return View(await merchantItems.ToListAsync());
         }
 
         // GET: Items/Details/5

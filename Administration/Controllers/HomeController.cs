@@ -309,15 +309,9 @@ namespace Administration.Controllers
         }
         public IActionResult SignUp()
         {
-            ViewData["MerchantID"] = new SelectList(_context.Merchants, "ID", "MerchantName");
             return View();
         }
 
-        public IActionResult SignOut()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index");
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -341,26 +335,35 @@ namespace Administration.Controllers
                                 Username = model.Username,
                                 Password = SecurePasswordHasher.Hash(model.Password),
                                 CreatedAt = DateTime.Now,
-                                Active = false //Leave online sign ups inactive until appoved by admin
+                                Active = true
                             };
-                            _context.Users.Add(user);
+                            await _context.AddAsync(user);
                             await _context.SaveChangesAsync();
 
-                            //Put User in Online Merchant
-                            var merchant = await _context.Merchants.FirstOrDefaultAsync(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active);
-                            if (merchant != null)
+                            var merchant = new Merchant
                             {
-                                var userMerchant = new MerchantUser
-                                {
-                                    Active = true,
-                                    CreatedAt = DateTime.Now,
-                                    MerchantID = merchant.ID,
-                                    RoleID = (int)RoleEnums.OnlineSignUp,
-                                    UserID = user.ID
-                                };
-                                await _context.MerchantUsers.AddAsync(userMerchant);
-                                await _context.SaveChangesAsync();
-                            }
+                                MerchantName = model.MerchantName,
+                                WebsiteUrl = model.WebsiteUrl,
+                                MerchantTypeID = (int)MerchantTypeEnums.Online,
+                                Active = true,
+                                CreatedAt = DateTime.Now,
+                                IsBillable = false,
+                                SelfBoardingApplication = true
+                            };
+                            await _context.AddAsync(merchant);
+                            await _context.SaveChangesAsync();
+
+                            var userMerchant = new MerchantUser
+                            {
+                                Active = true,
+                                CreatedAt = DateTime.Now,
+                                MerchantID = merchant.ID,
+                                RoleID = (int)RoleEnums.OnlineSignUp,
+                                UserID = user.ID
+                            };
+                            await _context.AddAsync(userMerchant);
+                            await _context.SaveChangesAsync();
+
                             CreateUserSession(user);
                             return RedirectToAction("Index");
                         }
@@ -380,6 +383,11 @@ namespace Administration.Controllers
                 }
             }
             return View(model);
+        }
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
         }
         public IActionResult About()
         {

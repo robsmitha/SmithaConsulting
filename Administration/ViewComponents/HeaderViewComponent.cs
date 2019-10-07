@@ -18,9 +18,10 @@ namespace Administration.ViewComponents
     {
         public IViewComponentResult Invoke()
         {
-            var userId = HttpContext.Session?.GetInt32("userId");
-            var username = HttpContext.Session?.GetString("username");
-            var header = new HeaderViewModel(userId, username);
+            var userId = HttpContext.Session?.GetInt32(SessionKeysConstants.USER_ID);
+            var merchantId = HttpContext.Session?.GetInt32(SessionKeysConstants.MERCHANT_ID);
+            var username = HttpContext.Session?.GetString(SessionKeysConstants.USERNAME);
+            var header = new HeaderViewModel(userId, merchantId, username);
             return View("Header", header);
         }
     }

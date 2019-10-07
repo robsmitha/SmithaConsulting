@@ -9,10 +9,11 @@ namespace Administration.Models
     public class HeaderViewModel : LayoutViewModel
     {
         public HeaderViewModel() { }
-        public HeaderViewModel(int? userId, string username)
+        public HeaderViewModel(int? userId, int? merchantId, string username)
         {
             UserId = userId;
             IsLoggedIn = userId > 0;
+            MerchantId = merchantId;
             Greeting = username;
         }
     }

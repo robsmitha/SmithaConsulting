@@ -87,7 +87,33 @@
     <div class="col-md-8 order-md-1">
         <h1 class="mb-3 font-weight-light"><i class="fas fa-file-invoice-dollar"></i> Billing Info</h1>
         <form method="post" asp-action="Payment" asp-controller="Register">
+            @Html.ValidationMessage("CustomError")
             <input type="hidden" asp-for="CurrentOrderID" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="form-label-group">
+                        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                        <label asp-for="FirstName"></label>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-label-group">
+                        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                        <label asp-for="LastName"></label>
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="form-label-group">
+                    <input asp-for="Email" class="form-control" placeholder="Email Address" />
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
             <blockquote class="blockquote">
                 <p class="mb-0">
                     This one's on the house, hoss.

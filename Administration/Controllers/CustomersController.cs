@@ -20,9 +20,12 @@ namespace Administration.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? merchantId)
         {
-            return View(await _context.Customers.ToListAsync());
+            merchantId = merchantId ?? MerchantID;
+            var merchantCustomers = _context.Orders.Where(x => x.MerchantID == merchantId && x.CustomerID != null).Include(o => o.Customer);
+
+            return View(await merchantCustomers.Select(x => x.Customer).ToListAsync());
         }
 
         // GET: Customers/Details/5
