@@ -1,4 +1,6 @@
 ﻿using Architecture;
+using Architecture.DTOs;
+using Architecture.Services.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +10,11 @@ namespace Store.Models
 {
     public class OrderViewModel
     {
-        public Order Order { get; set; }
-        public List<LineItem> LineItems { get; set; }
-        public List<Payment> Payments { get; set; }
+        public OrderDTO Order { get; set; }
+        public List<LineItemDTO> LineItems { get; set; }
+        public List<PaymentDTO> Payments { get; set; }
         public OrderViewModel() { }
-        public OrderViewModel(Order order, List<LineItem> lineItems, List<Payment> payments)
+        public OrderViewModel(OrderDTO order, List<LineItemDTO> lineItems, List<PaymentDTO> payments)
         {
             Order = order;
             LineItems = lineItems;

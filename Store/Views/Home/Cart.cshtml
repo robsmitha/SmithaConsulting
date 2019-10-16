@@ -13,16 +13,16 @@
         foreach (var lineItem in distinctLineItems)
         {
             var qty = lineItems.Where(x => x.ItemID == lineItem.ItemID).Count();
-            switch (lineItem.Item.ItemTypeID)
+            switch (lineItem.ItemTypeID)
             {
                 case (int)ItemTypeEnums.Discount:
                     <button type="button" class="list-group-item list-group-item-action list-group-item-light" disabled>
                         <div class="row">
                             <div class="col">
                                 <h6 class="my-0 lead">
-                                    @lineItem.Item.ItemName
+                                    @lineItem.ItemName
                                 </h6>
-                                <small class="text-muted font-weight-light">@lineItem.Item.ItemDescription</small>
+                                <small class="text-muted font-weight-light">@lineItem.ItemDescription</small>
                             </div>
                             <div class="col-auto text-right">
                                 <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
@@ -35,9 +35,9 @@
                         <div class="row">
                             <div class="col">
                                 <h6 class="my-0 lead">
-                                    @lineItem.Item.ItemName
+                                    @lineItem.ItemName
                                 </h6>
-                                <small class="text-muted">@lineItem.Item.ItemDescription</small>
+                                <small class="text-muted">@lineItem.ItemDescription</small>
                             </div>
                             <div class="col-auto text-right">
                                 <span class="text-muted font-weight-light">

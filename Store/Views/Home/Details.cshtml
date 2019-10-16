@@ -14,7 +14,7 @@
         <div class="form-group">
             <label>Status</label>
             <br />
-            @Model.Order.OrderStatusType.Description
+            @Model.Order.OrderStatusType
         </div>
     </div>
     <div class="col-sm col-6">
@@ -40,7 +40,7 @@
                     <div class="list-group-item pl-1">
                         <div class="row">
                             <div class="col-6">
-                                @item.Item.ItemName
+                                @item.ItemName
                             </div>
                             <div class="col text-right">
                                 X @qty
@@ -76,7 +76,7 @@
                                 @payment.CreatedAt
                             </div>
                             <div class="col">
-                                @payment.PaymentType.Description
+                                @payment.PaymentTypeDescription
                             </div>
                             <div class="text-right col-auto">
                                 @payment.Amount.ToString("C")

@@ -1,4 +1,6 @@
 ﻿using Architecture;
+using Architecture.DTOs;
+using Architecture.Services.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +10,8 @@ namespace Store.Models
 {
     public class RegisterListViewModel
     {
-        public List<Item> Items { get; set; }
-        public RegisterListViewModel(List<Item> items)
+        public List<ItemDTO> Items { get; set; }
+        public RegisterListViewModel(List<ItemDTO> items)
         {
             Items = items;
         }

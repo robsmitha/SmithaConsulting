@@ -4,35 +4,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Architecture;
-using Architecture.Data;
 using Architecture.Enums;
 using Store.Models;
+using Architecture.DTOs;
 
 namespace Store.Controllers
 {
     public class HomeController : BaseController
     {
-
-        private readonly DbArchitecture _context;
-        public HomeController(DbArchitecture context) : base(context)
-        {
-            _context = context;
-        }
         public IActionResult Index()
         {
-            Order order = GetOrder();
+            var order = GetOrder();
             var model = new RegisterViewModel(order);
             return View(model);
         }
         public IActionResult List(int? orderId)
         {
-            Order order = GetOrder(orderId);
-            var items = new List<Item>();
+            var order = GetOrder(orderId);
+            var items = new List<ItemDTO>();
             if (MerchantID > 0)
             {
-                items = _context.Items.Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
+                items = API.GetAll<ItemDTO>("/items").Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
             }
             var model = new RegisterListViewModel(items);
             return PartialView(model);
@@ -46,47 +38,45 @@ namespace Store.Controllers
         }
         protected bool AddLineItem(int itemId, int? orderId = null)
         {
-            var item = _context.Items.SingleOrDefault(x => x.ID == itemId);
-            if (item != null)
+            var item = API.Get<ItemDTO>($"/items/{itemId}");
+            if (item?.ID > 0)
             {
-                var lineItem = new LineItem
+                var lineItem = new LineItemDTO
                 {
                     ItemAmount = item.Price ?? 0M,
                     ItemID = item.ID,
                 };
+                var order = orderId > 0 ? GetOrder(orderId) : null;
                 //Create Order if needed
-                var order = _context.Orders.SingleOrDefault(x => x.ID == orderId);
                 if (order == null)
                 {
-                    order = new Order
+                    order = new OrderDTO
                     {
                         OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
                         MerchantID = MerchantID.Value,
                         CustomerID = CustomerID
                     };
-                    _context.Orders.Add(order);
-                    _context.SaveChanges();
+
+                    API.Add("/orders", order);
                 }
-                lineItem.OrderID = order.ID;
-                _context.LineItems.Add(lineItem);
-                _context.SaveChanges();
+                API.Add("/lineitems", lineItem);
                 return true;
             }
             return false;
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddLineItem(RegisterViewModel model)
+        public async Task<IActionResult> AddLineItem(RegisterViewModel model)
         {
             var msg = string.Empty;
             var success = true;
-            var order = GetOrder(model.CurrentOrderID);
+            var order = await GetOrderAsync(model.CurrentOrderID);
             if (MerchantID > 0)
             {
-                var item = _context.Items.SingleOrDefault(x => x.ID == model.SelectedItemID);
+                var item = API.Get<ItemDTO>($"/items/{model.SelectedItemID}");
                 if (item != null)
                 {
-                    var lineItem = new LineItem
+                    var lineItem = new LineItemDTO
                     {
                         ItemAmount = item.Price.Value,
                         ItemID = item.ID,
@@ -94,19 +84,18 @@ namespace Store.Controllers
                     //Create Order if needed
                     if (order == null)
                     {
-                        order = new Order
+                        order = new OrderDTO
                         {
                             OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
                             MerchantID = MerchantID.Value,
-                            CustomerID = CustomerID
+                            CustomerID = CustomerID,
+                            CreatedAt = DateTime.Now
                         };
-                        _context.Orders.Add(order);
-                        _context.SaveChanges();
+
+                        order = API.Add("/orders", order);
                     }
                     lineItem.OrderID = order.ID;
-
-                    _context.LineItems.Add(lineItem);
-                    _context.SaveChanges();
+                    API.Add("/lineitems", lineItem);
                     success = true;
                 }
             }
@@ -122,11 +111,11 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                var lineItem = _context.LineItems.LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
+                var lineItem = API.GetAll<LineItemDTO>("/lineitems")
+                    .LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
                 if (lineItem != null)
                 {
-                    _context.LineItems.Remove(lineItem);
-                    _context.SaveChanges();
+                    API.Delete($"/lineitems/{lineItem.ID}");
                     UpdateDiscounts(order);
                 }
             }
@@ -146,13 +135,12 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
-                if (lineItems != null)
-                {
-                    _context.LineItems.RemoveRange(lineItems);
-                    _context.SaveChanges();
-                    UpdateDiscounts(order);
-                }
+                API.GetAll<LineItemDTO>("/lineitems")
+                    .Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID)
+                    .ToList()
+                    .ForEach(x => API.Delete($"/lineitems/{x.ID}"));
+
+                UpdateDiscounts(order);
             }
             catch (Exception ex)
             {
@@ -178,32 +166,33 @@ namespace Store.Controllers
         {
             try
             {
-                var order = await _context.Orders.SingleOrDefaultAsync(x => x.ID == model.CurrentOrderID);
+                var order = await GetOrderAsync(model.CurrentOrderID);
                 if (order != null)
                 {
                     if (ModelState.IsValid)
                     {
-                        var customer = await _context.Customers.SingleOrDefaultAsync(x => x.ID == CustomerID.Value);
+                        var customer = await API.GetAsync<CustomerDTO>($"/customers/{CustomerID.Value}");
                         customer.Email = model.Email;
                         customer.FirstName = model.FirstName;
                         customer.LastName = model.LastName;
-                        _context.Update(customer);
-                        await _context.SaveChangesAsync();
-                        var amount = _context.LineItems.Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
+                        API.Add("/customer", customer);
+
+                        var amount = API.GetAll<LineItemDTO>("/lineitems")
+                            .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
                         //Create payment on order.
-                        var payment = new Payment
+                        var payment = new PaymentDTO
                         {
                             OrderID = model.CurrentOrderID,
                             PaymentTypeID = (int)PaymentTypeEnums.CreditCardManual,
                             Amount = amount,
-                            PaymentStatusTypeID = (int)PaymentStatusTypeEnums.Paid,
-                            Active = true,
-                            CreatedAt = DateTime.Now
+                            PaymentStatusTypeID = (int)PaymentStatusTypeEnums.Paid
                         };
+
+                        API.Add("/payments", payment);
+
                         order.OrderStatusTypeID = (int)OrderStatusTypeEnums.Paid;
-                        _context.Payments.Add(payment);
-                        _context.Orders.Update(order);
-                        _context.SaveChanges();
+                        API.Update($"/orders/{order.ID}", order);
+
                         return RedirectToAction("Details", "Home", new { id = model.CurrentOrderID });
                     }
                 }
@@ -230,12 +219,7 @@ namespace Store.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.Merchant)
-                .Include(o => o.OrderStatusType)
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var order = await GetOrderAsync(id);
 
             if (order == null)
             {
@@ -245,11 +229,12 @@ namespace Store.Controllers
             var orderViewModel = GetOrderViewModel(order);
             return View(orderViewModel);
         }
-        protected bool AddDiscount(Order order, string lookupCode)
+        protected bool AddDiscount(OrderDTO order, string lookupCode)
         {
             try
             {
-                var discount = _context.Items.FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
+                var discount = API.GetAll<ItemDTO>("/items")
+                .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
                 if (discount != null)
                 {
                     var amount = 0M;
@@ -259,18 +244,18 @@ namespace Store.Controllers
                             amount = discount.Price ?? 0;
                             break;
                         case (int)PriceTypeEnums.Variable:
-                            var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID);
+                            var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == order.ID);
+
                             amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
                             break;
                     }
-                    var lineItem = new LineItem
+                    var lineItem = new LineItemDTO
                     {
                         ItemAmount = amount > 0 ? amount * -1 : amount,
                         ItemID = discount.ID,
                         OrderID = order.ID
                     };
-                    _context.LineItems.Add(lineItem);
-                    _context.SaveChanges();
+                    API.Add("/lineitems", lineItem);
                     return true;
                 }
             }
@@ -281,15 +266,16 @@ namespace Store.Controllers
             return false;
 
         }
-        protected bool UpdateDiscounts(Order order)
+        protected bool UpdateDiscounts(OrderDTO order)
         {
             try
             {
-                var discounts = _context.Items.Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
+                var discounts = API.GetAll<ItemDTO>("/items")
+                .Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
                 foreach (var discount in discounts)
                 {
-                    var lineItemDiscount = _context.LineItems.SingleOrDefault(x => x.ItemID == discount.ID);
-                    if (lineItemDiscount != null)
+                    var lineItemDiscount = API.Get<ItemDTO>($"/items/{discount.ID}");
+                    if (lineItemDiscount?.ID > 0)
                     {
 
                         var amount = 0M;
@@ -299,24 +285,26 @@ namespace Store.Controllers
                                 amount = discount.Price ?? 0;
                                 break;
                             case (int)PriceTypeEnums.Variable: //variable
-                                var lineItems = _context.LineItems.Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
+                                var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
                                 amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
                                 break;
                         }
-                        _context.LineItems.Remove(lineItemDiscount);
+
+                        API.Delete($"/lineitems/{lineItemDiscount.ID}");
+
                         if (amount != 0)
                         {
-                            var lineItem = new LineItem
+                            var lineItem = new LineItemDTO
                             {
                                 ItemAmount = amount > 0 ? amount * -1 : amount,
                                 ItemID = discount.ID,
                                 OrderID = order.ID
                             };
-                            _context.LineItems.Add(lineItem);
+                            API.Add("/lineitems", lineItem);
                         }
                     }
                 }
-                _context.SaveChanges();
+
                 return true;
             }
             catch (Exception ex)
@@ -328,7 +316,7 @@ namespace Store.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ApplyDiscount(PaymentViewModel model)
         {
-            var order = _context.Orders.SingleOrDefault(x => x.ID == model.CurrentOrderID);
+            var order = GetOrder(model.CurrentOrderID);
             if (AddDiscount(order, model.PromoCode))
             {
 
@@ -338,7 +326,7 @@ namespace Store.Controllers
         public IActionResult Edit(int itemId, int orderId)
         {
             var model = new RegisterEditViewModel();
-            var lineItems = _context.LineItems.Where(x => x.OrderID == orderId && x.ItemID == itemId);
+            var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
             var lineItem = lineItems.FirstOrDefault();
             if (lineItem != null)
             {
@@ -356,8 +344,7 @@ namespace Store.Controllers
             var msg = string.Empty;
             try
             {
-                var lineItems = _context.LineItems.Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
-
+                var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
                 var itemCount = lineItems.Count;
                 if (itemCount > 0)
                 {
@@ -374,9 +361,8 @@ namespace Store.Controllers
                         // remove
                         for (int i = 0; i < itemCount - model.Quantity && i < lineItems.Count; i++)
                         {
-                            _context.LineItems.Remove(lineItems[i]);
+                            API.Delete($"/lineItems/{lineItems[i].ID}");
                         }
-                        _context.SaveChanges();
                     }
                 }
 
