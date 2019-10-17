@@ -1,5 +1,5 @@
 ﻿using Administration.Constants;
-using Architecture;
+using DataModeling;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

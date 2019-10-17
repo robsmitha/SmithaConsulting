@@ -15,17 +15,25 @@ namespace Store.Controllers
 {
     public class BaseController : Controller
     {
+        public int? ApplicationID => int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
+
+        #region CDN
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
-        public string ConversationStirng => HttpContext.Session.GetString("Conversation") ?? string.Empty;
-        public bool HasSessionConversation => !string.IsNullOrEmpty(ConversationStirng);
+        #endregion
+
+        #region Session
         public int? CustomerID => HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
-        public int? ApplicationID = int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
+        #endregion
+
+        #region API
         public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
-        public static string APIKey = ConfigurationManager.GetConfiguration("APIKey");
+        public static string APIKey = "key";// ConfigurationManager.GetConfiguration("APIKey");
         public APIExtensions API = new APIExtensions(APIEndpoint, APIKey);
+        #endregion
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -66,6 +74,7 @@ namespace Store.Controllers
             }
         }
 
+        #region Order helper methods
         public OrderDTO GetOrder(int? orderId = null)
         {
             if (orderId != null)
@@ -76,6 +85,7 @@ namespace Store.Controllers
             return API.GetAll<OrderDTO>("/orders")
                 .LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
         }
+
         public async Task<OrderDTO> GetOrderAsync(int? orderId = null)
         {
             if (orderId != null)
@@ -100,6 +110,7 @@ namespace Store.Controllers
             }
             return new OrderViewModel(order, lineItems, payments);
         }
+        #endregion
 
     }
 }

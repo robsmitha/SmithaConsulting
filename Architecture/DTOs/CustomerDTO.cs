@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DataModeling;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Architecture.DTOs
 {

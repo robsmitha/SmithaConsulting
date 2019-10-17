@@ -1,4 +1,4 @@
-﻿using Architecture;
+﻿using DataModeling;
 using System.Collections.Generic;
 
 namespace Administration.Models

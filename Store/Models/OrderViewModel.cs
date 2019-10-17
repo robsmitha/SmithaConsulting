@@ -1,4 +1,4 @@
-﻿using Architecture;
+﻿using DataModeling;
 using Architecture.DTOs;
 using Architecture.Services.API;
 using System;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Architecture;
+using DataModeling;
 using Architecture.Enums;
 using Administration.Constants;
 using Administration.Models;

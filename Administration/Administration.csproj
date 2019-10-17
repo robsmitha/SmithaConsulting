@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Architecture\Architecture.csproj" />
+    <ProjectReference Include="..\DataModeling\DataModeling.csproj" />
   </ItemGroup>
 
   <ItemGroup>

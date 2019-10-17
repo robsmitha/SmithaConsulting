@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Architecture.Data;
+using DataModeling.Data;
 using Administration.Models;
 using Architecture.Constants;
 using Architecture.Services.LanguageUnderstanding;

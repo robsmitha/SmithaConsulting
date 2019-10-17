@@ -1,4 +1,4 @@
-﻿using Architecture;
+﻿using DataModeling;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

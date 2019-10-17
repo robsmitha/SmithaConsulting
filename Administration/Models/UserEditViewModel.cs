@@ -1,4 +1,4 @@
-﻿using Architecture;
+﻿using DataModeling;
 using System.ComponentModel.DataAnnotations;
 
 namespace Administration.Models

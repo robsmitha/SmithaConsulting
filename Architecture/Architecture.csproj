@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190930010630_ApplicationType.cs" />
-    <Compile Remove="Migrations\20190930010630_ApplicationType.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Microsoft.EntityFrameworkCore.Relational">
       <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.entityframeworkcore.relational\2.2.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
     </Reference>
@@ -24,6 +19,10 @@
     </Reference>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataModeling\DataModeling.csproj" />
   </ItemGroup>
 
 </Project>

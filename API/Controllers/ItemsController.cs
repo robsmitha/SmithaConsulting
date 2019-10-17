@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Architecture;
-using Architecture.Data;
+using DataModeling;
+using DataModeling.Data;
 using Architecture.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

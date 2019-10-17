@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Architecture;
-using Architecture.Data;
+using DataModeling;
+using DataModeling.Data;
 using Architecture.DTOs;
 
 namespace API.Controllers
