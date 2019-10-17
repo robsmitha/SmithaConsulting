@@ -1,4 +1,5 @@
-﻿using DataModeling;
+﻿using Architecture.DTOs;
+using DataModeling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace Portfolio.Models
 {
     public class BlogListViewModel
     {
-        public List<Blog> Blogs { get; set; }
+        public List<BlogViewModel> Blogs { get; set; }
     }
 }

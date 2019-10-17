@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Blog>
+﻿@model BlogListViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -25,9 +25,9 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-            @if (Model?.Count() > 0)
+            @if (Model?.Blogs != null &&  Model.Blogs.Count() > 0)
             {
-                foreach (var item in Model)
+                foreach (var item in Model.Blogs)
                 {
                     <div class="post-preview">
 
@@ -41,7 +41,7 @@
                         </a>
                         <p class="post-meta">
                             Posted by
-                            <a href="#">@Html.DisplayFor(modelItem => item.User.Email)</a>
+                            <a href="#">@Html.DisplayFor(modelItem => item.AuthorEmail)</a>
                             on @Html.DisplayFor(modelItem => item.PublishDate)
                         </p>
                     </div>

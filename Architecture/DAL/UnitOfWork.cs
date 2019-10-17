@@ -17,6 +17,12 @@ namespace Architecture.DAL
             get => orderRepository = orderRepository ?? new GenericRepository<Order>(_context);
             set => orderRepository = value;
         }
+        private GenericRepository<Blog> blogRepository;
+        public GenericRepository<Blog> BlogRepository
+        {
+            get => blogRepository = blogRepository ?? new GenericRepository<Blog>(_context);
+            set => blogRepository = value;
+        }
         public void Save()
         {
             _context.SaveChanges();

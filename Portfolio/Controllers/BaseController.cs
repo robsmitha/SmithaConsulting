@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Enums;
-using Portfolio.Models;
 using Portfolio.Utilities;
 using Portfolio.Constants;
+using Architecture.Utilities;
+using Architecture.DTOs;
 
 namespace Portfolio.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly DbArchitecture _context;
 
-        public BaseController(DbArchitecture context)
-        {
-            _context = context;
-        }
+        #region API
+        public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
+        public static string APIKey = "key";// ConfigurationManager.GetConfiguration("APIKey");
+        public APIExtensions API = new APIExtensions(APIEndpoint, APIKey);
+        #endregion
+
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
@@ -41,13 +32,12 @@ namespace Portfolio.Controllers
             #region Set Theme in Session
             if (ThemeCDN == null && ApplicationID > 0)
             {
-                var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);
+                var application = API.Get<ApplicationDTO>($"/applications/{ApplicationID}");
                 if (application != null)
                 {
-                    var theme = _context.Themes.SingleOrDefault(t => t.ID == application.ThemeID);
+                    var theme = API.Get<ThemeDTO>($"/themes/{application.ThemeID}");
                     if (theme != null)
                     {
-                        //Set theme
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
                     }
                 }

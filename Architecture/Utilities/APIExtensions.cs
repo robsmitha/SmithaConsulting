@@ -41,6 +41,11 @@ namespace Architecture.Utilities
             var response = Service.Get(!function.StartsWith("/") ? $"/{function}" : function);
             return JsonConvert.DeserializeObject<IEnumerable<T>>(response);
         }
+        public async Task<IEnumerable<T>> GetAllAsync<T>(string function)
+        {
+            var response = await Service.GetAsync(!function.StartsWith("/") ? $"/{function}" : function);
+            return JsonConvert.DeserializeObject<IEnumerable<T>>(response);
+        }
         public void Delete(string function)
         {
             Service.Delete(!function.StartsWith("/") ? $"/{function}" : function);

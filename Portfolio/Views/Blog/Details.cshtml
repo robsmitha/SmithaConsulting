@@ -1,4 +1,4 @@
-﻿@model Blog
+﻿@model BlogViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -17,7 +17,7 @@
                     <h2 class="subheading">@Model.Subheading</h2>
                     <span class="meta">
                         Posted by
-                        <a href="#">@Model.User.Username</a>
+                        <a href="#">@Model.Author</a>
                         on @Model.PublishDate
                     </span>
                 </div>
