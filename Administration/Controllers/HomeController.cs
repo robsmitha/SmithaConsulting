@@ -377,7 +377,7 @@ namespace Administration.Controllers
                         ModelState.AddModelError("CustomError", $"The Username {model.Username} is already taken.");
                     }                 
                 }
-                catch(Exception ex)
+                catch (Exception)
                 {
                     return RedirectToAction("Error");
                 }

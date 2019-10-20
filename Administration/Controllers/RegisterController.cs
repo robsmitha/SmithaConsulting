@@ -188,12 +188,14 @@ namespace Administration.Controllers
                         if (!string.IsNullOrWhiteSpace(model.Email))
                         {
 
-                            var customer = new Customer();
-                            customer.Email = model.Email;
-                            customer.FirstName = model.FirstName;
-                            customer.LastName = model.LastName;
-                            customer.Active = true;
-                            customer.CreatedAt = DateTime.Now;
+                            var customer = new Customer
+                            {
+                                Email = model.Email,
+                                FirstName = model.FirstName,
+                                LastName = model.LastName,
+                                Active = true,
+                                CreatedAt = DateTime.Now
+                            };
                             await _context.AddAsync(customer);
                             await _context.SaveChangesAsync();
                             order.CustomerID = customer.ID;
@@ -299,7 +301,7 @@ namespace Administration.Controllers
                 _context.SaveChanges();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
                 return false;
             }

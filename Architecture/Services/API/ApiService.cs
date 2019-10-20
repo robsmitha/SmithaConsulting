@@ -27,7 +27,7 @@ namespace Architecture.Services.API
                 {
                     response = await client.GetStringAsync($"{Endpoint}{function}");
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -45,7 +45,7 @@ namespace Architecture.Services.API
                 {
                     response = client.GetStringAsync($"{Endpoint}{function}").Result;
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -64,7 +64,7 @@ namespace Architecture.Services.API
                     var response = client.PostAsync($"{Endpoint}{function}", content).Result;
                     return response.Content.ReadAsStringAsync().Result;
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -80,7 +80,7 @@ namespace Architecture.Services.API
                 {
                     return await client.PostAsync($"{Endpoint}{function}", new StringContent(data, Encoding.UTF8, "application/json"));
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -96,7 +96,7 @@ namespace Architecture.Services.API
                 {
                     return await client.PutAsync($"{Endpoint}{function}", new StringContent(data, Encoding.UTF8, "application/json"));
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -113,7 +113,7 @@ namespace Architecture.Services.API
                     var response = client.PutAsync($"{Endpoint}{function}", new StringContent(data, Encoding.UTF8, "application/json")).Result;
                     return response.Content.ReadAsStringAsync().Result;
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }
@@ -130,7 +130,7 @@ namespace Architecture.Services.API
                 {
                     response = client.DeleteAsync(($"{Endpoint}{function}")).Result;
                 }
-                catch (HttpRequestException e)
+                catch (HttpRequestException)
                 {
 
                 }

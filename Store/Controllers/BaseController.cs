@@ -30,7 +30,7 @@ namespace Store.Controllers
 
         #region API
         public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
-        public static string APIKey = "key";// ConfigurationManager.GetConfiguration("APIKey");
+        public static string APIKey = ConfigurationManager.GetConfiguration("APIKey");
         public APIExtensions API = new APIExtensions(APIEndpoint, APIKey);
         #endregion
 
@@ -82,8 +82,9 @@ namespace Store.Controllers
                 var order = API.Get<OrderDTO>($"/orders/{orderId}");
                 return order;
             }
-            return API.GetAll<OrderDTO>("/orders")
-                .LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
+            return CustomerID > 0
+                ? API.GetAll<OrderDTO>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                : null;
         }
 
         public async Task<OrderDTO> GetOrderAsync(int? orderId = null)
