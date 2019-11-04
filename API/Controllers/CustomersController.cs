@@ -86,10 +86,16 @@ namespace API.Controllers
                 CreatedAt = DateTime.Now,
                 Active = true
             };
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
-            return new CustomerDTO(customer);
+            try
+            {
+                _context.Customers.Add(customer);
+                await _context.SaveChangesAsync();
+                return Ok(new CustomerDTO(customer));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         // DELETE: api/Customers/5

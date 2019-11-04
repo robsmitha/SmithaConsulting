@@ -70,7 +70,9 @@ namespace Store.Controllers
         {
             var msg = string.Empty;
             var success = true;
-            var order = await GetOrderAsync(model.CurrentOrderID);
+            var order = await GetOrderAsync();
+            //Create Order if needed
+
             if (MerchantID > 0)
             {
                 var item = API.Get<ItemDTO>($"/items/{model.SelectedItemID}");
@@ -99,6 +101,28 @@ namespace Store.Controllers
                     success = true;
                 }
             }
+
+            //if (order == null)
+            //{
+            //    order = new OrderDTO
+            //    {
+            //        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
+            //        MerchantID = MerchantID.Value,
+            //        CustomerID = CustomerID,
+            //        CreatedAt = DateTime.Now
+            //    };
+            //    order = API.Add("/orders", order);
+            //}
+            //var item = await API.GetAsync<ItemDTO>($"/items/{model.SelectedItemID}");
+            //if (item != null)
+            //{
+            //    var lineItem = new LineItemDTO
+            //    {
+            //        ItemAmount = item.Price.Value,
+            //        ItemID = item.ID,
+            //    };
+            //    API.Add($"/orders/{model.CurrentOrderID}/lineitems/", lineItem);
+            //}
             return Json(new { success, msg, orderId = order?.ID });
         }
 
@@ -135,11 +159,12 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                API.GetAll<LineItemDTO>("/lineitems")
-                    .Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID)
-                    .ToList()
-                    .ForEach(x => API.Delete($"/lineitems/{x.ID}"));
+                //API.GetAll<LineItemDTO>("/lineitems")
+                //    .Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID)
+                //    .ToList()
+                //    .ForEach(x => API.Delete($"/lineitems/{x.ID}"));
 
+                API.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
                 UpdateDiscounts(order);
             }
             catch (Exception ex)

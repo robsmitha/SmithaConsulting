@@ -65,25 +65,36 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<OrderDTO>> Put(int id, OrderDTO dto)
         {
-            var order = unitOfWork.OrderRepository.Get(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
-            
+            var order = unitOfWork.OrderRepository
+                .Get(x => x.ID == id, 
+                includeProperties: "Customer,Merchant,OrderStatusType,User")
+                .FirstOrDefault();          
             if(order != null)
             {
                 order.OrderStatusTypeID = dto.OrderStatusTypeID;
-
                 unitOfWork.OrderRepository.Update(order);
                 await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
-                return new OrderDTO(order);
-
+                return Ok(new OrderDTO(order));
             }
             return NotFound();
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
             unitOfWork.OrderRepository.Delete(id);
+            unitOfWork.Save();
+            return Ok();
+        }
+
+        [HttpDelete("{id}/lineItems/{itemId}")]
+        public ActionResult DeleteLineItemsByItemId(int id, int itemId)
+        {
+            var entities = unitOfWork.LineItemRepository.Get(filter: x => x.OrderID == id && x.ItemID == itemId);
+            unitOfWork.LineItemRepository.DeleteRange(entities);
+            unitOfWork.Save();
+            return Ok();
         }
     }
 }

@@ -247,7 +247,7 @@ namespace DataModeling.Data
             };
             context.Users.Add(user);
 
-            var @namespace = "Architecture";
+            var @namespace = "DataModeling";
             var entities = AppDomain.CurrentDomain.GetAssemblies()
                        .SelectMany(t => t.GetTypes())
                        .Where(t => t.IsClass && t.Namespace == @namespace 
@@ -329,7 +329,7 @@ namespace DataModeling.Data
             context.Permissions.AddRange(permissions);
             context.SaveChanges();
 
-            var roleId = roles.FirstOrDefault(x => x.Name == "Owner").ID;
+            var roleId = roles.First(x => x.Name == "Owner").ID;
             var rolePermissions = new List<RolePermission>();
             foreach (var permission in permissions)
             {

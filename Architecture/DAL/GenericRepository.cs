@@ -16,7 +16,8 @@ namespace Architecture.DAL
             this.context = context;
             this.dbSet = context.Set<TEntity>();
         }
-        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
+        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+            string includeProperties = "")
         {
             IQueryable<TEntity> query = dbSet;
 
@@ -49,6 +50,17 @@ namespace Architecture.DAL
                 dbSet.Attach(entityToDelete);
             }
             dbSet.Remove(entityToDelete);
+        }
+        public virtual void DeleteRange(IEnumerable<TEntity> entities)
+        {
+            foreach(var entityToDelete in entities)
+            {
+                if (context.Entry(entityToDelete).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entityToDelete);
+                }
+            }
+            dbSet.RemoveRange(entities);
         }
         public virtual void Update(TEntity entityToUpdate)
         {

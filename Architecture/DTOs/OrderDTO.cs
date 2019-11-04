@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DataModeling;
 
 namespace Architecture.DTOs
@@ -14,6 +15,8 @@ namespace Architecture.DTOs
         public int? CustomerID { get; set; }
         public int? UserID { get; set; }
         public string OrderStatusType { get; set; }
+        public List<LineItemDTO> LineItems { get; set; }
+        public List<PaymentDTO> Payments { get; set; }
 
         public OrderDTO(Order order)
         {

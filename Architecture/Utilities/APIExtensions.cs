@@ -14,7 +14,6 @@ namespace Architecture.Utilities
         {
             Service = new APIService(endpoint, apiKey);
         }
-        #region Extensions
         public T Get<T>(string function)
         {
             var response = Service.Get(!function.StartsWith("/") ? $"/{function}" : function);
@@ -50,6 +49,5 @@ namespace Architecture.Utilities
         {
             Service.Delete(!function.StartsWith("/") ? $"/{function}" : function);
         }
-        #endregion
     }
 }

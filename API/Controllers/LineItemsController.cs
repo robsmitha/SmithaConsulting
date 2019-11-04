@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
 using Architecture.DTOs;
+using Architecture.DAL;
 
 namespace API.Controllers
 {
@@ -14,63 +15,58 @@ namespace API.Controllers
     [ApiController]
     public class LineItemsController : ControllerBase
     {
-        private readonly DbArchitecture _context;
-
+        private readonly UnitOfWork unitOfWork;
         public LineItemsController(DbArchitecture context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LineItemDTO>>> Get()
+        public ActionResult<IEnumerable<LineItemDTO>> Get()
         {
-            var lineItems = await _context.LineItems.Include(o => o.Item).Select(x => new LineItemDTO(x)).ToListAsync();
-            return lineItems;
+            var lineItems = unitOfWork.LineItemRepository.Get(includeProperties: "Item");
+            try
+            {
+                return Ok(lineItems.Select(x => new LineItemDTO(x)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
 
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItemDTO>> Get(int id)
         {
-            var lineItem = await _context.LineItems.Include(o => o.Item).FirstOrDefaultAsync(x => x.ID == id);
+            var data = await unitOfWork.LineItemRepository
+                .Get(x => x.ID == id, includeProperties: "Item")
+                .AsQueryable()
+                .FirstOrDefaultAsync();
 
-            if (lineItem == null)
+            if (data == null)
             {
                 return NotFound();
             }
-            var dto = new LineItemDTO(lineItem);
+
+            var dto = new LineItemDTO(data);
             return dto;
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, LineItemDTO lineItem)
+        public async Task<ActionResult<LineItemDTO>> Put(int id, LineItemDTO dto)
         {
-            if (id != lineItem.ID)
+            var data = unitOfWork.LineItemRepository.Get(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
+
+            if (data != null)
             {
-                return BadRequest();
+                unitOfWork.LineItemRepository.Update(data);
+                await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
+                return new LineItemDTO(data);
             }
 
-            _context.Entry(lineItem).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LineItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return NotFound();
         }
 
 
@@ -85,31 +81,17 @@ namespace API.Controllers
                 OrderID = dto.OrderID,
                 Active = true
             };
-            _context.Add(lineItem);
-            await _context.SaveChangesAsync();
+
+            unitOfWork.LineItemRepository.Insert(lineItem);
+            await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
 
             return new LineItemDTO(lineItem);
         }
-
         [HttpDelete("{id}")]
-        public async Task<ActionResult<LineItemDTO>> Delete(int id)
+        public void Delete(int id)
         {
-            var lineItem = await _context.LineItems.FindAsync(id);
-            if (lineItem == null)
-            {
-                return NotFound();
-            }
+            unitOfWork.OrderRepository.Delete(id);
 
-            _context.LineItems.Remove(lineItem);
-            await _context.SaveChangesAsync();
-            
-            var dto = new LineItemDTO(lineItem);
-            return dto;
-        }
-
-        private bool LineItemExists(int id)
-        {
-            return _context.LineItems.Any(e => e.ID == id);
         }
     }
 }
