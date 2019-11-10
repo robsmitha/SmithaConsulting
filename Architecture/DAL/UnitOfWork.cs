@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Threading.Tasks;
 using DataModeling;
 using DataModeling.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Architecture.DAL
 {
     public class UnitOfWork : IDisposable
     {
-        private DbArchitecture _context;
+        private readonly DbArchitecture _context;
         public UnitOfWork(DbArchitecture context)
         {
             _context = context;
         }
+
+        #region Repositories
         private GenericRepository<Order> orderRepository;
         public GenericRepository<Order> OrderRepository
         {
@@ -29,9 +33,29 @@ namespace Architecture.DAL
             get => blogRepository = blogRepository ?? new GenericRepository<Blog>(_context);
             set => blogRepository = value;
         }
+        private GenericRepository<Application> applicationRepository;
+        public GenericRepository<Application> ApplicationRepository
+        {
+            get => applicationRepository = applicationRepository ?? new GenericRepository<Application>(_context);
+            set => applicationRepository = value;
+        }
+        #endregion
+
         public void Save()
         {
             _context.SaveChanges();
+        }
+        public async Task<bool> SaveAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
         }
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)

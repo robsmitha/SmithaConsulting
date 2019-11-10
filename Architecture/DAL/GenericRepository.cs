@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Architecture.DAL
 {
@@ -16,7 +17,8 @@ namespace Architecture.DAL
             this.context = context;
             this.dbSet = context.Set<TEntity>();
         }
-        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+        public virtual IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null, 
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
             string includeProperties = "")
         {
             IQueryable<TEntity> query = dbSet;
@@ -30,42 +32,123 @@ namespace Architecture.DAL
 
             return orderBy != null ? orderBy(query).ToList() : query.ToList();  
         }
-        public virtual TEntity GetByID(object id)
+        public async virtual Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "")
         {
-            return dbSet.Find(id);
+            IQueryable<TEntity> query = dbSet;
+
+            query = filter != null ? query.Where(filter) : query;
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return orderBy != null 
+                ? await orderBy(query).ToListAsync() 
+                : await query.ToListAsync();
         }
-        public virtual void Insert(TEntity entity)
+        public virtual TEntity Get(Expression<Func<TEntity, bool>> filter, string includeProperties = "")
+        {
+            IQueryable<TEntity> query = dbSet;
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return query.FirstOrDefault(filter);
+        }
+        public async virtual Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, string includeProperties = "")
+        {
+            IQueryable<TEntity> query = dbSet;
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return await query.FirstOrDefaultAsync(filter);
+        }
+
+        public virtual void Add(TEntity entity)
         {
             dbSet.Add(entity);
         }
+        public async void AddAsync(TEntity entity)
+        {
+            await dbSet.AddAsync(entity);
+        }
+        public virtual void AddRange(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                if (context.Entry(entity).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entity);
+                }
+            }
+            dbSet.AddRange(entities);
+        }
+        public async virtual void AddRangeAsync(IEnumerable<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                if (context.Entry(entity).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entity);
+                }
+            }
+            await dbSet.AddRangeAsync(entities);
+        }
+
         public virtual void Delete(object id)
         {
-            TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
+            TEntity entity = dbSet.Find(id);
+            Delete(entity);
         }
-        public virtual void Delete(TEntity entityToDelete)
+        public async virtual void DeleteAsync(object id)
         {
-            if (context.Entry(entityToDelete).State == EntityState.Detached)
+            TEntity entity = dbSet.Find(id);
+            await Task.Run(() => DeleteAsync(entity));
+        }
+        public virtual void Delete(TEntity entity)
+        {
+            if (context.Entry(entity).State == EntityState.Detached)
             {
-                dbSet.Attach(entityToDelete);
+                dbSet.Attach(entity);
             }
-            dbSet.Remove(entityToDelete);
+            dbSet.Remove(entity);
+        }
+        public async virtual void DeleteAsync(TEntity entity)
+        {
+            if (context.Entry(entity).State == EntityState.Detached)
+            {
+                dbSet.Attach(entity);
+            }
+            await Task.Run(() => dbSet.Remove(entity));
         }
         public virtual void DeleteRange(IEnumerable<TEntity> entities)
         {
-            foreach(var entityToDelete in entities)
+            foreach(var entity in entities)
             {
-                if (context.Entry(entityToDelete).State == EntityState.Detached)
+                if (context.Entry(entity).State == EntityState.Detached)
                 {
-                    dbSet.Attach(entityToDelete);
+                    dbSet.Attach(entity);
                 }
             }
             dbSet.RemoveRange(entities);
         }
-        public virtual void Update(TEntity entityToUpdate)
+        public virtual void Update(TEntity entity)
         {
-            dbSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            dbSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
+        }
+        public async virtual void UpdateAsync(TEntity entity)
+        {
+            await Task.Run(() => dbSet.Attach(entity));
+            context.Entry(entity).State = EntityState.Modified;
         }
 
     }

@@ -24,21 +24,21 @@ namespace API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<OrderDTO>> Get()
         {
-            var orders = unitOfWork.OrderRepository.Get(includeProperties: "Customer,Merchant,OrderStatusType,User");
-            return orders.Select(x => new OrderDTO(x)).ToArray();
+            var orders = unitOfWork.OrderRepository.GetAll(includeProperties: "Customer,Merchant,OrderStatusType,User");
+            return Ok(orders.Select(x => new OrderDTO(x)).ToArray());
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public ActionResult<OrderDTO> Get(int id)
         {
-            var order = unitOfWork.OrderRepository.Get(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
+            var order = unitOfWork.OrderRepository.GetAll(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
             if(order == null)
             {
                 return NotFound();
             }
             var orderDTO = new OrderDTO(order);
-            return orderDTO;
+            return Ok(orderDTO);
         }
 
         // POST api/values
@@ -55,10 +55,10 @@ namespace API.Controllers
                 Active = true
             };
 
-            unitOfWork.OrderRepository.Insert(order);
+            unitOfWork.OrderRepository.Add(order);
             await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
 
-            return new OrderDTO(order);
+            return Ok(new OrderDTO(order));
         }
 
         // PUT api/values/5
@@ -66,7 +66,7 @@ namespace API.Controllers
         public async Task<ActionResult<OrderDTO>> Put(int id, OrderDTO dto)
         {
             var order = unitOfWork.OrderRepository
-                .Get(x => x.ID == id, 
+                .GetAll(x => x.ID == id, 
                 includeProperties: "Customer,Merchant,OrderStatusType,User")
                 .FirstOrDefault();          
             if(order != null)
@@ -91,7 +91,7 @@ namespace API.Controllers
         [HttpDelete("{id}/lineItems/{itemId}")]
         public ActionResult DeleteLineItemsByItemId(int id, int itemId)
         {
-            var entities = unitOfWork.LineItemRepository.Get(filter: x => x.OrderID == id && x.ItemID == itemId);
+            var entities = unitOfWork.LineItemRepository.GetAll(filter: x => x.OrderID == id && x.ItemID == itemId);
             unitOfWork.LineItemRepository.DeleteRange(entities);
             unitOfWork.Save();
             return Ok();

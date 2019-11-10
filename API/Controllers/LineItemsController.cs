@@ -24,7 +24,7 @@ namespace API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<LineItemDTO>> Get()
         {
-            var lineItems = unitOfWork.LineItemRepository.Get(includeProperties: "Item");
+            var lineItems = unitOfWork.LineItemRepository.GetAll(includeProperties: "Item");
             try
             {
                 return Ok(lineItems.Select(x => new LineItemDTO(x)));
@@ -40,7 +40,7 @@ namespace API.Controllers
         public async Task<ActionResult<LineItemDTO>> Get(int id)
         {
             var data = await unitOfWork.LineItemRepository
-                .Get(x => x.ID == id, includeProperties: "Item")
+                .GetAll(x => x.ID == id, includeProperties: "Item")
                 .AsQueryable()
                 .FirstOrDefaultAsync();
 
@@ -57,7 +57,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<LineItemDTO>> Put(int id, LineItemDTO dto)
         {
-            var data = unitOfWork.LineItemRepository.Get(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
+            var data = unitOfWork.LineItemRepository.GetAll(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
 
             if (data != null)
             {
@@ -82,7 +82,7 @@ namespace API.Controllers
                 Active = true
             };
 
-            unitOfWork.LineItemRepository.Insert(lineItem);
+            unitOfWork.LineItemRepository.Add(lineItem);
             await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
 
             return new LineItemDTO(lineItem);

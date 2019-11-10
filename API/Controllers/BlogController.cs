@@ -28,7 +28,7 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<BlogDTO>>> GetBlogs()
         {
             var blog = unitOfWork.BlogRepository
-                .Get(includeProperties: "BlogStatusType,User")
+                .GetAll(includeProperties: "BlogStatusType,User")
                 .Select(x => new BlogDTO(x));
             return await System.Threading.Tasks.Task.Run(() => blog.ToList());
         }
@@ -38,7 +38,7 @@ namespace API.Controllers
         public async Task<ActionResult<BlogDTO>> GetBlog(int id)
         {
             var blog = await System.Threading.Tasks.Task.Run(() => unitOfWork.BlogRepository
-                .Get(x => x.ID == id, includeProperties: "BlogStatusType,User")
+                .GetAll(x => x.ID == id, includeProperties: "BlogStatusType,User")
                 .Select(x => new BlogDTO(x))
                 .SingleOrDefault());
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
 using Architecture.DTOs;
+using Architecture.DAL;
 
 namespace API.Controllers
 {
@@ -15,35 +16,37 @@ namespace API.Controllers
     [ApiController]
     public class ApplicationsController : ControllerBase
     {
-        private readonly DbArchitecture _context;
-
+        private readonly UnitOfWork unitOfWork;
         public ApplicationsController(DbArchitecture context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
         }
-
         // GET: api/Applications
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ApplicationDTO>>> GetApplications()
         {
-            var applications = _context.Applications
-                .Include(o => o.ApplicationType);
-            return await applications.Select(x=> new ApplicationDTO(x)).ToListAsync();
+            var applications = await unitOfWork
+                .ApplicationRepository
+                .GetAllAsync(includeProperties: "ApplicationType");
+
+            return Ok(applications.Select(x => new ApplicationDTO(x)).ToArray());
         }
 
         // GET: api/Applications/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationDTO>> GetApplication(int id)
         {
-            var application = await _context.Applications.FindAsync(id);
-
+            var application = await unitOfWork
+                .ApplicationRepository
+                .GetAsync(x => x.ID == id, includeProperties: "ApplicationType");
+            
             if (application == null)
             {
                 return NotFound();
             }
 
             var dto = new ApplicationDTO(application);
-            return dto;
+            return Ok(dto);
         }
 
         // PUT: api/Applications/5
@@ -54,65 +57,26 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-
-            var application = await _context.Applications.SingleOrDefaultAsync(x => x.ID == id);
-
-            _context.Entry(application).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ApplicationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Applications
-        [HttpPost]
-        public async Task<ActionResult<ApplicationDTO>> PostApplication(ApplicationDTO dto)
-        {
-            var application = new Application
-            {
-                ApplicationTypeID = dto.ApplicationTypeID,
-                Description = dto.Description,
-                Name = dto.Name
-            };
-            _context.Applications.Add(application);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetApplication", new { id = dto.ID }, dto);
-        }
-
-        // DELETE: api/Applications/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Application>> DeleteApplication(int id)
-        {
-            var application = await _context.Applications.FindAsync(id);
-            if (application == null)
+            var application = unitOfWork
+                .ApplicationRepository
+                .GetAll(x => x.ID == id, includeProperties: "ApplicationType").FirstOrDefault();
+            
+            if(application == null)
             {
                 return NotFound();
             }
 
-            _context.Applications.Remove(application);
-            await _context.SaveChangesAsync();
+            unitOfWork.ApplicationRepository.Update(application);
 
-            return application;
-        }
-
-        private bool ApplicationExists(int id)
-        {
-            return _context.Applications.Any(e => e.ID == id);
+            try
+            {
+                await unitOfWork.SaveAsync();
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
