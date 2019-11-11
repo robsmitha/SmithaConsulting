@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace API.Controllers
 {
@@ -23,14 +23,14 @@ namespace API.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerModel>>> GetCustomers()
         {
-            return await _context.Customers.Select(x => new CustomerDTO(x)).ToListAsync();
+            return await _context.Customers.Select(x => new CustomerModel(x)).ToListAsync();
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerDTO>> GetCustomer(int id)
+        public async Task<ActionResult<CustomerModel>> GetCustomer(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
 
@@ -39,13 +39,13 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var dto = new CustomerDTO(customer);
+            var dto = new CustomerModel(customer);
             return dto;
         }
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, CustomerDTO customer)
+        public async Task<IActionResult> PutCustomer(int id, CustomerModel customer)
         {
             if (id != customer.ID)
             {
@@ -75,7 +75,7 @@ namespace API.Controllers
 
         // POST: api/Customers
         [HttpPost]
-        public async Task<ActionResult<CustomerDTO>> PostCustomer(CustomerDTO dto)
+        public async Task<ActionResult<CustomerModel>> PostCustomer(CustomerModel dto)
         {
             var customer = new Customer
             {
@@ -90,7 +90,7 @@ namespace API.Controllers
             {
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
-                return Ok(new CustomerDTO(customer));
+                return Ok(new CustomerModel(customer));
             }
             catch(Exception ex)
             {
@@ -100,7 +100,7 @@ namespace API.Controllers
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CustomerDTO>> DeleteCustomer(int id)
+        public async Task<ActionResult<CustomerModel>> DeleteCustomer(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
@@ -111,7 +111,7 @@ namespace API.Controllers
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 
-            var dto = new CustomerDTO(customer);
+            var dto = new CustomerModel(customer);
             return dto;
         }
 

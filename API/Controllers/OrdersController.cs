@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DataModeling;
 using Architecture.DAL;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 using Architecture.Enums;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,28 +22,28 @@ namespace API.Controllers
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<OrderDTO>> Get()
+        public ActionResult<IEnumerable<OrderModel>> Get()
         {
             var orders = unitOfWork.OrderRepository.GetAll(includeProperties: "Customer,Merchant,OrderStatusType,User");
-            return Ok(orders.Select(x => new OrderDTO(x)).ToArray());
+            return Ok(orders.Select(x => new OrderModel(x)).ToArray());
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<OrderDTO> Get(int id)
+        public ActionResult<OrderModel> Get(int id)
         {
             var order = unitOfWork.OrderRepository.GetAll(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
             if(order == null)
             {
                 return NotFound();
             }
-            var orderDTO = new OrderDTO(order);
+            var orderDTO = new OrderModel(order);
             return Ok(orderDTO);
         }
 
         // POST api/values
         [HttpPost]
-        public async Task<ActionResult<OrderDTO>> Post( OrderDTO dto)
+        public async Task<ActionResult<OrderModel>> Post( OrderModel dto)
         {
             var order = new Order
             {
@@ -58,12 +58,12 @@ namespace API.Controllers
             unitOfWork.OrderRepository.Add(order);
             await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
 
-            return Ok(new OrderDTO(order));
+            return Ok(new OrderModel(order));
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<OrderDTO>> Put(int id, OrderDTO dto)
+        public async Task<ActionResult<OrderModel>> Put(int id, OrderModel dto)
         {
             var order = unitOfWork.OrderRepository
                 .GetAll(x => x.ID == id, 
@@ -74,7 +74,7 @@ namespace API.Controllers
                 order.OrderStatusTypeID = dto.OrderStatusTypeID;
                 unitOfWork.OrderRepository.Update(order);
                 await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
-                return Ok(new OrderDTO(order));
+                return Ok(new OrderModel(order));
             }
             return NotFound();
         }

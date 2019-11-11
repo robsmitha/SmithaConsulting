@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace API.Controllers
 {
@@ -24,15 +24,15 @@ namespace API.Controllers
 
         // GET: api/Themes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ThemeDTO>>> GetThemes()
+        public async Task<ActionResult<IEnumerable<ThemeModel>>> GetThemes()
         {
             var themes = _context.Themes;
-            return await themes.Select(x => new ThemeDTO(x)).ToListAsync();
+            return await themes.Select(x => new ThemeModel(x)).ToListAsync();
         }
 
         // GET: api/Themes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ThemeDTO>> GetTheme(int id)
+        public async Task<ActionResult<ThemeModel>> GetTheme(int id)
         {
             var theme = await _context.Themes.FindAsync(id);
 
@@ -41,7 +41,7 @@ namespace API.Controllers
                 return NotFound();
             }
             
-            return new ThemeDTO(theme);
+            return new ThemeModel(theme);
         }
 
         // PUT: api/Themes/5

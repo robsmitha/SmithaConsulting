@@ -1,14 +1,14 @@
 ﻿using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class MerchantDTO
+    public class MerchantModel
     {
         public int ID { get; set; }
         public string MerchantName { get; set; }
         public int MerchantTypeID { get; set; }
         public bool Active { get; set; }
-        public MerchantDTO(Merchant merchant)
+        public MerchantModel(Merchant merchant)
         {
             if (merchant != null)
             {
@@ -19,6 +19,6 @@ namespace Architecture.DTOs
             }
         }
 
-        public MerchantDTO() { }
+        public MerchantModel() { }
     }
 }

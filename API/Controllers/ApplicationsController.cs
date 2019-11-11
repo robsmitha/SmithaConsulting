@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 using Architecture.DAL;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -17,24 +18,25 @@ namespace API.Controllers
     public class ApplicationsController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
+        private readonly Mapper mapper;
         public ApplicationsController(DbArchitecture context)
         {
             unitOfWork = new UnitOfWork(context);
         }
         // GET: api/Applications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ApplicationDTO>>> GetApplications()
+        public async Task<ActionResult<IEnumerable<ApplicationModel>>> GetApplications()
         {
             var applications = await unitOfWork
                 .ApplicationRepository
                 .GetAllAsync(includeProperties: "ApplicationType");
 
-            return Ok(applications.Select(x => new ApplicationDTO(x)).ToArray());
+            return Ok(applications.Select(x => new ApplicationModel(x)).ToArray());
         }
 
         // GET: api/Applications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationDTO>> GetApplication(int id)
+        public async Task<ActionResult<ApplicationModel>> GetApplication(int id)
         {
             var application = await unitOfWork
                 .ApplicationRepository
@@ -45,13 +47,13 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var dto = new ApplicationDTO(application);
+            var dto = new ApplicationModel(application);
             return Ok(dto);
         }
 
         // PUT: api/Applications/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutApplication(int id, ApplicationDTO dto)
+        public async Task<IActionResult> PutApplication(int id, ApplicationModel dto)
         {
             if (id != dto.ID)
             {

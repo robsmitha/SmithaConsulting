@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class BlogDTO
+    public class BlogModel
     {
         public int ID { get; set; }
         public string Author { get; set; }
@@ -17,8 +17,8 @@ namespace Architecture.DTOs
         public int BlogStatusTypeID { get; set; }
         public DateTime? PublishDate { get; set; }
         public int UserID { get; set; }
-        public BlogDTO() { }
-        public BlogDTO(Blog x)
+        public BlogModel() { }
+        public BlogModel(Blog x)
         {
             if(x != null)
             {

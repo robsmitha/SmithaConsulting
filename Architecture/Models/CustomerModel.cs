@@ -1,9 +1,9 @@
 ﻿using DataModeling;
 using System;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class CustomerDTO
+    public class CustomerModel
     {
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -12,7 +12,7 @@ namespace Architecture.DTOs
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
-        public CustomerDTO(Customer customer)
+        public CustomerModel(Customer customer)
         {
             if (customer != null)
             {
@@ -25,6 +25,6 @@ namespace Architecture.DTOs
             }
         }
 
-        public CustomerDTO() { }
+        public CustomerModel() { }
     }
 }

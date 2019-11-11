@@ -1,20 +1,15 @@
-﻿using DataModeling;
-using Architecture.DTOs;
-using Architecture.Services.API;
-using System;
+﻿using Architecture.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Store.Models
 {
     public class OrderViewModel
     {
-        public OrderDTO Order { get; set; }
-        public List<LineItemDTO> LineItems { get; set; }
-        public List<PaymentDTO> Payments { get; set; }
+        public OrderModel Order { get; set; }
+        public List<LineItemModel> LineItems { get; set; }
+        public List<PaymentModel> Payments { get; set; }
         public OrderViewModel() { }
-        public OrderViewModel(OrderDTO order, List<LineItemDTO> lineItems, List<PaymentDTO> payments)
+        public OrderViewModel(OrderModel order, List<LineItemModel> lineItems, List<PaymentModel> payments)
         {
             Order = order;
             LineItems = lineItems;

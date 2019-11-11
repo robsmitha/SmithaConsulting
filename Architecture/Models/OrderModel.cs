@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class OrderDTO
+    public class OrderModel
     {
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -15,10 +15,10 @@ namespace Architecture.DTOs
         public int? CustomerID { get; set; }
         public int? UserID { get; set; }
         public string OrderStatusType { get; set; }
-        public List<LineItemDTO> LineItems { get; set; }
-        public List<PaymentDTO> Payments { get; set; }
+        public List<LineItemModel> LineItems { get; set; }
+        public List<PaymentModel> Payments { get; set; }
 
-        public OrderDTO(Order order)
+        public OrderModel(Order order)
         {
             if (order != null)
             {
@@ -34,7 +34,7 @@ namespace Architecture.DTOs
             }
         }
 
-        public OrderDTO() { }
+        public OrderModel() { }
 
     }
 }

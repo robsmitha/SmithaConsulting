@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class ApplicationDTO
+    public class ApplicationModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int ApplicationTypeID { get; set; }
         public int ThemeID { get; set; }
-        public ApplicationDTO() { }
-        public ApplicationDTO(Application application)
+        public ApplicationModel() { }
+        public ApplicationModel(Application application)
         {
             if(application != null)
             {

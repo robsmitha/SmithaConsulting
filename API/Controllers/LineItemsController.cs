@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 using Architecture.DAL;
 
 namespace API.Controllers
@@ -22,12 +22,12 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<LineItemDTO>> Get()
+        public ActionResult<IEnumerable<LineItemModel>> Get()
         {
             var lineItems = unitOfWork.LineItemRepository.GetAll(includeProperties: "Item");
             try
             {
-                return Ok(lineItems.Select(x => new LineItemDTO(x)));
+                return Ok(lineItems.Select(x => new LineItemModel(x)));
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@ namespace API.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LineItemDTO>> Get(int id)
+        public async Task<ActionResult<LineItemModel>> Get(int id)
         {
             var data = await unitOfWork.LineItemRepository
                 .GetAll(x => x.ID == id, includeProperties: "Item")
@@ -49,13 +49,13 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var dto = new LineItemDTO(data);
+            var dto = new LineItemModel(data);
             return dto;
         }
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<LineItemDTO>> Put(int id, LineItemDTO dto)
+        public async Task<ActionResult<LineItemModel>> Put(int id, LineItemModel dto)
         {
             var data = unitOfWork.LineItemRepository.GetAll(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
 
@@ -63,7 +63,7 @@ namespace API.Controllers
             {
                 unitOfWork.LineItemRepository.Update(data);
                 await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
-                return new LineItemDTO(data);
+                return new LineItemModel(data);
             }
 
             return NotFound();
@@ -71,7 +71,7 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<LineItemDTO>> Post(LineItemDTO dto)
+        public async Task<ActionResult<LineItemModel>> Post(LineItemModel dto)
         {
             var lineItem = new LineItem
             {
@@ -85,7 +85,7 @@ namespace API.Controllers
             unitOfWork.LineItemRepository.Add(lineItem);
             await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
 
-            return new LineItemDTO(lineItem);
+            return new LineItemModel(lineItem);
         }
         [HttpDelete("{id}")]
         public void Delete(int id)

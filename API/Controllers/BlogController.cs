@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
 using Architecture.DAL;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace API.Controllers
 {
@@ -25,21 +25,21 @@ namespace API.Controllers
 
         // GET: api/Blogs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetBlogs()
+        public async Task<ActionResult<IEnumerable<BlogModel>>> GetBlogs()
         {
             var blog = unitOfWork.BlogRepository
                 .GetAll(includeProperties: "BlogStatusType,User")
-                .Select(x => new BlogDTO(x));
+                .Select(x => new BlogModel(x));
             return await System.Threading.Tasks.Task.Run(() => blog.ToList());
         }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BlogDTO>> GetBlog(int id)
+        public async Task<ActionResult<BlogModel>> GetBlog(int id)
         {
             var blog = await System.Threading.Tasks.Task.Run(() => unitOfWork.BlogRepository
                 .GetAll(x => x.ID == id, includeProperties: "BlogStatusType,User")
-                .Select(x => new BlogDTO(x))
+                .Select(x => new BlogModel(x))
                 .SingleOrDefault());
 
             if (blog == null)

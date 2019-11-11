@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataModeling;
 using DataModeling.Data;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace API.Controllers
 {
@@ -24,16 +24,16 @@ namespace API.Controllers
 
         // GET: api/Merchants
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MerchantDTO>>> GetMerchants()
+        public async Task<ActionResult<IEnumerable<MerchantModel>>> GetMerchants()
         {
             var merchants = _context.Merchants
                 .Include(o => o.MerchantType);
-            return await merchants.Select(x => new MerchantDTO(x)).ToListAsync();
+            return await merchants.Select(x => new MerchantModel(x)).ToListAsync();
         }
 
         // GET: api/Merchants/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MerchantDTO>> GetMerchant(int id)
+        public async Task<ActionResult<MerchantModel>> GetMerchant(int id)
         {
             var merchant = await _context.Merchants.FindAsync(id);
 
@@ -41,7 +41,7 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            var dto = new MerchantDTO(merchant);
+            var dto = new MerchantModel(merchant);
             return dto;
         }
 

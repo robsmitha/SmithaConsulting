@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class PaymentDTO
+    public class PaymentModel
     {
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

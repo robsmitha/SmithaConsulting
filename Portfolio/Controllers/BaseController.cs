@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Portfolio.Utilities;
 using Portfolio.Constants;
 using Architecture.Utilities;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace Portfolio.Controllers
 {
@@ -32,10 +32,10 @@ namespace Portfolio.Controllers
             #region Set Theme in Session
             if (ThemeCDN == null && ApplicationID > 0)
             {
-                var application = API.Get<ApplicationDTO>($"/applications/{ApplicationID}");
+                var application = API.Get<ApplicationModel>($"/applications/{ApplicationID}");
                 if (application != null)
                 {
-                    var theme = API.Get<ThemeDTO>($"/themes/{application.ThemeID}");
+                    var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");
                     if (theme != null)
                     {
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);

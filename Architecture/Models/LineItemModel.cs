@@ -1,9 +1,9 @@
 ﻿using System;
 using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class LineItemDTO
+    public class LineItemModel
     {
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -14,7 +14,7 @@ namespace Architecture.DTOs
         public int ItemTypeID { get; set; }
         public string ItemDescription { get; set; }
 
-        public LineItemDTO(LineItem lineItem)
+        public LineItemModel(LineItem lineItem)
         {
             if (lineItem != null)
             {
@@ -29,6 +29,6 @@ namespace Architecture.DTOs
             }
         }
 
-        public LineItemDTO() { }
+        public LineItemModel() { }
     }
 }

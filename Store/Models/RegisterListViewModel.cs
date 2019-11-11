@@ -1,17 +1,12 @@
-﻿using DataModeling;
-using Architecture.DTOs;
-using Architecture.Services.API;
-using System;
+﻿using Architecture.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Store.Models
 {
     public class RegisterListViewModel
     {
-        public List<ItemDTO> Items { get; set; }
-        public RegisterListViewModel(List<ItemDTO> items)
+        public List<ItemModel> Items { get; set; }
+        public RegisterListViewModel(List<ItemModel> items)
         {
             Items = items;
         }

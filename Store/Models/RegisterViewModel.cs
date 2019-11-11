@@ -1,4 +1,4 @@
-﻿using Architecture.DTOs;
+﻿using Architecture.Models;
 
 namespace Store.Models
 {
@@ -9,9 +9,9 @@ namespace Store.Models
         public int SelectedItemID { get; set; }
         public int SelectedLineItemID { get; set; }
         public int? CurrentOrderID { get; set; }
-        public OrderDTO Order { get; set; }
+        public OrderModel Order { get; set; }
         public RegisterViewModel() { }
-        public RegisterViewModel(OrderDTO order)
+        public RegisterViewModel(OrderModel order)
         {
             Order = order;
             CurrentOrderID = order?.ID;

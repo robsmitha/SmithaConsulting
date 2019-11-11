@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Architecture.Enums;
 using Store.Models;
-using Architecture.DTOs;
+using Architecture.Models;
 
 namespace Store.Controllers
 {
@@ -21,10 +21,10 @@ namespace Store.Controllers
         public IActionResult List(int? orderId)
         {
             var order = GetOrder(orderId);
-            var items = new List<ItemDTO>();
+            var items = new List<ItemModel>();
             if (MerchantID > 0)
             {
-                items = API.GetAll<ItemDTO>("/items").Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
+                items = API.GetAll<ItemModel>("/items").Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
             }
             var model = new RegisterListViewModel(items);
             return PartialView(model);
@@ -38,10 +38,10 @@ namespace Store.Controllers
         }
         protected bool AddLineItem(int itemId, int? orderId = null)
         {
-            var item = API.Get<ItemDTO>($"/items/{itemId}");
+            var item = API.Get<ItemModel>($"/items/{itemId}");
             if (item?.ID > 0)
             {
-                var lineItem = new LineItemDTO
+                var lineItem = new LineItemModel
                 {
                     ItemAmount = item.Price ?? 0M,
                     ItemID = item.ID,
@@ -50,7 +50,7 @@ namespace Store.Controllers
                 //Create Order if needed
                 if (order == null)
                 {
-                    order = new OrderDTO
+                    order = new OrderModel
                     {
                         OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
                         MerchantID = MerchantID.Value,
@@ -75,10 +75,10 @@ namespace Store.Controllers
 
             if (MerchantID > 0)
             {
-                var item = API.Get<ItemDTO>($"/items/{model.SelectedItemID}");
+                var item = API.Get<ItemModel>($"/items/{model.SelectedItemID}");
                 if (item != null)
                 {
-                    var lineItem = new LineItemDTO
+                    var lineItem = new LineItemModel
                     {
                         ItemAmount = item.Price.Value,
                         ItemID = item.ID,
@@ -86,7 +86,7 @@ namespace Store.Controllers
                     //Create Order if needed
                     if (order == null)
                     {
-                        order = new OrderDTO
+                        order = new OrderModel
                         {
                             OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
                             MerchantID = MerchantID.Value,
@@ -135,7 +135,7 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                var lineItem = API.GetAll<LineItemDTO>("/lineitems")
+                var lineItem = API.GetAll<LineItemModel>("/lineitems")
                     .LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
                 if (lineItem != null)
                 {
@@ -196,16 +196,16 @@ namespace Store.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var customer = await API.GetAsync<CustomerDTO>($"/customers/{CustomerID.Value}");
+                        var customer = await API.GetAsync<CustomerModel>($"/customers/{CustomerID.Value}");
                         customer.Email = model.Email;
                         customer.FirstName = model.FirstName;
                         customer.LastName = model.LastName;
                         API.Add("/customer", customer);
 
-                        var amount = API.GetAll<LineItemDTO>("/lineitems")
+                        var amount = API.GetAll<LineItemModel>("/lineitems")
                             .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
                         //Create payment on order.
-                        var payment = new PaymentDTO
+                        var payment = new PaymentModel
                         {
                             OrderID = model.CurrentOrderID,
                             PaymentTypeID = (int)PaymentTypeEnums.CreditCardManual,
@@ -254,11 +254,11 @@ namespace Store.Controllers
             var orderViewModel = GetOrderViewModel(order);
             return View(orderViewModel);
         }
-        protected bool AddDiscount(OrderDTO order, string lookupCode)
+        protected bool AddDiscount(OrderModel order, string lookupCode)
         {
             try
             {
-                var discount = API.GetAll<ItemDTO>("/items")
+                var discount = API.GetAll<ItemModel>("/items")
                 .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
                 if (discount != null)
                 {
@@ -269,12 +269,12 @@ namespace Store.Controllers
                             amount = discount.Price ?? 0;
                             break;
                         case (int)PriceTypeEnums.Variable:
-                            var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == order.ID);
+                            var lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == order.ID);
 
                             amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
                             break;
                     }
-                    var lineItem = new LineItemDTO
+                    var lineItem = new LineItemModel
                     {
                         ItemAmount = amount > 0 ? amount * -1 : amount,
                         ItemID = discount.ID,
@@ -291,15 +291,15 @@ namespace Store.Controllers
             return false;
 
         }
-        protected bool UpdateDiscounts(OrderDTO order)
+        protected bool UpdateDiscounts(OrderModel order)
         {
             try
             {
-                var discounts = API.GetAll<ItemDTO>("/items")
+                var discounts = API.GetAll<ItemModel>("/items")
                 .Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
                 foreach (var discount in discounts)
                 {
-                    var lineItemDiscount = API.Get<ItemDTO>($"/items/{discount.ID}");
+                    var lineItemDiscount = API.Get<ItemModel>($"/items/{discount.ID}");
                     if (lineItemDiscount?.ID > 0)
                     {
 
@@ -310,7 +310,7 @@ namespace Store.Controllers
                                 amount = discount.Price ?? 0;
                                 break;
                             case (int)PriceTypeEnums.Variable: //variable
-                                var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
+                                var lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
                                 amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
                                 break;
                         }
@@ -319,7 +319,7 @@ namespace Store.Controllers
 
                         if (amount != 0)
                         {
-                            var lineItem = new LineItemDTO
+                            var lineItem = new LineItemModel
                             {
                                 ItemAmount = amount > 0 ? amount * -1 : amount,
                                 ItemID = discount.ID,
@@ -351,7 +351,7 @@ namespace Store.Controllers
         public IActionResult Edit(int itemId, int orderId)
         {
             var model = new RegisterEditViewModel();
-            var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
+            var lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
             var lineItem = lineItems.FirstOrDefault();
             if (lineItem != null)
             {
@@ -369,7 +369,7 @@ namespace Store.Controllers
             var msg = string.Empty;
             try
             {
-                var lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
+                var lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
                 var itemCount = lineItems.Count;
                 if (itemCount > 0)
                 {

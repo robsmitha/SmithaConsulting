@@ -8,7 +8,7 @@ using Architecture.Enums;
 using Store.Constants;
 using Store.Models;
 using Store.Utilities;
-using Architecture.DTOs;
+using Architecture.Models;
 using Architecture.Utilities;
 
 namespace Store.Controllers
@@ -44,17 +44,17 @@ namespace Store.Controllers
 
             if (CustomerID == null)
             {
-                var customer = API.Add("/customers", new CustomerDTO());
+                var customer = API.Add("/customers", new CustomerModel());
                 CreateCustomerSession(customer);
             }
 
             #region Set Theme in Session
             if (ThemeCDN == null && ApplicationID > 0)
             {
-                var application = API.Get<ApplicationDTO>($"/applications/{ApplicationID}");
+                var application = API.Get<ApplicationModel>($"/applications/{ApplicationID}");
                 if (application != null)
                 {
-                    var theme = API.Get<ThemeDTO>($"/themes/{application.ThemeID}");
+                    var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");
                     if (theme != null)
                     {
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
@@ -64,10 +64,10 @@ namespace Store.Controllers
             #endregion
         }
 
-        public void CreateCustomerSession(CustomerDTO customer)
+        public void CreateCustomerSession(CustomerModel customer)
         {
             HttpContext.Session.SetInt32(SessionKeysConstants.CUSTOMER_ID, customer.ID);
-            var merchantId = API.GetAll<MerchantDTO>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
+            var merchantId = API.GetAll<MerchantModel>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
             if (merchantId != null)
             {
                 HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
@@ -75,38 +75,38 @@ namespace Store.Controllers
         }
 
         #region Order helper methods
-        public OrderDTO GetOrder(int? orderId = null)
+        public OrderModel GetOrder(int? orderId = null)
         {
             if (orderId != null)
             {
-                var order = API.Get<OrderDTO>($"/orders/{orderId}");
+                var order = API.Get<OrderModel>($"/orders/{orderId}");
                 return order;
             }
             return CustomerID > 0
-                ? API.GetAll<OrderDTO>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                ? API.GetAll<OrderModel>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                 : null;
         }
 
-        public async Task<OrderDTO> GetOrderAsync(int? orderId = null)
+        public async Task<OrderModel> GetOrderAsync(int? orderId = null)
         {
             if (orderId != null)
             {
-                return await API.GetAsync<OrderDTO>($"/orders/{orderId}");
+                return await API.GetAsync<OrderModel>($"/orders/{orderId}");
             }
-            return API.GetAll<OrderDTO>("/orders")
+            return API.GetAll<OrderModel>("/orders")
                 .LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
         }
 
-        public OrderViewModel GetOrderViewModel(OrderDTO order)
+        public OrderViewModel GetOrderViewModel(OrderModel order)
         {
-            var payments = new List<PaymentDTO>();
-            var lineItems = new List<LineItemDTO>();
+            var payments = new List<PaymentModel>();
+            var lineItems = new List<LineItemModel>();
             if (order != null)
             {
-                payments = API.GetAll<PaymentDTO>("/payments")
+                payments = API.GetAll<PaymentModel>("/payments")
                     .Where(x => x.OrderID == order.ID)
                    .ToList();
-                lineItems = API.GetAll<LineItemDTO>("/lineitems").Where(x => x.OrderID == order.ID)
+                lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == order.ID)
                 .ToList();
             }
             return new OrderViewModel(order, lineItems, payments);

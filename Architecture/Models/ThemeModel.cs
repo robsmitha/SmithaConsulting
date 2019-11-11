@@ -1,13 +1,13 @@
 ﻿using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class ThemeDTO
+    public class ThemeModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
         public string StyleSheetCDN { get; set; }
-        public ThemeDTO(Theme theme)
+        public ThemeModel(Theme theme)
         {
            if(theme != null)
             {

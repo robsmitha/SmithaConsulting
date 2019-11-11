@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using DataModeling;
 
-namespace Architecture.DTOs
+namespace Architecture.Models
 {
-    public class ItemDTO
+    public class ItemModel
     {
         public int ID { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -21,7 +21,7 @@ namespace Architecture.DTOs
         public string LookupCode { get; set; }
         public decimal? Percentage { get; set; }
 
-        public ItemDTO(Item item)
+        public ItemModel(Item item)
         {
             if (item != null)
             {
