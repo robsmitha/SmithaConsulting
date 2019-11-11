@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Architecture.Models;
+using DataLayer.Models;
 
 namespace Portfolio.Controllers
 {

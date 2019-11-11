@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DataModeling;
-using DataModeling.Data;
+using DataLayer;
+using DataLayer.Data;
 
 namespace Administration.Controllers
 {

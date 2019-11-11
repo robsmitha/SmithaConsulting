@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataModeling;
-using Architecture.DAL;
-using DataModeling.Data;
-using Architecture.Models;
-using Architecture.Enums;
+using DataLayer;
+using DataLayer.DAL;
+using DataLayer.Data;
+using DataLayer.Models;
+using DomainLayer.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

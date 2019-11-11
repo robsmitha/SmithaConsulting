@@ -5,15 +5,15 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administration", "Administration\Administration.csproj", "{52A62118-F747-45B3-AA43-2DF512800298}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture", "Architecture\Architecture.csproj", "{0254AEBA-99A7-4C92-8C33-2065690EB06C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainLayer", "DomainLayer\DomainLayer.csproj", "{0254AEBA-99A7-4C92-8C33-2065690EB06C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portfolio", "portfolio\Portfolio.csproj", "{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portfolio", "Portfolio\Portfolio.csproj", "{1CD9B751-1A0C-45CA-A8A1-EDA33F8A6B5F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store", "Store\Store.csproj", "{741DBF4B-B43B-45DF-8C4D-A91A57D5E119}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{C25D1DA6-5AC4-4591-9DCC-576B631C2D5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModeling", "DataModeling\DataModeling.csproj", "{B8F5A305-6575-471B-84F2-76B712EF5A06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\DataLayer.csproj", "{B8F5A305-6575-471B-84F2-76B712EF5A06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

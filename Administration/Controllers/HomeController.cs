@@ -5,15 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DataModeling;
+using DataLayer;
 using Administration.Models;
-using DataModeling.Data;
+using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Architecture.Utilities;
+using DomainLayer.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Administration.Constants;
-using Architecture.Enums;
+using DomainLayer.Enums;
 using System.Net.Mail;
 using System.Net;
 using Administration.Utilities;
@@ -391,7 +391,7 @@ namespace Administration.Controllers
         }
         public IActionResult About()
         {
-            var @namespace = "Architecture";
+            var @namespace = "DomainLayer";
             
 
             var entities = AppDomain.CurrentDomain.GetAssemblies()

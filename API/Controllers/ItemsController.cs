@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Models;
+using DataLayer;
+using DataLayer.Data;
+using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

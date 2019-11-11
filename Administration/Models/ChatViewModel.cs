@@ -1,4 +1,4 @@
-﻿using Architecture.Services.LanguageUnderstanding;
+﻿using DomainLayer.Services.LanguageUnderstanding;
 using System;
 using System.Collections.Generic;
 

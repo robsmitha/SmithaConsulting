@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Enums;
+using DataLayer;
+using DataLayer.Data;
+using DomainLayer.Enums;
 using Administration.Constants;
 using Administration.Models;
 using System;

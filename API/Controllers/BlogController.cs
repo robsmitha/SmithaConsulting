@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.DAL;
-using Architecture.Models;
+using DataLayer.Data;
+using DataLayer.DAL;
+using DataLayer.Models;
 
 namespace API.Controllers
 {

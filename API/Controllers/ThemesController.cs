@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Models;
+using DataLayer;
+using DataLayer.Data;
+using DataLayer.Models;
 
 namespace API.Controllers
 {

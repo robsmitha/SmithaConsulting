@@ -1,4 +1,4 @@
-﻿using Architecture.Models;
+﻿using DataLayer.Models;
 using System.Collections.Generic;
 
 namespace Store.Models

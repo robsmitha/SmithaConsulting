@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DataModeling;
-using DataModeling.Data;
+using DataLayer;
+using DataLayer.Data;
 using Administration.Models;
-using Architecture.Utilities;
+using DomainLayer.Utilities;
 
 namespace Administration.Controllers
 {

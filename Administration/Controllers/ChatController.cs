@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using DataModeling.Data;
+using DataLayer.Data;
 using Administration.Models;
-using Architecture.Constants;
-using Architecture.Services.LanguageUnderstanding;
-using Architecture.Services.GoogleGeocode;
-using Architecture.Services.Weather;
-using Architecture.Services.Stock;
+using DomainLayer.Constants;
+using DomainLayer.Services.LanguageUnderstanding;
+using DomainLayer.Services.GoogleGeocode;
+using DomainLayer.Services.Weather;
+using DomainLayer.Services.Stock;
 
 namespace Administration.Controllers
 {

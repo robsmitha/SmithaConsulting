@@ -59,7 +59,7 @@ namespace Portfolio.Controllers
 
         public IActionResult About()
         {
-            var @namespace = "DataModeling";
+            var @namespace = "DataLayer";
             
 
             var entities = AppDomain.CurrentDomain.GetAssemblies()

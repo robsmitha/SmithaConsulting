@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Portfolio.Utilities;
 using Portfolio.Constants;
-using Architecture.Utilities;
-using Architecture.Models;
+using DomainLayer.Utilities;
+using DataLayer.Models;
 
 namespace Portfolio.Controllers
 {

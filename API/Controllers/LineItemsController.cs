@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Models;
-using Architecture.DAL;
+using DataLayer;
+using DataLayer.Data;
+using DataLayer.Models;
+using DataLayer.DAL;
 
 namespace API.Controllers
 {

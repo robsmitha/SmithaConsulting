@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DataModeling;
-using DataModeling.Data;
-using Architecture.Enums;
+using DataLayer;
+using DataLayer.Data;
+using DomainLayer.Enums;
 using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 

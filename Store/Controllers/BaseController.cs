@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Architecture.Enums;
+using DomainLayer.Enums;
 using Store.Constants;
 using Store.Models;
 using Store.Utilities;
-using Architecture.Models;
-using Architecture.Utilities;
+using DataLayer.Models;
+using DomainLayer.Utilities;
 
 namespace Store.Controllers
 {

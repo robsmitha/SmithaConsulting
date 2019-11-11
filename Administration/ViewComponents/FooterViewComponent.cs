@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using DataModeling;
-using Architecture.Enums;
+using DataLayer;
+using DomainLayer.Enums;
 using Administration.Constants;
 using Administration.Models;
 using System;
