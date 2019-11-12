@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer
 {
-    public class Task : BaseModel
+    public class TaskItem : BaseModel
     {
         public string Name { get; set; }
         public string Description { get; set; }

@@ -71,7 +71,6 @@ namespace Store.Controllers
             var msg = string.Empty;
             var success = true;
             var order = await GetOrderAsync();
-            //Create Order if needed
 
             if (MerchantID > 0)
             {
@@ -93,7 +92,6 @@ namespace Store.Controllers
                             CustomerID = CustomerID,
                             CreatedAt = DateTime.Now
                         };
-
                         order = API.Add("/orders", order);
                     }
                     lineItem.OrderID = order.ID;
@@ -200,7 +198,7 @@ namespace Store.Controllers
                         customer.Email = model.Email;
                         customer.FirstName = model.FirstName;
                         customer.LastName = model.LastName;
-                        API.Add("/customer", customer);
+                        API.Update("/customer", customer);
 
                         var amount = API.GetAll<LineItemModel>("/lineitems")
                             .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
@@ -230,7 +228,7 @@ namespace Store.Controllers
                 model = new PaymentViewModel(orderViewModel, order.ID);
                 return View(model);
             }
-            catch
+            catch(Exception ex)
             {
                 return RedirectToAction("Error");
             }

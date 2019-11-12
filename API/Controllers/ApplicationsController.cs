@@ -18,10 +18,11 @@ namespace API.Controllers
     public class ApplicationsController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
-        private readonly Mapper mapper;
-        public ApplicationsController(DbArchitecture context)
+        private readonly IMapper _mapper;
+        public ApplicationsController(DbArchitecture context, IMapper mapper)
         {
             unitOfWork = new UnitOfWork(context);
+            _mapper = mapper;
         }
         // GET: api/Applications
         [HttpGet]
@@ -31,7 +32,7 @@ namespace API.Controllers
                 .ApplicationRepository
                 .GetAllAsync(includeProperties: "ApplicationType");
 
-            return Ok(applications.Select(x => new ApplicationModel(x)).ToArray());
+            return Ok(_mapper.Map<IEnumerable<ApplicationModel>>(applications));
         }
 
         // GET: api/Applications/5
@@ -47,27 +48,24 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            var dto = new ApplicationModel(application);
-            return Ok(dto);
+            return Ok(_mapper.Map<ApplicationModel>(application));
         }
 
         // PUT: api/Applications/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutApplication(int id, ApplicationModel dto)
+        public async Task<IActionResult> PutApplication(int id, ApplicationModel model)
         {
-            if (id != dto.ID)
+            if (id != model.ID)
             {
                 return BadRequest();
             }
-            var application = unitOfWork
-                .ApplicationRepository
-                .GetAll(x => x.ID == id, includeProperties: "ApplicationType").FirstOrDefault();
+            var application = unitOfWork.ApplicationRepository.Get(x => x.ID == id, includeProperties: "ApplicationType");
             
             if(application == null)
             {
                 return NotFound();
             }
-
+            application = _mapper.Map<Application>(model);
             unitOfWork.ApplicationRepository.Update(application);
 
             try

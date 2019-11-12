@@ -60,7 +60,7 @@ namespace DataLayer.Data
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<TaskPriorityType> TaskPriorityTypes { get; set; }
         public DbSet<TaskStatusType> TaskStatusType { get; set; }
         public DbSet<TaskType> TaskTypes { get; set; }
@@ -125,7 +125,7 @@ namespace DataLayer.Data
             modelBuilder.Entity<RolePermission>();
             modelBuilder.Entity<State>();
             modelBuilder.Entity<Tag>();
-            modelBuilder.Entity<Task>();
+            modelBuilder.Entity<TaskItem>();
             modelBuilder.Entity<TaskPriorityType>();
             modelBuilder.Entity<TaskStatusType>();
             modelBuilder.Entity<TaskType>();

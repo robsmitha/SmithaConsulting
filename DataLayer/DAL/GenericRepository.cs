@@ -10,7 +10,7 @@ namespace DataLayer.DAL
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
-        internal DbArchitecture context;
+        protected DbArchitecture context;
         internal DbSet<TEntity> dbSet;
         public GenericRepository(DbArchitecture context)
         {

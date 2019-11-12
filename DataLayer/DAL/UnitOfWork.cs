@@ -15,10 +15,10 @@ namespace DataLayer.DAL
         }
 
         #region Repositories
-        private GenericRepository<Order> orderRepository;
-        public GenericRepository<Order> OrderRepository
+        private OrdersRepository orderRepository;
+        public OrdersRepository OrderRepository
         {
-            get => orderRepository = orderRepository ?? new GenericRepository<Order>(_context);
+            get => orderRepository = orderRepository ?? new OrdersRepository(_context);
             set => orderRepository = value;
         }
         private GenericRepository<LineItem> lineItemRepository;
