@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLayer;
 using DataLayer.DAL;
 using DataLayer.Data;
 using DataLayer.Models;
-using DomainLayer.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -67,10 +66,17 @@ namespace API.Controllers
                 includeProperties: "Customer,Merchant,OrderStatusType,User");          
             if(order != null)
             {
-                order = _mapper.Map<Order>(model);
-                _unitOfWork.OrderRepository.Update(order);
-                await Task.Run(() => _unitOfWork.Save());
-                return CreatedAtAction("Get", new { id = order.ID });
+                try
+                {
+                    _mapper.Map(model, order);
+                    _unitOfWork.OrderRepository.Update(order);
+                    await Task.Run(() => _unitOfWork.Save());
+                    return Ok(_mapper.Map<OrderModel>(order));
+                }
+                catch(Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
             }
             return NotFound();
         }

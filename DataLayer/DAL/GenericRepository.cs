@@ -111,7 +111,7 @@ namespace DataLayer.DAL
         public async virtual void DeleteAsync(object id)
         {
             TEntity entity = dbSet.Find(id);
-            await System.Threading.Tasks.Task.Run(() => DeleteAsync(entity));
+            await Task.Run(() => DeleteAsync(entity));
         }
         public virtual void Delete(TEntity entity)
         {
@@ -127,7 +127,7 @@ namespace DataLayer.DAL
             {
                 dbSet.Attach(entity);
             }
-            await System.Threading.Tasks.Task.Run(() => dbSet.Remove(entity));
+            await Task.Run(() => dbSet.Remove(entity));
         }
         public virtual void DeleteRange(IEnumerable<TEntity> entities)
         {
@@ -147,7 +147,7 @@ namespace DataLayer.DAL
         }
         public async virtual void UpdateAsync(TEntity entity)
         {
-            await System.Threading.Tasks.Task.Run(() => dbSet.Attach(entity));
+            await Task.Run(() => dbSet.Attach(entity));
             context.Entry(entity).State = EntityState.Modified;
         }
 
