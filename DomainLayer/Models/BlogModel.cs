@@ -1,7 +1,7 @@
 ﻿using DataLayer;
 using System;
 
-namespace DataLayer.Models
+namespace DomainLayer.Models
 {
     public class BlogModel
     {

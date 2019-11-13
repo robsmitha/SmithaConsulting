@@ -1,7 +1,7 @@
 ﻿using System;
 using DataLayer;
 
-namespace DataLayer.Models
+namespace DomainLayer.Models
 {
     public class LineItemModel
     {

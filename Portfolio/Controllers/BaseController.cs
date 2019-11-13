@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Portfolio.Utilities;
 using Portfolio.Constants;
 using DomainLayer.Utilities;
-using DataLayer.Models;
+using DomainLayer.Models;
 
 namespace Portfolio.Controllers
 {

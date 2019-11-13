@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
-using DataLayer.Models;
+using DomainLayer.Models;
 using DataLayer.DAL;
 
 namespace API.Controllers

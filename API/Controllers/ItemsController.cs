@@ -2,7 +2,7 @@
 using System.Linq;
 using DataLayer;
 using DataLayer.Data;
-using DataLayer.Models;
+using DomainLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,8 @@
-﻿using DataLayer.Models;
+﻿using DomainLayer.Models;
 using AutoMapper;
+using DataLayer;
 
-namespace DataLayer.DAL
+namespace DomainLayer.Utilities
 {
     public class MappingProfile : Profile
     {

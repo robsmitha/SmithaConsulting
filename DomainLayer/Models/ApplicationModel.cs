@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using DataLayer;
 
-namespace DataLayer.Models
+namespace DomainLayer.Models
 {
     public class ApplicationModel
     {

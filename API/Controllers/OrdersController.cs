@@ -5,7 +5,7 @@ using AutoMapper;
 using DataLayer;
 using DataLayer.DAL;
 using DataLayer.Data;
-using DataLayer.Models;
+using DomainLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

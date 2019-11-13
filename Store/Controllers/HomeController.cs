@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DomainLayer.Enums;
 using Store.Models;
-using DataLayer.Models;
+using DomainLayer.Models;
 
 namespace Store.Controllers
 {

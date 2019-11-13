@@ -1,6 +1,6 @@
 ﻿using DataLayer;
 
-namespace DataLayer.Models
+namespace DomainLayer.Models
 {
     public class MerchantModel
     {

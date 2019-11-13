@@ -8,7 +8,7 @@ using DomainLayer.Enums;
 using Store.Constants;
 using Store.Models;
 using Store.Utilities;
-using DataLayer.Models;
+using DomainLayer.Models;
 using DomainLayer.Utilities;
 
 namespace Store.Controllers
