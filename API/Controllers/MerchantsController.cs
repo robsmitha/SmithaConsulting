@@ -31,6 +31,16 @@ namespace API.Controllers
             return await merchants.Select(x => new MerchantModel(x)).ToListAsync();
         }
 
+        // GET: api/Merchants/5/items
+        [HttpGet("{id}/items")]
+        public async Task<ActionResult<IEnumerable<ItemModel>>> GetMerchantItems(int id)
+        {
+            var items = _context.Items
+                .Include(o => o.Merchant)
+                .Where(i => i.MerchantID == id);
+            return await items.Select(x => new ItemModel(x)).ToListAsync();
+        }
+
         // GET: api/Merchants/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MerchantModel>> GetMerchant(int id)

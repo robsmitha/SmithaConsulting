@@ -90,8 +90,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            unitOfWork.OrderRepository.Delete(id);
-
+            unitOfWork.LineItemRepository.Delete(id);
+            unitOfWork.Save();
         }
     }
 }

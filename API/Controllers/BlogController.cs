@@ -26,14 +26,14 @@ namespace API.Controllers
             var blog = unitOfWork.BlogRepository
                 .GetAll(includeProperties: "BlogStatusType,User")
                 .Select(x => new BlogModel(x));
-            return await System.Threading.Tasks.Task.Run(() => blog.ToList());
+            return await Task.Run(() => blog.ToList());
         }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogModel>> GetBlog(int id)
         {
-            var blog = await System.Threading.Tasks.Task.Run(() => unitOfWork.BlogRepository
+            var blog = await Task.Run(() => unitOfWork.BlogRepository
                 .GetAll(x => x.ID == id, includeProperties: "BlogStatusType,User")
                 .Select(x => new BlogModel(x))
                 .SingleOrDefault());

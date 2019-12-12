@@ -24,7 +24,7 @@ namespace Store.Controllers
             var items = new List<ItemModel>();
             if (MerchantID > 0)
             {
-                items = API.GetAll<ItemModel>("/items").Where(x => x.MerchantID == MerchantID && x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
+                items = API.GetAll<ItemModel>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
             }
             var model = new RegisterListViewModel(items);
             return PartialView(model);

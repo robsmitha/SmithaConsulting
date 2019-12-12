@@ -77,7 +77,7 @@ namespace Store.Controllers
         #region Order helper methods
         public OrderModel GetOrder(int? orderId = null)
         {
-            if (orderId != null)
+            if (orderId > 0)
             {
                 var order = API.Get<OrderModel>($"/orders/{orderId}");
                 return order;
@@ -89,12 +89,13 @@ namespace Store.Controllers
 
         public async Task<OrderModel> GetOrderAsync(int? orderId = null)
         {
-            if (orderId != null)
+            if (orderId > 0)
             {
                 return await API.GetAsync<OrderModel>($"/orders/{orderId}");
             }
-            return API.GetAll<OrderModel>("/orders")
-                .LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
+            var a = await API.GetAllAsync<OrderModel>("/orders");
+            return a.LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open); 
+                
         }
 
         public OrderViewModel GetOrderViewModel(OrderModel order)
@@ -103,11 +104,11 @@ namespace Store.Controllers
             var lineItems = new List<LineItemModel>();
             if (order != null)
             {
-                payments = API.GetAll<PaymentModel>("/payments")
-                    .Where(x => x.OrderID == order.ID)
-                   .ToList();
-                lineItems = API.GetAll<LineItemModel>("/lineitems").Where(x => x.OrderID == order.ID)
-                .ToList();
+                var pr = API.GetAllAsync<PaymentModel>("/payments");
+                var lr = API.GetAllAsync<LineItemModel>("/lineitems");
+                Task.WaitAll(pr, lr);
+                payments = pr.Result.Where(x => x.OrderID == order.ID).ToList();
+                lineItems = lr.Result.Where(x => x.OrderID == order.ID).ToList();
             }
             return new OrderViewModel(order, lineItems, payments);
         }
