@@ -39,7 +39,7 @@ namespace Administration.Controllers
         public string AplhaAdvantageApiEndPoint = ConfigurationManager.GetConfiguration("AplhaAdvantageApiEndPoint");
         public string WeatherApiEndpoint = ConfigurationManager.GetConfiguration("DarkSkyEndpoint");
         public string WeatherSecretKey = ConfigurationManager.GetConfiguration("DarkSkySecretKey");
-        public int? ApplicationID = int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
+        public string ApplicationName => ConfigurationManager.GetConfiguration("ApplicationName");
         #endregion
 
         #region Session Variables
@@ -84,9 +84,9 @@ namespace Administration.Controllers
             }
 
             #region Set Theme in Session
-            if (ThemeCDN == null && ApplicationID > 0)
+            if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
             {
-                var application = _context.Applications.SingleOrDefault(x => x.ID == ApplicationID);
+                var application = _context.Applications.SingleOrDefault(x => x.Name.ToLower() == ApplicationName);
                 if (application != null)
                 {
                     var theme = _context.Themes.SingleOrDefault(t => t.ID == application.ThemeID);

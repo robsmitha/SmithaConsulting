@@ -65,7 +65,7 @@ namespace Administration.Controllers
             {
                 _context.Add(application);
                 await _context.SaveChangesAsync();
-                if(application.ID == ApplicationID)
+                if (application.Name.ToLower() == ApplicationName.ToLower())
                 {
                     var theme = await _context.Themes.SingleOrDefaultAsync(x => x.ID == application.ThemeID);
                     HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
@@ -113,7 +113,7 @@ namespace Administration.Controllers
                 {
                     _context.Update(application);
                     await _context.SaveChangesAsync();
-                    if (application.ID == ApplicationID)
+                    if (application.Name.ToLower() == ApplicationName.ToLower())
                     {
                         var theme = await _context.Themes.SingleOrDefaultAsync(x => x.ID == application.ThemeID);
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);

@@ -10,6 +10,7 @@ namespace Portfolio.Controllers
 {
     public class BaseController : Controller
     {
+        public string ApplicationName => ConfigurationManager.GetConfiguration("ApplicationName");
 
         #region API
         public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
@@ -20,7 +21,7 @@ namespace Portfolio.Controllers
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
-        public int? ApplicationID = int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -30,9 +31,9 @@ namespace Portfolio.Controllers
             }
 
             #region Set Theme in Session
-            if (ThemeCDN == null && ApplicationID > 0)
+            if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
             {
-                var application = API.Get<ApplicationModel>($"/applications/{ApplicationID}");
+                var application = API.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
                 if (application != null)
                 {
                     var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");

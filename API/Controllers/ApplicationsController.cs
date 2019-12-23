@@ -50,6 +50,21 @@ namespace API.Controllers
 
             return Ok(_mapper.Map<ApplicationModel>(application));
         }
+        // GET: api/Applications/store
+        [HttpGet("GetByName/{name}")]
+        public async Task<ActionResult<ApplicationModel>> GetApplicationByName(string name)
+        {
+            var application = await unitOfWork
+                .ApplicationRepository
+                .GetAsync(x => x.Name.ToLower() == name.ToLower(), includeProperties: "ApplicationType");
+
+            if (application == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<ApplicationModel>(application));
+        }
 
         // PUT: api/Applications/5
         [HttpPut("{id}")]

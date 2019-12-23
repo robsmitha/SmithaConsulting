@@ -15,7 +15,7 @@ namespace Store.Controllers
 {
     public class BaseController : Controller
     {
-        public int? ApplicationID => int.TryParse(ConfigurationManager.GetConfiguration("ApplicationID"), out var @int) ? (int?)@int : null;
+        public string ApplicationName => ConfigurationManager.GetConfiguration("ApplicationName");
 
         #region CDN
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
@@ -49,9 +49,9 @@ namespace Store.Controllers
             }
 
             #region Set Theme in Session
-            if (ThemeCDN == null && ApplicationID > 0)
+            if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
             {
-                var application = API.Get<ApplicationModel>($"/applications/{ApplicationID}");
+                var application = API.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
                 if (application != null)
                 {
                     var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");
@@ -80,18 +80,27 @@ namespace Store.Controllers
             if (orderId > 0)
             {
                 var order = API.Get<OrderModel>($"/orders/{orderId}");
+                if(order.CustomerID != CustomerID)
+                {
+                    return null;
+                }
                 return order;
             }
             return CustomerID > 0
                 ? API.GetAll<OrderModel>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
-                : null;
+                : null; 
         }
 
         public async Task<OrderModel> GetOrderAsync(int? orderId = null)
         {
             if (orderId > 0)
             {
-                return await API.GetAsync<OrderModel>($"/orders/{orderId}");
+                var order = await API.GetAsync<OrderModel>($"/orders/{orderId}");
+                if (order.CustomerID != CustomerID)
+                {
+                    return null;
+                }
+                return order;
             }
             var a = await API.GetAllAsync<OrderModel>("/orders");
             return a.LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open); 
