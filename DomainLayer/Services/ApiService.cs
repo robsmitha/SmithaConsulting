@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace DomainLayer.Services
 {
-    public class WebApiService
+    public class ApiService : IApiService
     {
         private string Endpoint { get; set; }
         private string APIKey { get; set; }
-        public WebApiService(string endpoint, string apiKey = null)
+        public ApiService(string endpoint, string apiKey = null)
         {
             Endpoint = endpoint;
             APIKey = apiKey;

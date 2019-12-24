@@ -2,11 +2,11 @@
 using AutoMapper;
 using DataLayer;
 
-namespace DomainLayer.Utilities
+namespace API.Utilities
 {
-    public class MappingProfile : Profile
+    public class ApiMappingProfile : Profile
     {
-        public MappingProfile()
+        public ApiMappingProfile()
         {
             CreateMap<Application, ApplicationModel>().ReverseMap();
             CreateMap<Customer, CustomerModel>().ReverseMap();

@@ -1,10 +1,13 @@
 ﻿using System;
+using AutoMapper;
+using DomainLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Store.Utilities;
 
 namespace Store
 {
@@ -35,6 +38,19 @@ namespace Store
                 // Make the session cookie essential
                 options.Cookie.IsEssential = true;
             });
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new StoreMappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            ICacheService cache = new CacheService();
+            services.AddSingleton(cache);
+
+            IApiService api = new ApiService(Configuration["Configurations:APIEndpoint"], Configuration["Configurations:APIKey"]);
+            services.AddSingleton(api);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

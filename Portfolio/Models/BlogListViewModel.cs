@@ -4,6 +4,10 @@ namespace Portfolio.Models
 {
     public class BlogListViewModel
     {
-        public List<BlogViewModel> Blogs { get; set; }
+        public IEnumerable<BlogViewModel> Blogs { get; set; }
+        public BlogListViewModel(IEnumerable<BlogViewModel> blogs) 
+        {
+            Blogs = blogs;
+        }
     }
 }

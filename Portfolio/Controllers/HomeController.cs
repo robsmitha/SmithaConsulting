@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Mail;
 using System.Net;
 using Portfolio.Utilities;
+using DomainLayer.Services;
+using AutoMapper;
 
 namespace Portfolio.Controllers
 {
     public class HomeController : BaseController
     {
+        public HomeController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
         public IActionResult Index()
         {
             return View();

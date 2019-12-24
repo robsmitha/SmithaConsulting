@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+﻿using API.Utilities;
+using AutoMapper;
 using DataLayer.Data;
-using DomainLayer.Utilities;
+using DomainLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,13 @@ namespace API
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new ApiMappingProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            ICacheService cache = new CacheService();
+            services.AddSingleton(cache);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

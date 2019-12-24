@@ -10,6 +10,7 @@ using Store.Models;
 using Store.Utilities;
 using DomainLayer.Models;
 using DomainLayer.Services;
+using AutoMapper;
 
 namespace Store.Controllers
 {
@@ -28,16 +29,15 @@ namespace Store.Controllers
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
         #endregion
 
-        #region API
-        public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
-        public static string APIKey = ConfigurationManager.GetConfiguration("APIKey");
-        private WebApiService api;
-        protected WebApiService API
+        protected readonly IApiService _api;
+        protected readonly IMapper _mapper;
+        protected readonly ICacheService _cache;
+        public BaseController(IApiService api, IMapper mapper, ICacheService cache)
         {
-            get => api ?? new WebApiService(APIEndpoint, APIKey);
-            set => api = value;
+            _api = api;
+            _mapper = mapper;
+            _cache = cache;
         }
-        #endregion
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
@@ -49,17 +49,17 @@ namespace Store.Controllers
 
             if (CustomerID == null)
             {
-                var customer = API.Post("/customers", new CustomerModel());
+                var customer = _api.Post("/customers", new CustomerModel());
                 CreateCustomerSession(customer);
             }
 
             #region Set Theme in Session
             if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
             {
-                var application = API.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
+                var application = _api.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
                 if (application != null)
                 {
-                    var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");
+                    var theme = _api.Get<ThemeModel>($"/themes/{application.ThemeID}");
                     if (theme != null)
                     {
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
@@ -72,7 +72,7 @@ namespace Store.Controllers
         public void CreateCustomerSession(CustomerModel customer)
         {
             HttpContext.Session.SetInt32(SessionKeysConstants.CUSTOMER_ID, customer.ID);
-            var merchantId = API.Get<IEnumerable<MerchantModel>>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
+            var merchantId = _api.Get<IEnumerable<MerchantModel>>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
             if (merchantId != null)
             {
                 HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
@@ -84,7 +84,7 @@ namespace Store.Controllers
         {
             if (orderId > 0)
             {
-                var order = API.Get<OrderModel>($"/orders/{orderId}");
+                var order = _api.Get<OrderModel>($"/orders/{orderId}");
                 if(order.CustomerID != CustomerID)
                 {
                     return null;
@@ -92,7 +92,7 @@ namespace Store.Controllers
                 return order;
             }
             return CustomerID > 0
-                ? API.Get<IEnumerable<OrderModel>>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                ? _api.Get<IEnumerable<OrderModel>>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                 : null; 
         }
 
@@ -100,14 +100,14 @@ namespace Store.Controllers
         {
             if (orderId > 0)
             {
-                var order = await API.GetAsync<OrderModel>($"/orders/{orderId}");
+                var order = await _api.GetAsync<OrderModel>($"/orders/{orderId}");
                 if (order.CustomerID != CustomerID)
                 {
                     return null;
                 }
                 return order;
             }
-            var a = await API.GetAsync<IEnumerable<OrderModel>>("/orders");
+            var a = await _api.GetAsync<IEnumerable<OrderModel>>("/orders");
             return a.LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open); 
                 
         }
@@ -118,8 +118,8 @@ namespace Store.Controllers
             var lineItems = new List<LineItemModel>();
             if (order != null)
             {
-                var pr = API.GetAsync<IEnumerable<PaymentModel>>("/payments");
-                var lr = API.GetAsync<IEnumerable<LineItemModel>>("/lineitems");
+                var pr = _api.GetAsync<IEnumerable<PaymentModel>>("/payments");
+                var lr = _api.GetAsync<IEnumerable<LineItemModel>>("/lineitems");
                 Task.WaitAll(pr, lr);
                 payments = pr.Result.Where(x => x.OrderID == order.ID).ToList();
                 lineItems = lr.Result.Where(x => x.OrderID == order.ID).ToList();

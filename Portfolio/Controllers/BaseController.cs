@@ -6,6 +6,7 @@ using Portfolio.Constants;
 using DomainLayer.Utilities;
 using DomainLayer.Models;
 using DomainLayer.Services;
+using AutoMapper;
 
 namespace Portfolio.Controllers
 {
@@ -13,16 +14,15 @@ namespace Portfolio.Controllers
     {
         public string ApplicationName => ConfigurationManager.GetConfiguration("ApplicationName");
 
-        #region API
-        public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
-        public static string APIKey = "key";// ConfigurationManager.GetConfiguration("APIKey");
-        private WebApiService api;
-        protected WebApiService API
+        protected readonly IApiService _api;
+        protected readonly IMapper _mapper;
+        protected readonly ICacheService _cache;
+        public BaseController(IApiService api, IMapper mapper, ICacheService cache)
         {
-            get => api ?? new WebApiService(APIEndpoint, APIKey);
-            set => api = value;
+            _api = api;
+            _mapper = mapper;
+            _cache = cache;
         }
-        #endregion
 
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
@@ -39,10 +39,10 @@ namespace Portfolio.Controllers
             #region Set Theme in Session
             if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
             {
-                var application = API.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
+                var application = _api.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
                 if (application != null)
                 {
-                    var theme = API.Get<ThemeModel>($"/themes/{application.ThemeID}");
+                    var theme = _api.Get<ThemeModel>($"/themes/{application.ThemeID}");
                     if (theme != null)
                     {
                         HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);

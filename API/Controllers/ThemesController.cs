@@ -10,6 +10,7 @@ using DataLayer.Data;
 using DomainLayer.Models;
 using AutoMapper;
 using DataLayer.DAL;
+using DomainLayer.Services;
 
 namespace API.Controllers
 {
@@ -19,10 +20,12 @@ namespace API.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ThemesController(DbArchitecture context, IMapper mapper)
+        private readonly ICacheService _cache;
+        public ThemesController(DbArchitecture context, IMapper mapper, ICacheService cache)
         {
             _unitOfWork = new UnitOfWork(context);
             _mapper = mapper;
+            _cache = cache;
         }
 
         // GET: api/Themes

@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using DomainLayer.Enums;
 using Store.Models;
 using DomainLayer.Models;
+using DomainLayer.Services;
+using AutoMapper;
 
 namespace Store.Controllers
 {
     public class HomeController : BaseController
     {
+        public HomeController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
+
         public IActionResult Index()
         {
             var order = GetOrder();
@@ -24,7 +28,7 @@ namespace Store.Controllers
             var items = new List<ItemModel>();
             if (MerchantID > 0)
             {
-                items = API.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
+                items = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
             }
             var model = new RegisterListViewModel(items);
             return PartialView(model);
@@ -38,7 +42,7 @@ namespace Store.Controllers
         }
         protected bool AddLineItem(int itemId, int? orderId = null)
         {
-            var item = API.Get<ItemModel>($"/items/{itemId}");
+            var item = _api.Get<ItemModel>($"/items/{itemId}");
             if (item?.ID > 0)
             {
                 var lineItem = new LineItemModel
@@ -57,9 +61,9 @@ namespace Store.Controllers
                         CustomerID = CustomerID
                     };
 
-                    API.Post("/orders", order);
+                    _api.Post("/orders", order);
                 }
-                API.Post("/lineitems", lineItem);
+                _api.Post("/lineitems", lineItem);
                 return true;
             }
             return false;
@@ -74,7 +78,7 @@ namespace Store.Controllers
 
             if (MerchantID > 0)
             {
-                var item = API.Get<ItemModel>($"/items/{model.SelectedItemID}");
+                var item = _api.Get<ItemModel>($"/items/{model.SelectedItemID}");
                 if (item != null)
                 {
                     var lineItem = new LineItemModel
@@ -92,10 +96,10 @@ namespace Store.Controllers
                             CustomerID = CustomerID,
                             CreatedAt = DateTime.Now
                         };
-                        order = API.Post("/orders", order);
+                        order = _api.Post("/orders", order);
                     }
                     lineItem.OrderID = order.ID;
-                    API.Post("/lineitems", lineItem);
+                    _api.Post("/lineitems", lineItem);
                     success = true;
                 }
             }
@@ -133,11 +137,11 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                var lineItem = API.Get<IEnumerable<LineItemModel>>("/lineitems")
+                var lineItem = _api.Get<IEnumerable<LineItemModel>>("/lineitems")
                     .LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
                 if (lineItem != null)
                 {
-                    API.Delete($"/lineitems/{lineItem.ID}");
+                    _api.Delete($"/lineitems/{lineItem.ID}");
                     UpdateDiscounts(order);
                 }
             }
@@ -162,7 +166,7 @@ namespace Store.Controllers
                 //    .ToList()
                 //    .ForEach(x => API.Delete($"/lineitems/{x.ID}"));
 
-                API.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
+                _api.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
                 UpdateDiscounts(order);
             }
             catch (Exception ex)
@@ -194,13 +198,13 @@ namespace Store.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var customer = await API.GetAsync<CustomerModel>($"/customers/{CustomerID.Value}");
+                        var customer = await _api.GetAsync<CustomerModel>($"/customers/{CustomerID.Value}");
                         customer.Email = model.Email;
                         customer.FirstName = model.FirstName;
                         customer.LastName = model.LastName;
-                        API.Put("/customer", customer);
+                        _api.Put("/customer", customer);
 
-                        var amount = API.Get<IEnumerable<LineItemModel>>("/lineitems")
+                        var amount = _api.Get<IEnumerable<LineItemModel>>("/lineitems")
                             .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
                         //Create payment on order.
                         var payment = new PaymentModel
@@ -211,10 +215,10 @@ namespace Store.Controllers
                             PaymentStatusTypeID = (int)PaymentStatusTypeEnums.Paid
                         };
 
-                        API.Post("/payments", payment);
+                        _api.Post("/payments", payment);
 
                         order.OrderStatusTypeID = (int)OrderStatusTypeEnums.Paid;
-                        API.Put($"/orders/{order.ID}", order);
+                        _api.Put($"/orders/{order.ID}", order);
 
                         return RedirectToAction("Details", "Home", new { id = model.CurrentOrderID });
                     }
@@ -256,7 +260,7 @@ namespace Store.Controllers
         {
             try
             {
-                var discount = API.Get<IEnumerable<ItemModel>>("/items")
+                var discount = _api.Get<IEnumerable<ItemModel>>("/items")
                 .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
                 if (discount != null)
                 {
@@ -267,7 +271,7 @@ namespace Store.Controllers
                             amount = discount.Price ?? 0;
                             break;
                         case (int)PriceTypeEnums.Variable:
-                            var lineItems = API.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID);
+                            var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID);
 
                             amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
                             break;
@@ -278,7 +282,7 @@ namespace Store.Controllers
                         ItemID = discount.ID,
                         OrderID = order.ID
                     };
-                    API.Post("/lineitems", lineItem);
+                    _api.Post("/lineitems", lineItem);
                     return true;
                 }
             }
@@ -293,11 +297,11 @@ namespace Store.Controllers
         {
             try
             {
-                var discounts = API.Get<IEnumerable<ItemModel>>("/items")
+                var discounts = _api.Get<IEnumerable<ItemModel>>("/items")
                 .Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
                 foreach (var discount in discounts)
                 {
-                    var lineItemDiscount = API.Get<ItemModel>($"/items/{discount.ID}");
+                    var lineItemDiscount = _api.Get<ItemModel>($"/items/{discount.ID}");
                     if (lineItemDiscount?.ID > 0)
                     {
 
@@ -308,12 +312,12 @@ namespace Store.Controllers
                                 amount = discount.Price ?? 0;
                                 break;
                             case (int)PriceTypeEnums.Variable: //variable
-                                var lineItems = API.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
+                                var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
                                 amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
                                 break;
                         }
 
-                        API.Delete($"/lineitems/{lineItemDiscount.ID}");
+                        _api.Delete($"/lineitems/{lineItemDiscount.ID}");
 
                         if (amount != 0)
                         {
@@ -323,7 +327,7 @@ namespace Store.Controllers
                                 ItemID = discount.ID,
                                 OrderID = order.ID
                             };
-                            API.Post("/lineitems", lineItem);
+                            _api.Post("/lineitems", lineItem);
                         }
                     }
                 }
@@ -349,7 +353,7 @@ namespace Store.Controllers
         public IActionResult Edit(int itemId, int orderId)
         {
             var model = new RegisterEditViewModel();
-            var lineItems = API.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
+            var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
             var lineItem = lineItems.FirstOrDefault();
             if (lineItem != null)
             {
@@ -367,7 +371,7 @@ namespace Store.Controllers
             var msg = string.Empty;
             try
             {
-                var lineItems = API.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
+                var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
                 var itemCount = lineItems.Count;
                 if (itemCount > 0)
                 {
@@ -384,7 +388,7 @@ namespace Store.Controllers
                         // remove
                         for (int i = 0; i < itemCount - model.Quantity && i < lineItems.Count; i++)
                         {
-                            API.Delete($"/lineItems/{lineItems[i].ID}");
+                            _api.Delete($"/lineItems/{lineItems[i].ID}");
                         }
                     }
                 }
