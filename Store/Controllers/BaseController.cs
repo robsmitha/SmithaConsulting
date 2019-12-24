@@ -9,7 +9,7 @@ using Store.Constants;
 using Store.Models;
 using Store.Utilities;
 using DomainLayer.Models;
-using DomainLayer.Utilities;
+using DomainLayer.Services;
 
 namespace Store.Controllers
 {
@@ -31,7 +31,12 @@ namespace Store.Controllers
         #region API
         public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
         public static string APIKey = ConfigurationManager.GetConfiguration("APIKey");
-        public APIExtensions API = new APIExtensions(APIEndpoint, APIKey);
+        private WebApiService api;
+        protected WebApiService API
+        {
+            get => api ?? new WebApiService(APIEndpoint, APIKey);
+            set => api = value;
+        }
         #endregion
 
         public override void OnActionExecuted(ActionExecutedContext context)
@@ -44,7 +49,7 @@ namespace Store.Controllers
 
             if (CustomerID == null)
             {
-                var customer = API.Add("/customers", new CustomerModel());
+                var customer = API.Post("/customers", new CustomerModel());
                 CreateCustomerSession(customer);
             }
 
@@ -67,7 +72,7 @@ namespace Store.Controllers
         public void CreateCustomerSession(CustomerModel customer)
         {
             HttpContext.Session.SetInt32(SessionKeysConstants.CUSTOMER_ID, customer.ID);
-            var merchantId = API.GetAll<MerchantModel>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
+            var merchantId = API.Get<IEnumerable<MerchantModel>>("/merchants").FirstOrDefault(x => x.MerchantTypeID == (int)MerchantTypeEnums.Online && x.Active)?.ID;
             if (merchantId != null)
             {
                 HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
@@ -87,7 +92,7 @@ namespace Store.Controllers
                 return order;
             }
             return CustomerID > 0
-                ? API.GetAll<OrderModel>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                ? API.Get<IEnumerable<OrderModel>>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                 : null; 
         }
 
@@ -102,7 +107,7 @@ namespace Store.Controllers
                 }
                 return order;
             }
-            var a = await API.GetAllAsync<OrderModel>("/orders");
+            var a = await API.GetAsync<IEnumerable<OrderModel>>("/orders");
             return a.LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open); 
                 
         }
@@ -113,8 +118,8 @@ namespace Store.Controllers
             var lineItems = new List<LineItemModel>();
             if (order != null)
             {
-                var pr = API.GetAllAsync<PaymentModel>("/payments");
-                var lr = API.GetAllAsync<LineItemModel>("/lineitems");
+                var pr = API.GetAsync<IEnumerable<PaymentModel>>("/payments");
+                var lr = API.GetAsync<IEnumerable<LineItemModel>>("/lineitems");
                 Task.WaitAll(pr, lr);
                 payments = pr.Result.Where(x => x.OrderID == order.ID).ToList();
                 lineItems = lr.Result.Where(x => x.OrderID == order.ID).ToList();

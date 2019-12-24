@@ -30,7 +30,7 @@ namespace Portfolio.Controllers
             const string subject = "Website Mail";
             string body = $"From: {model.Email}, {model.Name} message: {model.Message}";
 
-            var smtp = new SmtpClient
+            using (var smtp = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
@@ -38,15 +38,17 @@ namespace Portfolio.Controllers
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body,
-                Priority = MailPriority.High
             })
             {
-                smtp.Send(message);
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    Priority = MailPriority.High
+                })
+                {
+                    smtp.Send(message);
+                }
             }
 
             return RedirectToAction("Index");

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DomainLayer.Models;
+using System.Collections.Generic;
 
 namespace Portfolio.Controllers
 {
@@ -10,7 +11,7 @@ namespace Portfolio.Controllers
         // GET: Blog
         public async Task<IActionResult> Index()
         {
-            return View(await API.GetAllAsync<BlogModel>("/blogs"));
+            return View(await API.GetAsync<IEnumerable<BlogModel>>("/blog"));
         }
 
         // GET: Blog/Details/5
@@ -21,7 +22,7 @@ namespace Portfolio.Controllers
                 return NotFound();
             }
 
-            var blog = await API.GetAsync<BlogModel>($"/blogs/{id}");
+            var blog = await API.GetAsync<BlogModel>($"/blog/{id}");
             if (blog == null)
             {
                 return NotFound();

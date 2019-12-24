@@ -5,6 +5,7 @@ using Portfolio.Utilities;
 using Portfolio.Constants;
 using DomainLayer.Utilities;
 using DomainLayer.Models;
+using DomainLayer.Services;
 
 namespace Portfolio.Controllers
 {
@@ -15,7 +16,12 @@ namespace Portfolio.Controllers
         #region API
         public static string APIEndpoint = ConfigurationManager.GetConfiguration("APIEndpoint");
         public static string APIKey = "key";// ConfigurationManager.GetConfiguration("APIKey");
-        public APIExtensions API = new APIExtensions(APIEndpoint, APIKey);
+        private WebApiService api;
+        protected WebApiService API
+        {
+            get => api ?? new WebApiService(APIEndpoint, APIKey);
+            set => api = value;
+        }
         #endregion
 
         public string CDNLocation => ConfigurationManager.GetConfiguration("AWSCDN");
