@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
 using DomainLayer.Models;
+using DataLayer.DAL;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -14,110 +16,92 @@ namespace API.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly DbArchitecture _context;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CustomersController(DbArchitecture context)
+        public CustomersController(DbArchitecture context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = new UnitOfWork(context);
+            _mapper = mapper;
         }
 
         // GET: api/Customers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerModel>>> GetCustomers()
         {
-            return await _context.Customers.Select(x => new CustomerModel(x)).ToListAsync();
+            var customers = await _unitOfWork.CustomerRepository.GetAllAsync();
+            return Ok(_mapper.Map<IEnumerable<CustomerModel>>(customers));
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerModel>> GetCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _unitOfWork.CustomerRepository.GetAsync(c => c.ID == id);
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            var dto = new CustomerModel(customer);
-            return dto;
+            return Ok(_mapper.Map<CustomerModel>(customer));
         }
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, CustomerModel customer)
+        public async Task<IActionResult> PutCustomer(int id, CustomerModel model)
         {
-            if (id != customer.ID)
+            if (id != model.ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+            var customer = _unitOfWork.CustomerRepository.Get(x => x.ID == id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(model, customer);
+
+            _unitOfWork.CustomerRepository.Update(customer);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveAsync();
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!CustomerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, ex);
             }
-
-            return NoContent();
         }
 
         // POST: api/Customers
         [HttpPost]
-        public async Task<ActionResult<CustomerModel>> PostCustomer(CustomerModel dto)
+        public async Task<ActionResult<CustomerModel>> PostCustomer(CustomerModel model)
         {
-            var customer = new Customer
-            {
-                FirstName = dto.FirstName,
-                MiddleName = dto.MiddleName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                CreatedAt = DateTime.Now,
-                Active = true
-            };
             try
             {
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
-                return Ok(new CustomerModel(customer));
+                var customer = _mapper.Map<Customer>(model);
+                _unitOfWork.CustomerRepository.Add(customer);
+                await _unitOfWork.SaveAsync();
+                return _mapper.Map<CustomerModel>(customer);
             }
             catch(Exception ex)
             {
-                return BadRequest(ex);
+                return StatusCode(500, ex);
             }
         }
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CustomerModel>> DeleteCustomer(int id)
+        public async Task<ActionResult> DeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
-
-            var dto = new CustomerModel(customer);
-            return dto;
-        }
-
-        private bool CustomerExists(int id)
-        {
-            return _context.Customers.Any(e => e.ID == id);
+            _unitOfWork.CustomerRepository.Delete(id);
+            await _unitOfWork.SaveAsync();
+            return Ok();
         }
     }
 }

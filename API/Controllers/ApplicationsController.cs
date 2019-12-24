@@ -80,7 +80,7 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            application = _mapper.Map<Application>(model);
+            _mapper.Map(model, application);
             unitOfWork.ApplicationRepository.Update(application);
 
             try

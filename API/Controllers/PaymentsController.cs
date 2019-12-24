@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
+using DataLayer.DAL;
+using AutoMapper;
+using DomainLayer.Models;
 
 namespace API.Controllers
 {
@@ -15,93 +18,109 @@ namespace API.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly DbArchitecture _context;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PaymentsController(DbArchitecture context)
+        public PaymentsController(DbArchitecture context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = new UnitOfWork(context);
+            _mapper = mapper;
         }
 
         // GET: api/Payments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
+        public async Task<ActionResult<IEnumerable<PaymentModel>>> GetPayments()
         {
-            return await _context.Payments.ToListAsync();
+            try
+            {
+                var payments = await _unitOfWork
+                .PaymentRepository
+                .GetAllAsync();
+                return Ok(_mapper.Map<IEnumerable<PaymentModel>>(payments));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Payments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id)
+        public async Task<ActionResult<PaymentModel>> GetPayment(int id)
         {
-            var payment = await _context.Payments.FindAsync(id);
+            var payment = await _unitOfWork
+                .PaymentRepository
+                .GetAsync(p => p.ID == id);
 
             if (payment == null)
             {
                 return NotFound();
             }
 
-            return payment;
+            return Ok(_mapper.Map<PaymentModel>(payment));
         }
 
         // PUT: api/Payments/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPayment(int id, Payment payment)
+        public async Task<ActionResult<PaymentModel>> PutPayment(int id, PaymentModel model)
         {
-            if (id != payment.ID)
+            if (id != model.ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(payment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PaymentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Payments
-        [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
-        {
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPayment", new { id = payment.ID }, payment);
-        }
-
-        // DELETE: api/Payments/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Payment>> DeletePayment(int id)
-        {
-            var payment = await _context.Payments.FindAsync(id);
+            var payment = await _unitOfWork.PaymentRepository.GetAsync(p => p.ID == id);
+            
             if (payment == null)
             {
                 return NotFound();
             }
 
-            _context.Payments.Remove(payment);
-            await _context.SaveChangesAsync();
-
-            return payment;
+            try
+            {
+                _mapper.Map(model, payment);
+                _unitOfWork.PaymentRepository.Update(payment);
+                await _unitOfWork.SaveAsync();
+                return Ok(_mapper.Map<PaymentModel>(payment));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        private bool PaymentExists(int id)
+        // POST: api/Payments
+        [HttpPost]
+        public async Task<ActionResult<PaymentModel>> PostPayment(PaymentModel model)
         {
-            return _context.Payments.Any(e => e.ID == id);
+            try
+            {
+                var payment = _mapper.Map<Payment>(model);
+                _unitOfWork.PaymentRepository.Add(payment);
+                await _unitOfWork.SaveAsync();
+                return _mapper.Map<PaymentModel>(payment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
+
+        // DELETE: api/Payments/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePayment(int id)
+        {
+            try
+            {
+                _unitOfWork.PaymentRepository.Delete(id);
+                await _unitOfWork.SaveAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
     }
 }

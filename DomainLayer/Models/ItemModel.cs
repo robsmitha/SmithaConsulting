@@ -20,24 +20,5 @@ namespace DomainLayer.Models
         public string Code { get; set; }
         public string LookupCode { get; set; }
         public decimal? Percentage { get; set; }
-
-        public ItemModel(Item item)
-        {
-            if (item != null)
-            {
-                ID = item.ID;
-                CreatedAt = item.CreatedAt;
-                MerchantID = item.MerchantID;
-                ItemTypeID = item.ItemTypeID;
-                PriceTypeID = item.PriceTypeID;
-                Price = item.Price;
-                ItemName = item.ItemName;
-                ItemDescription = item.ItemDescription;
-                UnitTypeID = item.UnitTypeID;
-                Code = item.Code;
-                LookupCode = item.LookupCode;
-                Percentage = item.Percentage;
-            }
-        }
     }
 }

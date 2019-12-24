@@ -10,10 +10,16 @@ namespace DomainLayer.Utilities
         {
             CreateMap<Application, ApplicationModel>().ReverseMap();
             CreateMap<Customer, CustomerModel>().ReverseMap();
+            CreateMap<LineItem, LineItemModel>().ReverseMap();
+            CreateMap<Theme, ThemeModel>().ReverseMap();
+            CreateMap<Item, ItemModel>().ReverseMap();
+
             CreateMap<Order, OrderModel>();
             CreateMap<OrderModel, Order>().ForMember(m => m.OrderStatusType, opt => opt.Ignore());
-            CreateMap<Payment, PaymentModel>().ReverseMap();
-            CreateMap<LineItem, LineItemModel>().ReverseMap();
+            CreateMap<Merchant, MerchantModel>();
+            CreateMap<MerchantModel, Merchant>().ForMember(m => m.MerchantType, opt => opt.Ignore());
+            CreateMap<Payment, PaymentModel>();
+            CreateMap<PaymentModel, Payment>().ForMember(m => m.PaymentType, opt => opt.Ignore());
         }
     }
 }

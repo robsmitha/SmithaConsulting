@@ -39,6 +39,36 @@ namespace DataLayer.DAL
             get => applicationRepository = applicationRepository ?? new GenericRepository<Application>(_context);
             set => applicationRepository = value;
         }
+        private GenericRepository<Customer> customerRepository;
+        public GenericRepository<Customer> CustomerRepository
+        {
+            get => customerRepository = customerRepository ?? new GenericRepository<Customer>(_context);
+            set => customerRepository = value;
+        }
+        private GenericRepository<Item> itemRepository;
+        public GenericRepository<Item> ItemRepository
+        {
+            get => itemRepository = itemRepository ?? new GenericRepository<Item>(_context);
+            set => itemRepository = value;
+        }
+        private MerchantsRepository merchantsRepository;
+        public MerchantsRepository MerchantRepository
+        {
+            get => merchantsRepository = merchantsRepository ?? new MerchantsRepository(_context);
+            set => merchantsRepository = value;
+        }
+        private GenericRepository<Payment> paymentRepository;
+        public GenericRepository<Payment> PaymentRepository
+        {
+            get => paymentRepository = paymentRepository ?? new GenericRepository<Payment>(_context);
+            set => paymentRepository = value;
+        }
+        private GenericRepository<Theme> themeRepository;
+        public GenericRepository<Theme> ThemeRepository
+        {
+            get => themeRepository = themeRepository ?? new GenericRepository<Theme>(_context);
+            set => themeRepository = value;
+        }
         #endregion
 
         public void Save()

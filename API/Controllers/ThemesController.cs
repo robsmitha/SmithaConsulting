@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
 using DomainLayer.Models;
+using AutoMapper;
+using DataLayer.DAL;
 
 namespace API.Controllers
 {
@@ -15,94 +17,115 @@ namespace API.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
-        private readonly DbArchitecture _context;
-
-        public ThemesController(DbArchitecture context)
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public ThemesController(DbArchitecture context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = new UnitOfWork(context);
+            _mapper = mapper;
         }
 
         // GET: api/Themes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ThemeModel>>> GetThemes()
         {
-            var themes = _context.Themes;
-            return await themes.Select(x => new ThemeModel(x)).ToListAsync();
+            try
+            {
+                var themes = await _unitOfWork
+                    .ThemeRepository
+                    .GetAllAsync();
+                return Ok(_mapper.Map<IEnumerable<ThemeModel>>(themes));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Themes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ThemeModel>> GetTheme(int id)
         {
-            var theme = await _context.Themes.FindAsync(id);
-
-            if (theme == null)
+            try
             {
-                return NotFound();
+                var theme = await _unitOfWork
+                    .ThemeRepository
+                    .GetAsync(t => t.ID == id);
+
+                if (theme == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(_mapper.Map<ThemeModel>(theme));
             }
-            
-            return new ThemeModel(theme);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // PUT: api/Themes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTheme(int id, Theme theme)
+        public async Task<ActionResult<ThemeModel>> PutTheme(int id, ThemeModel model)
         {
-            if (id != theme.ID)
+            if (id != model.ID)
             {
                 return BadRequest();
             }
+            var theme = await _unitOfWork
+                    .ThemeRepository
+                    .GetAsync(t => t.ID == id);
 
-            _context.Entry(theme).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ThemeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Themes
-        [HttpPost]
-        public async Task<ActionResult<Theme>> PostTheme(Theme theme)
-        {
-            _context.Themes.Add(theme);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTheme", new { id = theme.ID }, theme);
-        }
-
-        // DELETE: api/Themes/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Theme>> DeleteTheme(int id)
-        {
-            var theme = await _context.Themes.FindAsync(id);
             if (theme == null)
             {
                 return NotFound();
             }
 
-            _context.Themes.Remove(theme);
-            await _context.SaveChangesAsync();
-
-            return theme;
+            try
+            {
+                _mapper.Map(model, theme);
+                _unitOfWork.ThemeRepository.Update(theme);
+                await _unitOfWork.SaveAsync();
+                return Ok(_mapper.Map<ThemeModel>(theme));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        private bool ThemeExists(int id)
+        // POST: api/Themes
+        [HttpPost]
+        public async Task<ActionResult<ThemeModel>> PostTheme(ThemeModel model)
         {
-            return _context.Themes.Any(e => e.ID == id);
+            try
+            {
+                var theme = _mapper.Map<Theme>(model);
+                _unitOfWork.ThemeRepository.Add(theme);
+                await _unitOfWork.SaveAsync();
+                return CreatedAtAction("GetTheme", new { id = theme.ID });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        // DELETE: api/Themes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTheme(int id)
+        {
+            try
+            {
+                _unitOfWork.ThemeRepository.Delete(id);
+                await _unitOfWork.SaveAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
     }
 }

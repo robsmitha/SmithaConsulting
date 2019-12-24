@@ -8,6 +8,7 @@ using DataLayer;
 using DataLayer.Data;
 using DomainLayer.Models;
 using DataLayer.DAL;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -15,23 +16,27 @@ namespace API.Controllers
     [ApiController]
     public class LineItemsController : ControllerBase
     {
-        private readonly UnitOfWork unitOfWork;
-        public LineItemsController(DbArchitecture context)
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public LineItemsController(DbArchitecture context, IMapper mapper)
         {
-            unitOfWork = new UnitOfWork(context);
+            _unitOfWork = new UnitOfWork(context);
+            _mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<LineItemModel>> Get()
         {
-            var lineItems = unitOfWork.LineItemRepository.GetAll(includeProperties: "Item");
+            var lineItems = _unitOfWork
+                .LineItemRepository
+                .GetAll(includeProperties: "Item");
             try
             {
-                return Ok(lineItems.Select(x => new LineItemModel(x)));
+                return Ok(_mapper.Map<IEnumerable<LineItemModel>>(lineItems));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return StatusCode(500, ex);
             }
         }
 
@@ -39,59 +44,66 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItemModel>> Get(int id)
         {
-            var data = await unitOfWork.LineItemRepository
-                .GetAll(x => x.ID == id, includeProperties: "Item")
-                .AsQueryable()
-                .FirstOrDefaultAsync();
+            var lineItem = await _unitOfWork.LineItemRepository
+                .GetAsync(x => x.ID == id, includeProperties: "Item");
 
-            if (data == null)
+            if (lineItem == null)
             {
                 return NotFound();
             }
 
-            var dto = new LineItemModel(data);
-            return dto;
+            return Ok(_mapper.Map<LineItemModel>(lineItem));
         }
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<LineItemModel>> Put(int id, LineItemModel dto)
+        public async Task<ActionResult<LineItemModel>> Put(int id, LineItemModel model)
         {
-            var data = unitOfWork.LineItemRepository.GetAll(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User").FirstOrDefault();
+            var lineItem = await _unitOfWork
+                .LineItemRepository
+                .GetAsync(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User");
 
-            if (data != null)
+            if (lineItem == null)
             {
-                unitOfWork.LineItemRepository.Update(data);
-                await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
-                return new LineItemModel(data);
+                return NotFound();
             }
 
-            return NotFound();
+            _mapper.Map(model, lineItem);
+            _unitOfWork.LineItemRepository.Update(lineItem);
+            await _unitOfWork.SaveAsync();
+            return Ok(_mapper.Map<LineItemModel>(lineItem));
         }
 
 
         [HttpPost]
-        public async Task<ActionResult<LineItemModel>> Post(LineItemModel dto)
+        public async Task<ActionResult<LineItemModel>> Post(LineItemModel model)
         {
-            var lineItem = new LineItem
+            try
             {
-                CreatedAt = DateTime.Now,
-                ItemAmount = dto.ItemAmount,
-                ItemID = dto.ItemID,
-                OrderID = dto.OrderID,
-                Active = true
-            };
+                var lineItem = _mapper.Map<LineItem>(model);
+                _unitOfWork.LineItemRepository.Add(lineItem);
+                await _unitOfWork.SaveAsync();
+                return CreatedAtAction("Get", new { id = lineItem.ID });
 
-            unitOfWork.LineItemRepository.Add(lineItem);
-            await System.Threading.Tasks.Task.Run(() => unitOfWork.Save());
-
-            return new LineItemModel(lineItem);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            unitOfWork.LineItemRepository.Delete(id);
-            unitOfWork.Save();
+            try
+            {
+                _unitOfWork.LineItemRepository.Delete(id);
+                await _unitOfWork.SaveAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
     }
 }
