@@ -24,12 +24,7 @@ namespace Store.Controllers
         }
         public IActionResult List(int? orderId)
         {
-            var order = GetOrder(orderId);
-            var items = new List<ItemModel>();
-            if (MerchantID > 0)
-            {
-                items = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
-            }
+            var items = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
             var model = new RegisterListViewModel(items);
             return PartialView(model);
         }
@@ -40,9 +35,8 @@ namespace Store.Controllers
             var model = new RegisterCartViewModel(orderViewModel);
             return PartialView("Cart", model);
         }
-        protected bool AddLineItem(int itemId, int? orderId = null)
+        protected bool AddLineItem(ItemModel item, OrderModel order)
         {
-            var item = _api.Get<ItemModel>($"/items/{itemId}");
             if (item?.ID > 0)
             {
                 var lineItem = new LineItemModel
@@ -50,19 +44,7 @@ namespace Store.Controllers
                     ItemAmount = item.Price ?? 0M,
                     ItemID = item.ID,
                 };
-                var order = orderId > 0 ? GetOrder(orderId) : null;
-                //Create Order if needed
-                if (order == null)
-                {
-                    order = new OrderModel
-                    {
-                        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
-                        MerchantID = MerchantID.Value,
-                        CustomerID = CustomerID
-                    };
-
-                    _api.Post("/orders", order);
-                }
+                lineItem.OrderID = order.ID;
                 _api.Post("/lineitems", lineItem);
                 return true;
             }
@@ -73,58 +55,33 @@ namespace Store.Controllers
         public async Task<IActionResult> AddLineItem(RegisterViewModel model)
         {
             var msg = string.Empty;
-            var success = true;
-            var order = await GetOrderAsync();
-
-            if (MerchantID > 0)
+            var orderTask = GetOrderAsync();
+            var itemTask = _api.GetAsync<ItemModel>($"/items/{model.SelectedItemID}");
+            await Task.WhenAll(orderTask, itemTask);
+            var order = orderTask.Result;
+            var item = itemTask.Result;
+            bool success;
+            try
             {
-                var item = _api.Get<ItemModel>($"/items/{model.SelectedItemID}");
-                if (item != null)
+                //Create Order if needed
+                if (order == null)
                 {
-                    var lineItem = new LineItemModel
+                    order = new OrderModel
                     {
-                        ItemAmount = item.Price.Value,
-                        ItemID = item.ID,
+                        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
+                        MerchantID = MerchantID.Value,
+                        CustomerID = CustomerID,
+                        CreatedAt = DateTime.Now
                     };
-                    //Create Order if needed
-                    if (order == null)
-                    {
-                        order = new OrderModel
-                        {
-                            OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
-                            MerchantID = MerchantID.Value,
-                            CustomerID = CustomerID,
-                            CreatedAt = DateTime.Now
-                        };
-                        order = _api.Post("/orders", order);
-                    }
-                    lineItem.OrderID = order.ID;
-                    _api.Post("/lineitems", lineItem);
-                    success = true;
+                    order = _api.Post("/orders", order);
                 }
+                success = AddLineItem(item, order);
             }
-
-            //if (order == null)
-            //{
-            //    order = new OrderDTO
-            //    {
-            //        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
-            //        MerchantID = MerchantID.Value,
-            //        CustomerID = CustomerID,
-            //        CreatedAt = DateTime.Now
-            //    };
-            //    order = API.Add("/orders", order);
-            //}
-            //var item = await API.GetAsync<ItemDTO>($"/items/{model.SelectedItemID}");
-            //if (item != null)
-            //{
-            //    var lineItem = new LineItemDTO
-            //    {
-            //        ItemAmount = item.Price.Value,
-            //        ItemID = item.ID,
-            //    };
-            //    API.Add($"/orders/{model.CurrentOrderID}/lineitems/", lineItem);
-            //}
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                success = false;
+            }
             return Json(new { success, msg, orderId = order?.ID });
         }
 
@@ -161,11 +118,6 @@ namespace Store.Controllers
             var order = GetOrder(model.CurrentOrderID);
             try
             {
-                //API.GetAll<LineItemDTO>("/lineitems")
-                //    .Where(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID)
-                //    .ToList()
-                //    .ForEach(x => API.Delete($"/lineitems/{x.ID}"));
-
                 _api.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
                 UpdateDiscounts(order);
             }
@@ -176,16 +128,24 @@ namespace Store.Controllers
             }
             return Json(new { success, msg, orderId = order?.ID });
         }
-        public IActionResult Payment()
+        public async Task<IActionResult> Payment()
         {
-            var order = GetOrder();
-            if (order != null)
+            var order = await GetOrderAsync();
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            try
             {
                 var orderViewModel = GetOrderViewModel(order);
                 var model = new PaymentViewModel(orderViewModel, order.ID);
                 return View(model);
             }
-            return RedirectToAction("Error");
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error");
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -260,8 +220,8 @@ namespace Store.Controllers
         {
             try
             {
-                var discount = _api.Get<IEnumerable<ItemModel>>("/items")
-                .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID && x.LookupCode == lookupCode);
+                var discount = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items")
+                    .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.LookupCode == lookupCode);
                 if (discount != null)
                 {
                     var amount = 0M;
@@ -272,7 +232,6 @@ namespace Store.Controllers
                             break;
                         case (int)PriceTypeEnums.Variable:
                             var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID);
-
                             amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
                             break;
                     }
@@ -371,8 +330,12 @@ namespace Store.Controllers
             var msg = string.Empty;
             try
             {
-                var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == model.OrderID && x.ItemID == model.ItemID).ToList();
-                var itemCount = lineItems.Count;
+                var orderTask = GetOrderAsync();
+                var itemTask = _api.GetAsync<ItemModel>($"/items/{model.ItemID}");
+                Task.WhenAll(orderTask, itemTask);
+                var item = itemTask.Result;
+                var order = orderTask.Result;
+                var itemCount = order.LineItems.Count;
                 if (itemCount > 0)
                 {
                     if (model.Quantity > itemCount)
@@ -380,15 +343,15 @@ namespace Store.Controllers
                         // add
                         for (int i = 0; i < model.Quantity - itemCount; i++)
                         {
-                            success &= AddLineItem(model.ItemID, model.OrderID);
+                            success &= AddLineItem(item, order);
                         }
                     }
                     else if (model.Quantity < itemCount)
                     {
                         // remove
-                        for (int i = 0; i < itemCount - model.Quantity && i < lineItems.Count; i++)
+                        for (int i = 0; i < itemCount - model.Quantity && i < itemCount; i++)
                         {
-                            _api.Delete($"/lineItems/{lineItems[i].ID}");
+                            _api.Delete($"/lineItems/{order.LineItems[i].ID}");
                         }
                     }
                 }

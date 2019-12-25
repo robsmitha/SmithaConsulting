@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLayer;
 using DataLayer.DAL;
 using DataLayer.Data;
+using DomainLayer.BLL;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +16,13 @@ namespace API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly BusinessLogic BLL;
         public OrdersController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET api/values
@@ -28,10 +31,10 @@ namespace API.Controllers
         {
             try
             {
-                var orders = await _unitOfWork
-                .OrderRepository
-                .GetAllAsync(includeProperties: "Customer,Merchant,OrderStatusType,User");
-                return Ok(_mapper.Map<IEnumerable<OrderModel>>(orders));
+                //TODO: pass properties in from query string
+                var includedProperties = "Customer,Merchant,OrderStatusType,User";
+                var orders = await BLL.Orders.GetOrderModelsAsync(includedProperties);
+                return Ok(orders);
             }
             catch (Exception ex)
             {
@@ -45,19 +48,19 @@ namespace API.Controllers
         {
             try
             {
-                var order = await _unitOfWork
-                .OrderRepository
-                .GetAsync(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User");
-                if (order == null)
+                var includedProperties = "Customer,Merchant,OrderStatusType,User";
+                var order = await BLL.Orders.GetOrderModelAsync(id, includedProperties);
+                
+                if(order == null)
                 {
                     return NotFound();
                 }
-                //var lineItems = _unitOfWork.OrderRepository.GetLineItems(order);
-                //var payments = _unitOfWork.OrderRepository.GetPayments(order);
-                var model = _mapper.Map<OrderModel>(order);
-                //model.LineItems = _mapper.Map<List<LineItemModel>>(lineItems);
-                //model.Payments = _mapper.Map<List<PaymentModel>>(payments);
-                return Ok(model);
+
+                var lineItems = await BLL.Orders.GetLineItemModelsAsync(order.ID);
+                var payment = await BLL.Orders.GetPaymentsAsync(order.ID);
+                order.LineItems = lineItems.ToList();
+                order.Payments = payment.ToList();
+                return Ok(order);
             }
             catch (Exception ex)
             {
@@ -71,10 +74,8 @@ namespace API.Controllers
         {
             try
             {
-                var order = _mapper.Map<Order>(model);
-                _unitOfWork.OrderRepository.Add(order);
-                await _unitOfWork.SaveAsync();
-                return CreatedAtAction("Get", new { id = order.ID });
+                var order = await BLL.Orders.AddOrderAsync(model);
+                return Ok(order);
             }
             catch (Exception ex)
             {
@@ -90,21 +91,16 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            var order = await _unitOfWork.OrderRepository
-                   .GetAsync(x => x.ID == id,
-                   includeProperties: "Customer,Merchant,OrderStatusType,User");
-            if (order == null)
-            {
-                return NotFound();
-            }
 
             try
             {
-               
-                _mapper.Map(model, order);
-                _unitOfWork.OrderRepository.Update(order);
-                await _unitOfWork.SaveAsync();
-                return Ok(_mapper.Map<OrderModel>(order));
+
+                var order = await BLL.Orders.UpdateOrderAsync(model);
+                if (order == null)
+                {
+                    return NotFound();
+                }
+                return Ok(order);
             }
             catch (Exception ex)
             {
@@ -118,8 +114,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.OrderRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await Task.Run(() => BLL.Orders.DeleteOrder(id));
                 return Ok();
             }
             catch(Exception ex)
@@ -129,14 +124,29 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}/lineItems/{itemId}")]
-        public async Task<ActionResult> DeleteLineItemsByItemId(int id, int itemId)
+        public async Task<IActionResult> DeleteLineItemsByItemId(int id, int itemId)
         {
             try
             {
-                var entities = _unitOfWork.LineItemRepository.GetAll(filter: x => x.OrderID == id && x.ItemID == itemId);
-                _unitOfWork.LineItemRepository.DeleteRange(entities);
-                await _unitOfWork.SaveAsync();
+                await Task.Run(() => BLL.Orders.DeleteLineItemsByItemId(id, itemId));
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpPost("{id}/lineItems")]
+        public async Task<ActionResult> BulkCreateLineItems(List<LineItemModel> lineItems)
+        {
+            try
+            {
+                if(lineItems?.Count > 0)
+                {
+                    return Ok();
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {

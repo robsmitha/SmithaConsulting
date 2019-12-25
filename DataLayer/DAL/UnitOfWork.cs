@@ -39,10 +39,10 @@ namespace DataLayer.DAL
             get => applicationRepository = applicationRepository ?? new GenericRepository<Application>(_context);
             set => applicationRepository = value;
         }
-        private GenericRepository<Customer> customerRepository;
-        public GenericRepository<Customer> CustomerRepository
+        private CustomersRepository customerRepository;
+        public CustomersRepository CustomerRepository
         {
-            get => customerRepository = customerRepository ?? new GenericRepository<Customer>(_context);
+            get => customerRepository = customerRepository ?? new CustomersRepository(_context);
             set => customerRepository = value;
         }
         private GenericRepository<Item> itemRepository;

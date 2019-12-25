@@ -9,6 +9,7 @@ using DataLayer.Data;
 using DomainLayer.Models;
 using DataLayer.DAL;
 using AutoMapper;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -16,61 +17,83 @@ namespace API.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly BusinessLogic BLL;
 
         public CustomersController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET: api/Customers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerModel>>> GetCustomers()
         {
-            var customers = await _unitOfWork.CustomerRepository.GetAllAsync();
-            return Ok(_mapper.Map<IEnumerable<CustomerModel>>(customers));
+            try
+            {
+                var customers = await BLL.Customers.GetCustomerModelsAsync();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerModel>> GetCustomer(int id)
         {
-            var customer = await _unitOfWork.CustomerRepository.GetAsync(c => c.ID == id);
-
-            if (customer == null)
+            try
             {
-                return NotFound();
-            }
+                var customer = await BLL.Customers.GetCustomerModel(id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(_mapper.Map<CustomerModel>(customer));
+                return Ok(customer);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        // GET: api/Customers/5
+        [HttpGet("{id}/orders")]
+        public async Task<ActionResult<IEnumerable<OrderModel>>> GetCustomerOrders(int id)
+        {
+            try
+            {
+                var orders = await Task.Run(() => BLL.Orders.GetCustomerOrderModels(id));
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, CustomerModel model)
+        public async Task<ActionResult<CustomerModel>> PutCustomer(int id, CustomerModel model)
         {
             if (id != model.ID)
             {
                 return BadRequest();
             }
-
-            var customer = _unitOfWork.CustomerRepository.Get(x => x.ID == id);
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            _mapper.Map(model, customer);
-
-            _unitOfWork.CustomerRepository.Update(customer);
-
             try
             {
-                await _unitOfWork.SaveAsync();
-                return Ok();
+                var customer = await BLL.Customers.UpdateCustomerAsync(model);
+
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                return Ok(customer);
             }
             catch (Exception ex)
             {
@@ -84,10 +107,7 @@ namespace API.Controllers
         {
             try
             {
-                var customer = _mapper.Map<Customer>(model);
-                _unitOfWork.CustomerRepository.Add(customer);
-                await _unitOfWork.SaveAsync();
-                return _mapper.Map<CustomerModel>(customer);
+                return await BLL.Customers.AddCustomerAsync(model);
             }
             catch(Exception ex)
             {
@@ -99,9 +119,15 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCustomer(int id)
         {
-            _unitOfWork.CustomerRepository.Delete(id);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            try
+            {
+                await Task.Run(() => BLL.Customers.DeleteCustomer(id));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
     }
 }

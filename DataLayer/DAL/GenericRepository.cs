@@ -150,6 +150,5 @@ namespace DataLayer.DAL
             await Task.Run(() => dbSet.Attach(entity));
             context.Entry(entity).State = EntityState.Modified;
         }
-
     }
 }

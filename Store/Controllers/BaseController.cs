@@ -92,7 +92,7 @@ namespace Store.Controllers
                 return order;
             }
             return CustomerID > 0
-                ? _api.Get<IEnumerable<OrderModel>>("/orders").LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
+                ? _api.Get<IEnumerable<OrderModel>>($"customers/{CustomerID}/orders").LastOrDefault(x => x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open)
                 : null; 
         }
 
@@ -107,25 +107,12 @@ namespace Store.Controllers
                 }
                 return order;
             }
-            var a = await _api.GetAsync<IEnumerable<OrderModel>>("/orders");
-            return a.LastOrDefault(x => x.CustomerID == CustomerID && x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open); 
-                
+            var a = await _api.GetAsync<IEnumerable<OrderModel>>($"customers/{CustomerID}/orders");
+            return a.LastOrDefault(x => x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
+
         }
 
-        public OrderViewModel GetOrderViewModel(OrderModel order)
-        {
-            var payments = new List<PaymentModel>();
-            var lineItems = new List<LineItemModel>();
-            if (order != null)
-            {
-                var pr = _api.GetAsync<IEnumerable<PaymentModel>>("/payments");
-                var lr = _api.GetAsync<IEnumerable<LineItemModel>>("/lineitems");
-                Task.WaitAll(pr, lr);
-                payments = pr.Result.Where(x => x.OrderID == order.ID).ToList();
-                lineItems = lr.Result.Where(x => x.OrderID == order.ID).ToList();
-            }
-            return new OrderViewModel(order, lineItems, payments);
-        }
+        public OrderViewModel GetOrderViewModel(OrderModel order) => new OrderViewModel(order);
         #endregion
 
     }

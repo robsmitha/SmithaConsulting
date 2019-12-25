@@ -9,11 +9,11 @@ namespace Store.Models
         public List<LineItemModel> LineItems { get; set; }
         public List<PaymentModel> Payments { get; set; }
         public OrderViewModel() { }
-        public OrderViewModel(OrderModel order, List<LineItemModel> lineItems, List<PaymentModel> payments)
+        public OrderViewModel(OrderModel order)
         {
             Order = order;
-            LineItems = lineItems;
-            Payments = payments;
+            LineItems = order?.LineItems ?? new List<LineItemModel>();
+            Payments = order?.Payments ?? new List<PaymentModel>();
         }
     }
 }

@@ -98,7 +98,7 @@ namespace API.Controllers
                 var payment = _mapper.Map<Payment>(model);
                 _unitOfWork.PaymentRepository.Add(payment);
                 await _unitOfWork.SaveAsync();
-                return _mapper.Map<PaymentModel>(payment);
+                return Ok(_mapper.Map<PaymentModel>(payment));
             }
             catch (Exception ex)
             {
