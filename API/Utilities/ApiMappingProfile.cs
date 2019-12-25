@@ -10,10 +10,14 @@ namespace API.Utilities
         {
             CreateMap<Application, ApplicationModel>().ReverseMap();
             CreateMap<Customer, CustomerModel>().ReverseMap();
-            CreateMap<LineItem, LineItemModel>().ReverseMap();
             CreateMap<Theme, ThemeModel>().ReverseMap();
             CreateMap<Item, ItemModel>().ReverseMap();
 
+            CreateMap<LineItem, LineItemModel>()
+                .ForMember(m => m.ItemName, opt => opt.MapFrom(src => src.Item.ItemName))
+                .ForMember(m => m.ItemTypeID, opt => opt.MapFrom(src => src.Item.ItemTypeID))
+                .ForMember(m => m.ItemDescription, opt => opt.MapFrom(src => src.Item.ItemDescription));
+            CreateMap<LineItemModel, LineItem>().ForMember(m => m.Item, opt => opt.Ignore());
             CreateMap<Order, OrderModel>();
             CreateMap<OrderModel, Order>().ForMember(m => m.OrderStatusType, opt => opt.Ignore());
             CreateMap<Merchant, MerchantModel>();
