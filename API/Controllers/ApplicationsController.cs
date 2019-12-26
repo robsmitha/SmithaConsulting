@@ -10,6 +10,7 @@ using DataLayer.Data;
 using DomainLayer.Models;
 using DataLayer.DAL;
 using AutoMapper;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -17,80 +18,108 @@ namespace API.Controllers
     [ApiController]
     public class ApplicationsController : ControllerBase
     {
-        private readonly UnitOfWork unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly BusinessLogic BLL;
         public ApplicationsController(DbArchitecture context, IMapper mapper)
         {
-            unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
         // GET: api/Applications
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ApplicationModel>>> GetApplications()
         {
-            var applications = await unitOfWork
-                .ApplicationRepository
-                .GetAllAsync(includeProperties: "ApplicationType");
-
-            return Ok(_mapper.Map<IEnumerable<ApplicationModel>>(applications));
+            var applications = await BLL.Applications.GetAllAsync();
+            return Ok(applications);
         }
 
         // GET: api/Applications/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationModel>> GetApplication(int id)
         {
-            var application = await unitOfWork
-                .ApplicationRepository
-                .GetAsync(x => x.ID == id, includeProperties: "ApplicationType");
-            
-            if (application == null)
+            try
             {
-                return NotFound();
+                var application = await BLL.Applications.GetAsync(id);
+                if (application == null)
+                {
+                    return NotFound();
+                }
+                return Ok(application);
             }
-
-            return Ok(_mapper.Map<ApplicationModel>(application));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
         // GET: api/Applications/store
         [HttpGet("GetByName/{name}")]
         public async Task<ActionResult<ApplicationModel>> GetApplicationByName(string name)
         {
-            var application = await unitOfWork
-                .ApplicationRepository
-                .GetAsync(x => x.Name.ToLower() == name.ToLower(), includeProperties: "ApplicationType");
-
-            if (application == null)
+            try
             {
-                return NotFound();
+                var application = await BLL.Applications.GetByNameAsync(name);
+                if (application == null)
+                {
+                    return NotFound();
+                }
+                return Ok(application);
             }
-
-            return Ok(_mapper.Map<ApplicationModel>(application));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // PUT: api/Applications/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutApplication(int id, ApplicationModel model)
+        public async Task<ActionResult<ApplicationModel>> PutApplication(int id, ApplicationModel model)
         {
             if (id != model.ID)
             {
                 return BadRequest();
             }
-            var application = unitOfWork.ApplicationRepository.Get(x => x.ID == id, includeProperties: "ApplicationType");
-            
-            if(application == null)
-            {
-                return NotFound();
-            }
-            _mapper.Map(model, application);
-            unitOfWork.ApplicationRepository.Update(application);
-
             try
             {
-                await unitOfWork.SaveAsync();
+                var application = await BLL.Applications.UpdateAsync(model);
+                if (application == null)
+                {
+                    return NotFound();
+                }
+                return Ok(application);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        // POST: api/Applications
+        [HttpPost]
+        public async Task<ActionResult<ApplicationModel>> PostApplication(ApplicationModel model)
+        {
+            try
+            {
+                return Ok(await BLL.Applications.AddAsync(model));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        // DELETE: api/Customers/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(int id)
+        {
+            try
+            {
+                await BLL.Applications.DeleteAsync(id);
                 return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex);
             }
         }
     }

@@ -33,7 +33,7 @@ namespace API.Controllers
         {
             try
             {
-                var customers = await BLL.Customers.GetCustomerModelsAsync();
+                var customers = await BLL.Customers.GetAllAsync();
                 return Ok(customers);
             }
             catch (Exception ex)
@@ -48,7 +48,7 @@ namespace API.Controllers
         {
             try
             {
-                var customer = await BLL.Customers.GetCustomerModel(id);
+                var customer = await BLL.Customers.GetAsync(id);
                 if (customer == null)
                 {
                     return NotFound();
@@ -87,7 +87,7 @@ namespace API.Controllers
             }
             try
             {
-                var customer = await BLL.Customers.UpdateCustomerAsync(model);
+                var customer = await BLL.Customers.UpdateAsync(model);
 
                 if (customer == null)
                 {
@@ -107,7 +107,7 @@ namespace API.Controllers
         {
             try
             {
-                return await BLL.Customers.AddCustomerAsync(model);
+                return Ok(await BLL.Customers.AddAsync(model));
             }
             catch(Exception ex)
             {
@@ -121,7 +121,7 @@ namespace API.Controllers
         {
             try
             {
-                await Task.Run(() => BLL.Customers.DeleteCustomer(id));
+                await BLL.Customers.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)

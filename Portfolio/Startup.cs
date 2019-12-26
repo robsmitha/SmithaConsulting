@@ -46,6 +46,8 @@ namespace Portfolio
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            ICacheService cache = new CacheService();
+            services.AddSingleton(cache);
 
             IApiService api = new ApiService(Configuration["Configurations:APIEndpoint"], Configuration["Configurations:APIKey"]);
             services.AddSingleton(api);

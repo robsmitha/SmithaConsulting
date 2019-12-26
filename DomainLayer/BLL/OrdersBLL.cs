@@ -17,19 +17,19 @@ namespace DomainLayer.BLL
         {
 
         }
-        public async Task<List<OrderModel>> GetOrderModelsAsync(string includeProperties = null)
+        public async Task<List<OrderModel>> GetAllAsync()
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: includeProperties);
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "Customer,Merchant,OrderStatusType,User");
             return _mapper.Map<List<OrderModel>>(orders);
         }
 
-        public async Task<OrderModel> GetOrderModelAsync(int id, string includeProperties = null)
+        public async Task<OrderModel> GetAsync(int id)
         {
-            var order = await _unitOfWork.OrderRepository.GetAsync(filter: o => o.ID == id, includeProperties: includeProperties);
+            var order = await _unitOfWork.OrderRepository.GetAsync(filter: o => o.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User");
             return _mapper.Map<OrderModel>(order);
         }
 
-        public async Task<IEnumerable<LineItemModel>> GetLineItemModelsAsync(int orderId)
+        public async Task<IEnumerable<LineItemModel>> GetLineItemsAsync(int orderId)
         {
             var lineItems = await Task.Run(() => _unitOfWork.OrderRepository.GetLineItems(orderId));
             return _mapper.Map<IEnumerable<LineItemModel>>(lineItems);
@@ -39,14 +39,14 @@ namespace DomainLayer.BLL
             var payments = await Task.Run(() => _unitOfWork.OrderRepository.GetPayments(orderId));
             return _mapper.Map<IEnumerable<PaymentModel>>(payments);
         }
-        public async Task<OrderModel> AddOrderAsync(OrderModel model)
+        public async Task<OrderModel> AddAsync(OrderModel model)
         {
             var order = _mapper.Map<Order>(model);
             _unitOfWork.OrderRepository.Add(order);
             await _unitOfWork.SaveAsync();
             return _mapper.Map<OrderModel>(order);
         }
-        public async Task<OrderModel> UpdateOrderAsync(OrderModel model)
+        public async Task<OrderModel> UpdateAsync(OrderModel model)
         {
 
             var order = await _unitOfWork.OrderRepository .GetAsync(x => x.ID == model.ID);
@@ -59,12 +59,12 @@ namespace DomainLayer.BLL
             await _unitOfWork.SaveAsync();
             return _mapper.Map<OrderModel>(order);
         }
-        public async void DeleteOrder(int id)
+        public async Task DeleteOrder(int id)
         {
             _unitOfWork.OrderRepository.Delete(id);
             await _unitOfWork.SaveAsync();
         }
-        public async void DeleteLineItemsByItemId(int id, int itemId)
+        public async Task DeleteLineItemsByItemId(int id, int itemId)
         {
             var entities = _unitOfWork.LineItemRepository.GetAll(filter: x => x.OrderID == id && x.ItemID == itemId);
             _unitOfWork.LineItemRepository.DeleteRange(entities);
@@ -100,9 +100,15 @@ namespace DomainLayer.BLL
                         orderModel.LineItems = new List<LineItemModel>();
                         orderModel.Payments = new List<PaymentModel>();
                     }
-                    orderRow.lineItem.Item = orderRow.item;
-                    orderModel.LineItems.Add(_mapper.Map<LineItemModel>(orderRow.lineItem));
-                    orderModel.Payments.Add(_mapper.Map<PaymentModel>(orderRow.payment));
+                    if(orderRow.lineItem != null)
+                    {
+                        orderRow.lineItem.Item = orderRow.item;
+                        orderModel.LineItems.Add(_mapper.Map<LineItemModel>(orderRow.lineItem));
+                    }
+                    if (orderRow.payment != null)
+                    {
+                        orderModel.Payments.Add(_mapper.Map<PaymentModel>(orderRow.payment));
+                    }
                 }
             }
             catch (Exception ex)

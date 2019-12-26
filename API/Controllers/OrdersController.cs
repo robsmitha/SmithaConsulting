@@ -31,9 +31,7 @@ namespace API.Controllers
         {
             try
             {
-                //TODO: pass properties in from query string
-                var includedProperties = "Customer,Merchant,OrderStatusType,User";
-                var orders = await BLL.Orders.GetOrderModelsAsync(includedProperties);
+                var orders = await BLL.Orders.GetAllAsync();
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -48,15 +46,14 @@ namespace API.Controllers
         {
             try
             {
-                var includedProperties = "Customer,Merchant,OrderStatusType,User";
-                var order = await BLL.Orders.GetOrderModelAsync(id, includedProperties);
+                var order = await BLL.Orders.GetAsync(id);
                 
                 if(order == null)
                 {
                     return NotFound();
                 }
 
-                var lineItems = await BLL.Orders.GetLineItemModelsAsync(order.ID);
+                var lineItems = await BLL.Orders.GetLineItemsAsync(order.ID);
                 var payment = await BLL.Orders.GetPaymentsAsync(order.ID);
                 order.LineItems = lineItems.ToList();
                 order.Payments = payment.ToList();
@@ -74,7 +71,7 @@ namespace API.Controllers
         {
             try
             {
-                var order = await BLL.Orders.AddOrderAsync(model);
+                var order = await BLL.Orders.AddAsync(model);
                 return Ok(order);
             }
             catch (Exception ex)
@@ -95,7 +92,7 @@ namespace API.Controllers
             try
             {
 
-                var order = await BLL.Orders.UpdateOrderAsync(model);
+                var order = await BLL.Orders.UpdateAsync(model);
                 if (order == null)
                 {
                     return NotFound();
@@ -114,7 +111,7 @@ namespace API.Controllers
         {
             try
             {
-                await Task.Run(() => BLL.Orders.DeleteOrder(id));
+                await BLL.Orders.DeleteOrder(id);
                 return Ok();
             }
             catch(Exception ex)
@@ -128,7 +125,7 @@ namespace API.Controllers
         {
             try
             {
-                await Task.Run(() => BLL.Orders.DeleteLineItemsByItemId(id, itemId));
+                await BLL.Orders.DeleteLineItemsByItemId(id, itemId);
                 return Ok();
             }
             catch (Exception ex)

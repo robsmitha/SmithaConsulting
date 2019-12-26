@@ -13,7 +13,10 @@ namespace DomainLayer.BLL
         private readonly IMapper _mapper;
         public BusinessLogic(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
+            if (_unitOfWork == null)
+            {
+                _unitOfWork = new UnitOfWork(context);
+            }
             _mapper = mapper;
         }
 
@@ -29,6 +32,13 @@ namespace DomainLayer.BLL
         {
             get => orders = orders ?? new OrdersBLL(_unitOfWork, _mapper);
             set => orders = value;
+        }
+
+        private ApplicationsBLL applications;
+        public ApplicationsBLL Applications
+        {
+            get => applications = applications ?? new ApplicationsBLL(_unitOfWork, _mapper);
+            set => applications = value;
         }
     }
 }
