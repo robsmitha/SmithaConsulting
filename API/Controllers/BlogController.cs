@@ -6,6 +6,9 @@ using DataLayer.Data;
 using DataLayer.DAL;
 using DomainLayer.Models;
 using AutoMapper;
+using DataLayer;
+using DomainLayer.BLL;
+using System;
 
 namespace API.Controllers
 {
@@ -13,39 +16,47 @@ namespace API.Controllers
     [ApiController]
     public class BlogController : ControllerBase
     {
-        private readonly UnitOfWork unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly BusinessLogic BLL;
         public BlogController(DbArchitecture context, IMapper mapper)
         {
-            unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET: api/Blogs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogModel>>> GetBlogs()
         {
-            var blogs = await unitOfWork
-                .BlogRepository
-                .GetAllAsync(includeProperties: "BlogStatusType,User");
-
-            return Ok(_mapper.Map<IEnumerable<BlogModel>>(blogs));
+            try
+            {
+                var blogs = await BLL.Blogs.GetAllAsync();
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BlogModel>> GetBlog(int id)
         {
-            var blog = await unitOfWork
-                .BlogRepository
-                .GetAsync(x => x.ID == id, includeProperties: "BlogStatusType,User");
-
-            if (blog == null)
+            try
             {
-                return NotFound();
+                var blog = await BLL.Blogs.GetAsync(id);
+                if (blog == null)
+                {
+                    return NotFound();
+                }
+                return Ok(blog);
             }
-
-            return Ok(_mapper.Map<BlogModel>(blog));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
     }
 }

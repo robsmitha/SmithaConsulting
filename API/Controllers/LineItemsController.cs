@@ -9,6 +9,7 @@ using DataLayer.Data;
 using DomainLayer.Models;
 using DataLayer.DAL;
 using AutoMapper;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -16,23 +17,22 @@ namespace API.Controllers
     [ApiController]
     public class LineItemsController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly BusinessLogic BLL;
         public LineItemsController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<LineItemModel>> Get()
+        public async Task<ActionResult<IEnumerable<LineItemModel>>> Get()
         {
-            var lineItems = _unitOfWork
-                .LineItemRepository
-                .GetAll(includeProperties: "Item");
             try
             {
-                return Ok(_mapper.Map<IEnumerable<LineItemModel>>(lineItems));
+                var lineItems = await BLL.LineItems.GetAllAsync();
+                return Ok(lineItems);
             }
             catch (Exception ex)
             {
@@ -44,34 +44,42 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItemModel>> Get(int id)
         {
-            var lineItem = await _unitOfWork.LineItemRepository
-                .GetAsync(x => x.ID == id, includeProperties: "Item");
-
-            if (lineItem == null)
+            try
             {
-                return NotFound();
+                var lineItem = await BLL.LineItems.GetAsync(id);
+                if (lineItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(lineItem);
             }
-
-            return Ok(_mapper.Map<LineItemModel>(lineItem));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
 
         [HttpPut("{id}")]
         public async Task<ActionResult<LineItemModel>> Put(int id, LineItemModel model)
         {
-            var lineItem = await _unitOfWork
-                .LineItemRepository
-                .GetAsync(x => x.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User");
-
-            if (lineItem == null)
+            if (id != model.ID)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            _mapper.Map(model, lineItem);
-            _unitOfWork.LineItemRepository.Update(lineItem);
-            await _unitOfWork.SaveAsync();
-            return Ok(_mapper.Map<LineItemModel>(lineItem));
+            try
+            {
+                var lineItem = await BLL.LineItems.UpdateAsync(model);
+                if (lineItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(lineItem);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
 
@@ -80,11 +88,7 @@ namespace API.Controllers
         {
             try
             {
-                var lineItem = _mapper.Map<LineItem>(model);
-                _unitOfWork.LineItemRepository.Add(lineItem);
-                await _unitOfWork.SaveAsync();
-                return CreatedAtAction("Get", new { id = lineItem.ID });
-
+                return Ok(await BLL.LineItems.AddAsync(model));
             }
             catch (Exception ex)
             {
@@ -96,8 +100,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.LineItemRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await BLL.LineItems.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)

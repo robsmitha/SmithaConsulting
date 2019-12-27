@@ -28,7 +28,7 @@ namespace Portfolio.Controllers
         public string BucketName => ConfigurationManager.GetConfiguration("S3BucketName");
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
 
-        public override void OnActionExecuted(ActionExecutedContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {

@@ -16,21 +16,21 @@ namespace Store.Controllers
     {
         public HomeController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var order = GetOrder();
+            var order = await GetOrderAsync();
             var model = new RegisterViewModel(order);
             return View(model);
         }
-        public IActionResult List(int? orderId)
+        public async Task<IActionResult> List(int? orderId)
         {
-            var items = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items").Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList();
-            var model = new RegisterListViewModel(items);
+            var items = await _api.GetAsync<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items");
+            var model = new RegisterListViewModel(items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList());
             return PartialView(model);
         }
-        public IActionResult LoadCart(int? orderId)
+        public async Task<IActionResult> LoadCart(int? orderId)
         {
-            var order = GetOrder(orderId);
+            var order = await GetOrderAsync(orderId);
             var orderViewModel = GetOrderViewModel(order);
             var model = new RegisterCartViewModel(orderViewModel);
             return PartialView("Cart", model);
@@ -87,15 +87,14 @@ namespace Store.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult RemoveLineItem(RegisterViewModel model)
+        public async Task<IActionResult> RemoveLineItem(RegisterViewModel model)
         {
             var msg = string.Empty;
             var success = false;
-            var order = GetOrder(model.CurrentOrderID);
+            var order = await GetOrderAsync(model.CurrentOrderID);
             try
             {
-                var lineItem = _api.Get<IEnumerable<LineItemModel>>("/lineitems")
-                    .LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
+                var lineItem = order.LineItems.LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
                 if (lineItem != null)
                 {
                     _api.Delete($"/lineitems/{lineItem.ID}");
@@ -111,11 +110,11 @@ namespace Store.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult RemoveItem(RegisterViewModel model)
+        public async Task<IActionResult> RemoveItem(RegisterViewModel model)
         {
             var msg = string.Empty;
             var success = false;
-            var order = GetOrder(model.CurrentOrderID);
+            var order = await GetOrderAsync(model.CurrentOrderID);
             try
             {
                 _api.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
@@ -300,20 +299,21 @@ namespace Store.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ApplyDiscount(PaymentViewModel model)
+        public async Task<IActionResult> ApplyDiscount(PaymentViewModel model)
         {
-            var order = GetOrder(model.CurrentOrderID);
+            var order = await GetOrderAsync(model.CurrentOrderID);
             if (AddDiscount(order, model.PromoCode))
             {
 
             }
             return RedirectToAction("Payment", new { orderId = model.CurrentOrderID });
         }
-        public IActionResult Edit(int itemId, int orderId)
+        public async Task<IActionResult> Edit(int itemId, int orderId)
         {
             var model = new RegisterEditViewModel();
-            var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == orderId && x.ItemID == itemId);
-            var lineItem = lineItems.FirstOrDefault();
+            var order = await GetOrderAsync(orderId);
+            var lineItems = order.LineItems.Where(x => x.ItemID == itemId);
+            var lineItem = lineItems.LastOrDefault();
             if (lineItem != null)
             {
                 model.OrderID = lineItem.OrderID;
@@ -324,7 +324,7 @@ namespace Store.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(RegisterEditViewModel model)
+        public async Task<IActionResult> Edit(RegisterEditViewModel model)
         {
             var success = true;
             var msg = string.Empty;
@@ -332,7 +332,7 @@ namespace Store.Controllers
             {
                 var orderTask = GetOrderAsync();
                 var itemTask = _api.GetAsync<ItemModel>($"/items/{model.ItemID}");
-                Task.WhenAll(orderTask, itemTask);
+                await Task.WhenAll(orderTask, itemTask);
                 var item = itemTask.Result;
                 var order = orderTask.Result;
                 var itemCount = order.LineItems.Count;

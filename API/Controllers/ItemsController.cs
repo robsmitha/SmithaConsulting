@@ -6,6 +6,7 @@ using AutoMapper;
 using DataLayer;
 using DataLayer.DAL;
 using DataLayer.Data;
+using DomainLayer.BLL;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,32 +17,46 @@ namespace API.Controllers
     [ApiController]
     public class ItemsController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
+        private readonly BusinessLogic BLL;
         public ItemsController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemModel>>> Get()
         {
-            var items = await _unitOfWork.ItemRepository.GetAllAsync(includeProperties: "Merchant");
-            return Ok(_mapper.Map<IEnumerable<ItemModel>>(items));
+            try
+            {
+                var items = await BLL.Items.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemModel>> Get(int id)
         {
-            var item = await _unitOfWork.ItemRepository.GetAsync(i => i.ID == id, includeProperties: "Merchant");
-            if (item == null)
+            try
             {
-                return NotFound();
-            }
+                var item = await BLL.Items.GetAsync(id);
+                if (item == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(_mapper.Map<ItemModel>(item));
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         [HttpPost]
@@ -49,10 +64,7 @@ namespace API.Controllers
         {
             try
             {
-                var item = _mapper.Map<Item>(model);
-                _unitOfWork.ItemRepository.Add(item);
-                await _unitOfWork.SaveAsync();
-                return CreatedAtAction("Get", new { id = item.ID });
+                return Ok(await BLL.Items.AddAsync(model));
             }
             catch (Exception ex)
             {
@@ -67,24 +79,19 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            var item = _unitOfWork.ItemRepository.Get(x => x.ID == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            _mapper.Map(model, item);
-
-            _unitOfWork.ItemRepository.Update(item);
-
             try
             {
-                await _unitOfWork.SaveAsync();
-                return Ok();
+                var item = await BLL.Items.UpdateAsync(model);
+
+                if (item == null)
+                {
+                    return NotFound();
+                }
+                return Ok(item);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex);
             }
         }
 
@@ -93,8 +100,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.ItemRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await BLL.Items.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)

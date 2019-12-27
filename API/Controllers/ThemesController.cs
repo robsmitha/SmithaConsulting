@@ -11,6 +11,7 @@ using DomainLayer.Models;
 using AutoMapper;
 using DataLayer.DAL;
 using DomainLayer.Services;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -18,14 +19,13 @@ namespace API.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly ICacheService _cache;
-        public ThemesController(DbArchitecture context, IMapper mapper, ICacheService cache)
+        private readonly BusinessLogic BLL;
+        public ThemesController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
-            _cache = cache;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET: api/Themes
@@ -34,10 +34,8 @@ namespace API.Controllers
         {
             try
             {
-                var themes = await _unitOfWork
-                    .ThemeRepository
-                    .GetAllAsync();
-                return Ok(_mapper.Map<IEnumerable<ThemeModel>>(themes));
+                var themes = await BLL.Themes.GetAllAsync();
+                return Ok(themes);
             }
             catch (Exception ex)
             {
@@ -51,16 +49,14 @@ namespace API.Controllers
         {
             try
             {
-                var theme = await _unitOfWork
-                    .ThemeRepository
-                    .GetAsync(t => t.ID == id);
+                var theme = await BLL.Themes.GetAsync(id);
 
                 if (theme == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(_mapper.Map<ThemeModel>(theme));
+                return Ok(theme);
             }
             catch (Exception ex)
             {
@@ -76,25 +72,18 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            var theme = await _unitOfWork
-                    .ThemeRepository
-                    .GetAsync(t => t.ID == id);
-
-            if (theme == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                _mapper.Map(model, theme);
-                _unitOfWork.ThemeRepository.Update(theme);
-                await _unitOfWork.SaveAsync();
-                return Ok(_mapper.Map<ThemeModel>(theme));
+                var theme = await BLL.Themes.UpdateAsync(model);
+                if (theme == null)
+                {
+                    return NotFound();
+                }
+                return Ok(theme);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, ex);
             }
         }
 
@@ -104,10 +93,7 @@ namespace API.Controllers
         {
             try
             {
-                var theme = _mapper.Map<Theme>(model);
-                _unitOfWork.ThemeRepository.Add(theme);
-                await _unitOfWork.SaveAsync();
-                return CreatedAtAction("GetTheme", new { id = theme.ID });
+                return Ok(await BLL.Themes.AddAsync(model));
             }
             catch (Exception ex)
             {
@@ -121,8 +107,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.ThemeRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await BLL.Applications.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)

@@ -10,6 +10,7 @@ using DataLayer.Data;
 using DomainLayer.Models;
 using DataLayer.DAL;
 using AutoMapper;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -17,13 +18,13 @@ namespace API.Controllers
     [ApiController]
     public class MerchantsController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
+        private readonly BusinessLogic BLL;
         public MerchantsController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET: api/Merchants
@@ -32,10 +33,8 @@ namespace API.Controllers
         {
             try
             {
-                var merchants = await _unitOfWork
-                    .MerchantRepository
-                    .GetAllAsync(includeProperties: "MerchantType");
-                return Ok(_mapper.Map<IEnumerable<MerchantModel>>(merchants));
+                var merchants = await BLL.Merchants.GetAllAsync();
+                return Ok(merchants);
             }
             catch (Exception ex)
             {
@@ -47,24 +46,34 @@ namespace API.Controllers
         [HttpGet("{id}/items")]
         public async Task<ActionResult<IEnumerable<ItemModel>>> GetMerchantItems(int id)
         {
-            var items = await _unitOfWork
-                .MerchantRepository
-                .GetMerchantItemsAsync(id);
-            return Ok(_mapper.Map<IEnumerable<ItemModel>>(items));
+            try
+            {
+                var items = await BLL.Merchants.GetMerchantItems(id);
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Merchants/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MerchantModel>> GetMerchant(int id)
         {
-            var merchant = await _unitOfWork.MerchantRepository.GetAsync(m => m.ID == id);
-
-            if (merchant == null)
+            try
             {
-                return NotFound();
+                var merchant = await BLL.Merchants.GetAsync(id);
+                if (merchant == null)
+                {
+                    return NotFound();
+                }
+                return Ok(merchant);
             }
-
-            return Ok(_mapper.Map<MerchantModel>(merchant));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // PUT: api/Merchants/5
@@ -75,26 +84,18 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-
-            var merchant = _unitOfWork.MerchantRepository.Get(x => x.ID == id);
-
-            if (merchant == null)
-            {
-                return NotFound();
-            }
-
-            _mapper.Map(model, merchant);
-
-            _unitOfWork.MerchantRepository.Update(merchant);
-
             try
             {
-                await _unitOfWork.SaveAsync();
-                return Ok();
+                var merchant = await BLL.Merchants.UpdateAsync(model);
+                if (merchant == null)
+                {
+                    return NotFound();
+                }
+                return Ok(merchant);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex);
             }
         }
 
@@ -104,10 +105,7 @@ namespace API.Controllers
         {
             try
             {
-                var merchant = _mapper.Map<Merchant>(model);
-                _unitOfWork.MerchantRepository.Add(merchant);
-                await _unitOfWork.SaveAsync();
-                return CreatedAtAction("GetMerchant", new { id = merchant.ID });
+                return Ok(await BLL.Merchants.AddAsync(model));
             }
             catch (Exception ex)
             {
@@ -121,8 +119,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.MerchantRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await BLL.Applications.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)

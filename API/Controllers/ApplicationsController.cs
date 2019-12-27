@@ -30,8 +30,15 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ApplicationModel>>> GetApplications()
         {
-            var applications = await BLL.Applications.GetAllAsync();
-            return Ok(applications);
+            try
+            {
+                var applications = await BLL.Applications.GetAllAsync();
+                return Ok(applications);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // GET: api/Applications/5

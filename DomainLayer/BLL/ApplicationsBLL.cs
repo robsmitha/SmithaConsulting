@@ -15,28 +15,28 @@ namespace DomainLayer.BLL
         {
             var applications = await _unitOfWork
                 .ApplicationRepository
-                .GetAllAsync(includeProperties: "ApplicationType");
+                .GetAllAsync(includeProperties: $"{nameof(ApplicationType)}");
             return _mapper.Map<IEnumerable<ApplicationModel>>(applications);
         }
         public async Task<ApplicationModel> GetAsync(int id)
         {
             var application = await _unitOfWork
                 .ApplicationRepository
-                .GetAsync(x => x.ID == id, includeProperties: "ApplicationType");
+                .GetAsync(x => x.ID == id, includeProperties: $"{nameof(ApplicationType)}");
             return _mapper.Map<ApplicationModel>(application);
         }
         public async Task<ApplicationModel> GetByNameAsync(string name)
         {
             var application = await _unitOfWork
                 .ApplicationRepository
-                .GetAsync(x => x.Name.ToLower() == name.ToLower(), includeProperties: "ApplicationType");
+                .GetAsync(x => x.Name.ToLower() == name.ToLower(), includeProperties: $"{nameof(ApplicationType)}");
             return _mapper.Map<ApplicationModel>(application);
         }
         public async Task<ApplicationModel> UpdateAsync(ApplicationModel model)
         {
             var application = await _unitOfWork
                 .ApplicationRepository
-                .GetAsync(x => x.ID == model.ID, includeProperties: "ApplicationType");
+                .GetAsync(x => x.ID == model.ID);
             if (application == null)
             {
                 return null;

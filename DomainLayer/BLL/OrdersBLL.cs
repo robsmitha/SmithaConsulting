@@ -19,13 +19,13 @@ namespace DomainLayer.BLL
         }
         public async Task<List<OrderModel>> GetAllAsync()
         {
-            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: "Customer,Merchant,OrderStatusType,User");
+            var orders = await _unitOfWork.OrderRepository.GetAllAsync(includeProperties: $"{nameof(Customer)},{nameof(Merchant)},{nameof(OrderStatusType)},{nameof(User)}");
             return _mapper.Map<List<OrderModel>>(orders);
         }
 
         public async Task<OrderModel> GetAsync(int id)
         {
-            var order = await _unitOfWork.OrderRepository.GetAsync(filter: o => o.ID == id, includeProperties: "Customer,Merchant,OrderStatusType,User");
+            var order = await _unitOfWork.OrderRepository.GetAsync(filter: o => o.ID == id, includeProperties: $"{nameof(Customer)},{nameof(Merchant)},{nameof(OrderStatusType)},{nameof(User)}");
             return _mapper.Map<OrderModel>(order);
         }
 
@@ -49,7 +49,7 @@ namespace DomainLayer.BLL
         public async Task<OrderModel> UpdateAsync(OrderModel model)
         {
 
-            var order = await _unitOfWork.OrderRepository .GetAsync(x => x.ID == model.ID);
+            var order = await _unitOfWork.OrderRepository.GetAsync(x => x.ID == model.ID);
             if (order == null)
             {
                 return null;

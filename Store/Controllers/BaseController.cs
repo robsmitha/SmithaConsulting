@@ -39,7 +39,7 @@ namespace Store.Controllers
             _cache = cache;
         }
 
-        public override void OnActionExecuted(ActionExecutedContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -107,9 +107,12 @@ namespace Store.Controllers
                 }
                 return order;
             }
-            var a = await _api.GetAsync<IEnumerable<OrderModel>>($"customers/{CustomerID}/orders");
-            return a.LastOrDefault(x => x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
-
+            if(CustomerID > 0)
+            {
+                var a = await _api.GetAsync<IEnumerable<OrderModel>>($"customers/{CustomerID}/orders");
+                return a.LastOrDefault(x => x.OrderStatusTypeID == (int)OrderStatusTypeEnums.Open);
+            }
+            return null;
         }
 
         public OrderViewModel GetOrderViewModel(OrderModel order) => new OrderViewModel(order);

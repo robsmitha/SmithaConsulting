@@ -11,6 +11,7 @@ using DataLayer.Data;
 using DataLayer.DAL;
 using AutoMapper;
 using DomainLayer.Models;
+using DomainLayer.BLL;
 
 namespace API.Controllers
 {
@@ -18,13 +19,13 @@ namespace API.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
+        private readonly BusinessLogic BLL;
         public PaymentsController(DbArchitecture context, IMapper mapper)
         {
-            _unitOfWork = new UnitOfWork(context);
-            _mapper = mapper;
+            if (BLL == null)
+            {
+                BLL = new BusinessLogic(context, mapper);
+            }
         }
 
         // GET: api/Payments
@@ -33,10 +34,8 @@ namespace API.Controllers
         {
             try
             {
-                var payments = await _unitOfWork
-                .PaymentRepository
-                .GetAllAsync();
-                return Ok(_mapper.Map<IEnumerable<PaymentModel>>(payments));
+                var payments = await BLL.Payments.GetAllAsync();
+                return Ok(payments);
             }
             catch (Exception ex)
             {
@@ -48,16 +47,19 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PaymentModel>> GetPayment(int id)
         {
-            var payment = await _unitOfWork
-                .PaymentRepository
-                .GetAsync(p => p.ID == id);
-
-            if (payment == null)
+            try
             {
-                return NotFound();
+                var payment = await BLL.Payments.GetAsync(id);
+                if (payment == null)
+                {
+                    return NotFound();
+                }
+                return Ok(payment);
             }
-
-            return Ok(_mapper.Map<PaymentModel>(payment));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
         // PUT: api/Payments/5
@@ -68,24 +70,18 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-
-            var payment = await _unitOfWork.PaymentRepository.GetAsync(p => p.ID == id);
-            
-            if (payment == null)
-            {
-                return NotFound();
-            }
-
             try
             {
-                _mapper.Map(model, payment);
-                _unitOfWork.PaymentRepository.Update(payment);
-                await _unitOfWork.SaveAsync();
-                return Ok(_mapper.Map<PaymentModel>(payment));
+                var payment = await BLL.Payments.UpdateAsync(model);
+                if (payment == null)
+                {
+                    return NotFound();
+                }
+                return Ok(payment);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, ex);
             }
         }
 
@@ -95,10 +91,7 @@ namespace API.Controllers
         {
             try
             {
-                var payment = _mapper.Map<Payment>(model);
-                _unitOfWork.PaymentRepository.Add(payment);
-                await _unitOfWork.SaveAsync();
-                return Ok(_mapper.Map<PaymentModel>(payment));
+                return Ok(await BLL.Payments.AddAsync(model));
             }
             catch (Exception ex)
             {
@@ -112,8 +105,7 @@ namespace API.Controllers
         {
             try
             {
-                _unitOfWork.PaymentRepository.Delete(id);
-                await _unitOfWork.SaveAsync();
+                await BLL.Payments.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception ex)
