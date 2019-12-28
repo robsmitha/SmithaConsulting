@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using AutoMapper;
 using DomainLayer.Models;
 using DomainLayer.BLL;

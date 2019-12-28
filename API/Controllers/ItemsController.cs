@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DataLayer;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using DataLayer.Data;
 using DomainLayer.BLL;
 using DomainLayer.Models;

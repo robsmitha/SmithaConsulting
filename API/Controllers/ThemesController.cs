@@ -9,7 +9,7 @@ using DataLayer;
 using DataLayer.Data;
 using DomainLayer.Models;
 using AutoMapper;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using DomainLayer.Services;
 using DomainLayer.BLL;
 

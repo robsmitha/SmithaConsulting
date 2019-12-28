@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace DataLayer.DAL
+namespace DataLayer.Repositories
 {
     public class GenericRepository<TEntity> where TEntity : class
     {

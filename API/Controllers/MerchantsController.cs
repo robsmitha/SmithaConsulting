@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using DataLayer.Data;
 using DomainLayer.Models;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using AutoMapper;
 using DomainLayer.BLL;
 

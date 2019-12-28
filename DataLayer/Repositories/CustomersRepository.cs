@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.DAL
+namespace DataLayer.Repositories
 {
     public class CustomersRepository : GenericRepository<Customer>
     {

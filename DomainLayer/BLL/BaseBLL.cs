@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using DataLayer.Data;
 using System;
 using System.Collections.Generic;

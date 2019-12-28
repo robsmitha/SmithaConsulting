@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DataLayer;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using DataLayer.Data;
 using DomainLayer.Models;
 using System;

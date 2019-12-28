@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer.Data;
-using DataLayer.DAL;
+using DataLayer.Repositories;
 using DomainLayer.Models;
 using AutoMapper;
 using DataLayer;

@@ -4,7 +4,7 @@ using DataLayer;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataLayer.DAL
+namespace DataLayer.Repositories
 {
     public class UnitOfWork : IDisposable
     {
