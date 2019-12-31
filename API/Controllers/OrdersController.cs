@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Repositories;
 using DataLayer.Data;
 using DomainLayer.BLL;

@@ -1,4 +1,4 @@
-﻿using DataLayer;
+﻿using DataLayer.Entities;
 using System;
 
 namespace DomainLayer.Models

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 

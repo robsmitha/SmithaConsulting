@@ -6,7 +6,7 @@ using DataLayer.Data;
 using DataLayer.Repositories;
 using DomainLayer.Models;
 using AutoMapper;
-using DataLayer;
+using DataLayer.Entities;
 using DomainLayer.BLL;
 using System;
 

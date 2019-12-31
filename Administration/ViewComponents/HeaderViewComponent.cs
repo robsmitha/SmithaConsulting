@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Enums;
 using Administration.Constants;

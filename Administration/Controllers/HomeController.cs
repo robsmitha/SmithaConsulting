@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer;
+using DataLayer.Entities;
 using Administration.Models;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;

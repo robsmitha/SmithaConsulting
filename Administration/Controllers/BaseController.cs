@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Enums;
 using Administration.Constants;

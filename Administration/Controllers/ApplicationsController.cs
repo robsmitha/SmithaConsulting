@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using DataLayer.Data;
 using Microsoft.AspNetCore.Http;
 using Administration.Constants;
-using DataLayer;
+using DataLayer.Entities;
 
 namespace Administration.Controllers
 {

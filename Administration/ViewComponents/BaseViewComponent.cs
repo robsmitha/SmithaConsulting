@@ -1,5 +1,5 @@
 ﻿using Administration.Constants;
-using DataLayer;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

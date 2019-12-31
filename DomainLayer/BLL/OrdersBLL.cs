@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Repositories;
 using DataLayer.Data;
 using DomainLayer.Models;

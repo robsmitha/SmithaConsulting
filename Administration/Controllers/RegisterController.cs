@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer;
+using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Enums;
 using Administration.Models;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DataLayer;
+using DataLayer.Entities;
 
 namespace DomainLayer.Models
 {
