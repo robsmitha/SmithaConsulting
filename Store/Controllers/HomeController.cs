@@ -161,7 +161,7 @@ namespace Store.Controllers
                         customer.Email = model.Email;
                         customer.FirstName = model.FirstName;
                         customer.LastName = model.LastName;
-                        _api.Put("/customer", customer);
+                        _api.Put($"/customers/{customer.ID}", customer);
 
                         var amount = _api.Get<IEnumerable<LineItemModel>>("/lineitems")
                             .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
