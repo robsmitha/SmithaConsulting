@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer.Entities;
 using Administration.Models;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using DomainLayer.Utilities;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Administration.Constants;
 using DomainLayer.Enums;
 using System.Net.Mail;
 using System.Net;
@@ -20,14 +16,15 @@ using Administration.Utilities;
 using System.Globalization;
 using Newtonsoft.Json;
 using System.Drawing;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public HomeController(DbArchitecture context) : base(context)
+        public HomeController(OperationsContext context) : base(context)
         {
             _context = context;
         }

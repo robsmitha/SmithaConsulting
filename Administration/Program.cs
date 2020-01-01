@@ -23,7 +23,7 @@ namespace Administration
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<DbArchitecture>();
+                    var context = services.GetRequiredService<OperationsContext>();
                     DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)

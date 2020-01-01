@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataLayer.Entities;
+using DomainLayer.Entities;
 
 namespace DomainLayer.Models
 {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.Migrations
 {
-    [DbContext(typeof(DbArchitecture))]
+    [DbContext(typeof(OperationsContext))]
     [Migration("20190930010724_ApplicationType")]
     partial class ApplicationType
     {

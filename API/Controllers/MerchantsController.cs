@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Models;
-using DataLayer.Repositories;
 using AutoMapper;
-using DomainLayer.BLL;
+using API.BLL;
 
 namespace API.Controllers
 {
@@ -19,7 +14,7 @@ namespace API.Controllers
     public class MerchantsController : ControllerBase
     {
         private readonly BusinessLogic BLL;
-        public MerchantsController(DbArchitecture context, IMapper mapper)
+        public MerchantsController(OperationsContext context, IMapper mapper)
         {
             if (BLL == null)
             {

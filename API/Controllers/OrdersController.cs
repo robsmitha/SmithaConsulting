@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.BLL;
 using AutoMapper;
-using DataLayer.Entities;
-using DataLayer.Repositories;
 using DataLayer.Data;
-using DomainLayer.BLL;
 using DomainLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +15,7 @@ namespace API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly BusinessLogic BLL;
-        public OrdersController(DbArchitecture context, IMapper mapper)
+        public OrdersController(OperationsContext context, IMapper mapper)
         {
             if (BLL == null)
             {

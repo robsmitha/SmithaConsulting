@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataLayer.Entities;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
+using DomainLayer.Entities;
 
 namespace DataLayer.Repositories
 {
     public class UnitOfWork : IDisposable
     {
-        private readonly DbArchitecture _context;
-        public UnitOfWork(DbArchitecture context)
+        private readonly OperationsContext _context;
+        public UnitOfWork(OperationsContext context)
         {
             _context = context;
         }

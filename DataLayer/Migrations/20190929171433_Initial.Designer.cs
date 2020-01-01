@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataLayer.Migrations
 {
-    [DbContext(typeof(DbArchitecture))]
+    [DbContext(typeof(OperationsContext))]
     [Migration("20190929171433_Initial")]
     partial class Initial
     {

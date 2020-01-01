@@ -1,17 +1,15 @@
 ﻿using DataLayer.Data;
-using DataLayer.Entities;
+using DomainLayer.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataLayer.Repositories
 {
     public class MerchantsRepository : GenericRepository<Merchant>
     {
-        public MerchantsRepository(DbArchitecture context) : base(context) { }
+        public MerchantsRepository(OperationsContext context) : base(context) { }
 
         public List<Item> GetMerchantItems(int id) => context.Items
             .Include(o => o.Merchant)

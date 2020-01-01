@@ -1,5 +1,5 @@
-﻿using System;
-using DataLayer.Entities;
+﻿using DomainLayer.Entities;
+using System;
 
 namespace DomainLayer.Models
 {

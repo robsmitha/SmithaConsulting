@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DataLayer.Entities;
 using DataLayer.Data;
-using Administration.Models;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class OrdersController : BaseController
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public OrdersController(DbArchitecture context) : base(context)
+        public OrdersController(OperationsContext context) : base(context)
         {
             _context = context;
         }

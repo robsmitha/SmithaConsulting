@@ -10,9 +10,9 @@ namespace DataLayer.Repositories
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
-        protected DbArchitecture context;
+        protected OperationsContext context;
         internal DbSet<TEntity> dbSet;
-        public GenericRepository(DbArchitecture context)
+        public GenericRepository(OperationsContext context)
         {
             this.context = context;
             this.dbSet = context.Set<TEntity>();

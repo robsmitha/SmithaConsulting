@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Enums;
 using Administration.Constants;
 using Administration.Models;
 using Administration.Utilities;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public BaseController(DbArchitecture context)
+        public BaseController(OperationsContext context)
         {
             _context = context;
         }

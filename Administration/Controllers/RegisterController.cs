@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer.Entities;
 using DataLayer.Data;
 using DomainLayer.Enums;
 using Administration.Models;
-using Microsoft.EntityFrameworkCore;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class RegisterController : BaseController
     {
-        private readonly DbArchitecture _context;
-        public RegisterController(DbArchitecture context) : base(context)
+        private readonly OperationsContext _context;
+        public RegisterController(OperationsContext context) : base(context)
         {
             _context = context;
         }

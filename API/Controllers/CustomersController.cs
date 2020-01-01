@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DataLayer.Entities;
-using DataLayer.Data;
 using DomainLayer.Models;
-using DataLayer.Repositories;
 using AutoMapper;
-using DomainLayer.BLL;
+using DataLayer.Data;
+using API.BLL;
 
 namespace API.Controllers
 {
@@ -19,7 +15,7 @@ namespace API.Controllers
     {
         private readonly BusinessLogic BLL;
 
-        public CustomersController(DbArchitecture context, IMapper mapper)
+        public CustomersController(OperationsContext context, IMapper mapper)
         {
             if (BLL == null)
             {

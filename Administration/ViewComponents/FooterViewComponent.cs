@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using DataLayer.Entities;
+using DomainLayer.Entities;
 using DomainLayer.Enums;
 using Administration.Constants;
 using Administration.Models;

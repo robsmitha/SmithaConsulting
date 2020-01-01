@@ -17,9 +17,9 @@ namespace Administration.Controllers
 {
     public class ChatController : BaseController
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public ChatController(DbArchitecture context) : base(context)
+        public ChatController(OperationsContext context) : base(context)
         {
             _context = context;
         }

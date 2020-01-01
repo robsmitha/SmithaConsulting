@@ -1,4 +1,4 @@
-﻿using DataLayer.Entities;
+﻿using DomainLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace DataLayer.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(DbArchitecture context)
+        public static void Initialize(OperationsContext context)
         {
             if (!context.Database.EnsureCreated())
             {

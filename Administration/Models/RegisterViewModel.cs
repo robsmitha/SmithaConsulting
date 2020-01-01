@@ -1,5 +1,4 @@
-﻿using DataLayer.Entities;
-using System.Collections.Generic;
+﻿using DomainLayer.Entities;
 
 namespace Administration.Models
 {

@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using DataLayer.Data;
 using Microsoft.AspNetCore.Http;
 using Administration.Constants;
-using DataLayer.Entities;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class ApplicationsController : BaseController
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public ApplicationsController(DbArchitecture context) : base(context)
+        public ApplicationsController(OperationsContext context) : base(context)
         {
             _context = context;
         }

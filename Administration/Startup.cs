@@ -43,7 +43,7 @@ namespace Administration
             });
 
             //Register database context (dependency injection)
-            services.AddDbContext<DbArchitecture>(options =>
+            services.AddDbContext<OperationsContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

@@ -24,7 +24,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             //Register database context (dependency injection)
-            services.AddDbContext<DbArchitecture>(options =>
+            services.AddDbContext<OperationsContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             var mappingConfig = new MapperConfiguration(mc =>

@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DataLayer.Entities;
 using DataLayer.Data;
 using Administration.Models;
 using DomainLayer.Utilities;
+using DomainLayer.Entities;
 
 namespace Administration.Controllers
 {
     public class UsersController : BaseController
     {
-        private readonly DbArchitecture _context;
+        private readonly OperationsContext _context;
 
-        public UsersController(DbArchitecture context) : base(context)
+        public UsersController(OperationsContext context) : base(context)
         {
             _context = context;
         }
