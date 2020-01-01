@@ -5,13 +5,12 @@ The Operations Software Solution implements a [Domain Driven Design (DDD)](https
 
 ### Data/Infrastructure Layer
 **Summary:** Uses Entity Framework Core to implement the [Repository design pattern](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design) and persist data.
-* Entities
 * Repositories
 * Data Migrations
 
 ### Domain Model Layer
 **Summary:** Responsible for representing concepts of the business, information about the business situation, and business rules.
-* Business Logic
+* Entities
 * Models
 
 
