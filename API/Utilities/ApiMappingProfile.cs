@@ -24,6 +24,7 @@ namespace API.Utilities
             CreateMap<MerchantModel, Merchant>().ForMember(m => m.MerchantType, opt => opt.Ignore());
             CreateMap<Payment, PaymentModel>();
             CreateMap<PaymentModel, Payment>().ForMember(m => m.PaymentType, opt => opt.Ignore());
+            CreateMap<User, UserModel>().ReverseMap();
         }
     }
 }

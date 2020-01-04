@@ -69,6 +69,12 @@ namespace DataLayer.Repositories
             get => themeRepository = themeRepository ?? new GenericRepository<Theme>(_context);
             set => themeRepository = value;
         }
+        private GenericRepository<User> usersRepository;
+        public GenericRepository<User>UsersRepository
+        {
+            get => usersRepository = usersRepository ?? new GenericRepository<User>(_context);
+            set => usersRepository = value;
+        }
         #endregion
 
         public void Save()

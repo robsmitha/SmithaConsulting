@@ -1,0 +1,17 @@
+﻿
+
+
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <partial name="_DocumentHeadPartial" />
+</head>
+<body class="bg-light">
+    @await Component.InvokeAsync("Header")
+    <main class="container">
+        @RenderBody()
+    </main>
+    @await Component.InvokeAsync("Footer")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

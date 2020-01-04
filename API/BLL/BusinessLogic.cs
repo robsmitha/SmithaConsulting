@@ -73,5 +73,11 @@ namespace API.BLL
             get => themes = themes ?? new ThemesBLL(_unitOfWork, _mapper);
             set => themes = value;
         }
+        private UsersBLL users;
+        public UsersBLL Users
+        {
+            get => users = users ?? new UsersBLL(_unitOfWork, _mapper);
+            set => users = value;
+        }
     }
 }

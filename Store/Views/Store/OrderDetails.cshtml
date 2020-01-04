@@ -1,0 +1,100 @@
+﻿@model OrderViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var orderTotal = Model.LineItems != null ? Model.LineItems.Sum(x => x.ItemAmount) : 0;
+    var paymentTotal = Model.Payments != null ? Model.Payments.Sum(x => x.Amount) : 0;
+}
+<div class="text-md-center my-3">
+    <h1 class="h3 mb-3 font-weight-light"><i class="far fa-check-circle"></i>  Order #@Model.Order.ID</h1>
+</div>
+<div class="row mb-2">
+    <div class="col-sm col-6">
+        <div class="form-group">
+            <label>Status</label>
+            <br />
+            @Model.Order.OrderStatusTypeName
+        </div>
+    </div>
+    <div class="col-sm col-6">
+        <div class="form-group">
+            <label>Date</label>
+            <br />
+            @Model.Order.CreatedAt
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="col-sm col-12">
+        <h5 class="font-weight-light">
+            <i class="fas fa-layer-group"></i> Items
+        </h5>
+        <div class="list-group-flush">
+            @if (Model?.LineItems != null)
+            {
+                var items = Model.LineItems.GroupBy(x => x.ItemID).Select(g => g.First()).ToList();
+                foreach (var item in items)
+                {
+                    var qty = Model.LineItems.Where(x => x.ItemID == item.ItemID).Count();
+                    <div class="list-group-item pl-1">
+                        <div class="row">
+                            <div class="col-6">
+                                @item.ItemName
+                            </div>
+                            <div class="col text-right">
+                                X @qty
+                            </div>
+                            <div class="col text-right">
+                                @item.ItemAmount.ToString("C")
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col text-right">
+                        <strong>@orderTotal.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm col-12">
+        <h5 class="font-weight-light">
+            <i class="fas fa-credit-card"></i> Payments
+        </h5>
+        <div class="list-group-flush">
+            @if (Model?.Payments != null)
+            {
+                foreach (var payment in Model.Payments)
+                {
+                    <div class="list-group-item pl-1">
+                        <div class="row">
+                            <div class="col-sm-auto col">
+                                @payment.CreatedAt
+                            </div>
+                            <div class="col">
+                                @payment.PaymentTypeDescription
+                            </div>
+                            <div class="text-right col-auto">
+                                @payment.Amount.ToString("C")
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col text-right">
+                        <strong>@paymentTotal.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Store">Back to Store</a>
+</div>

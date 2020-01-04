@@ -1,7 +1,6 @@
 ﻿
-.form-signin {
-    width: 100%;
-    max-width: 420px;
-    padding: 15px;
-    margin: auto;
+.bg-login-image {
+    background: url("/img/bg-login.jpg");
+    background-position: center;
+    background-size: cover;
 }

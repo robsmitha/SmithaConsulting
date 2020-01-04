@@ -9,6 +9,10 @@ using Store.Models;
 using DomainLayer.Models;
 using DomainLayer.Services;
 using AutoMapper;
+using DomainLayer.Utilities;
+using DomainLayer.Entities;
+using Microsoft.AspNetCore.Http;
+using Store.Constants;
 
 namespace Store.Controllers
 {
@@ -16,355 +20,161 @@ namespace Store.Controllers
     {
         public HomeController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var order = await GetOrderAsync();
-            var model = new RegisterViewModel(order);
+            var userId = HttpContext.Session?.GetInt32(SessionKeysConstants.USER_ID);
+            var model = new HomeViewModel(userId);
             return View(model);
         }
-        public async Task<IActionResult> List(int? orderId)
+        public IActionResult Login()
         {
-            var items = await _api.GetAsync<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items");
-            var model = new RegisterListViewModel(items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList());
-            return PartialView(model);
+            return View();
         }
-        public async Task<IActionResult> LoadCart(int? orderId)
+        public IActionResult ChangePassword()
         {
-            var order = await GetOrderAsync(orderId);
-            var orderViewModel = GetOrderViewModel(order);
-            var model = new RegisterCartViewModel(orderViewModel);
-            return PartialView("Cart", model);
-        }
-        protected bool AddLineItem(ItemModel item, OrderModel order)
-        {
-            if (item?.ID > 0)
-            {
-                var lineItem = new LineItemModel
-                {
-                    ItemAmount = item.Price ?? 0M,
-                    ItemID = item.ID,
-                };
-                lineItem.OrderID = order.ID;
-                _api.Post("/lineitems", lineItem);
-                return true;
-            }
-            return false;
+            var model = new ChangePasswordViewModel();
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddLineItem(RegisterViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            var msg = string.Empty;
-            var orderTask = GetOrderAsync();
-            var itemTask = _api.GetAsync<ItemModel>($"/items/{model.SelectedItemID}");
-            await Task.WhenAll(orderTask, itemTask);
-            var order = orderTask.Result;
-            var item = itemTask.Result;
-            bool success;
-            try
+            if (ModelState.IsValid)
             {
-                //Create Order if needed
-                if (order == null)
+                var user = await _api.GetAsync<UserModel>($"/users/{UserID}");
+                if (user != null && SecurePasswordHasher.Verify(model.OldPassword, user.Password))
                 {
-                    order = new OrderModel
+                    if (model.NewPassword == model.OldPassword)
                     {
-                        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
-                        MerchantID = MerchantID.Value,
-                        CustomerID = CustomerID,
-                        CreatedAt = DateTime.Now
-                    };
-                    order = _api.Post("/orders", order);
-                }
-                success = AddLineItem(item, order);
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                success = false;
-            }
-            return Json(new { success, msg, orderId = order?.ID });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveLineItem(RegisterViewModel model)
-        {
-            var msg = string.Empty;
-            var success = false;
-            var order = await GetOrderAsync(model.CurrentOrderID);
-            try
-            {
-                var lineItem = order.LineItems.LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
-                if (lineItem != null)
-                {
-                    _api.Delete($"/lineitems/{lineItem.ID}");
-                    UpdateDiscounts(order);
-                }
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                success = false;
-            }
-            return Json(new { success, msg, orderId = order?.ID });
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveItem(RegisterViewModel model)
-        {
-            var msg = string.Empty;
-            var success = false;
-            var order = await GetOrderAsync(model.CurrentOrderID);
-            try
-            {
-                _api.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
-                UpdateDiscounts(order);
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                success = false;
-            }
-            return Json(new { success, msg, orderId = order?.ID });
-        }
-        public async Task<IActionResult> Payment()
-        {
-            var order = await GetOrderAsync();
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                var orderViewModel = GetOrderViewModel(order);
-                var model = new PaymentViewModel(orderViewModel, order.ID);
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("Error");
-            }
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Payment(PaymentViewModel model)
-        {
-            try
-            {
-                var order = await GetOrderAsync(model.CurrentOrderID);
-                if (order != null)
-                {
-                    if (ModelState.IsValid)
+                        //New password must be different that current password
+                        ModelState.AddModelError("CustomError", $"New password must be different that current password.");
+                    }
+                    else if (model.NewPassword == model.ConfirmPassword)
                     {
-                        var customer = await _api.GetAsync<CustomerModel>($"/customers/{CustomerID.Value}");
-                        customer.Email = model.Email;
-                        customer.FirstName = model.FirstName;
-                        customer.LastName = model.LastName;
-                        _api.Put($"/customers/{customer.ID}", customer);
-
-                        var amount = _api.Get<IEnumerable<LineItemModel>>("/lineitems")
-                            .Where(x => x.OrderID == order.ID).Sum(x => x.ItemAmount);
-                        //Create payment on order.
-                        var payment = new PaymentModel
-                        {
-                            OrderID = model.CurrentOrderID,
-                            PaymentTypeID = (int)PaymentTypeEnums.CreditCardManual,
-                            Amount = amount,
-                            PaymentStatusTypeID = (int)PaymentStatusTypeEnums.Paid
-                        };
-
-                        _api.Post("/payments", payment);
-
-                        order.OrderStatusTypeID = (int)OrderStatusTypeEnums.Paid;
-                        _api.Put($"/orders/{order.ID}", order);
-
-                        return RedirectToAction("Details", "Home", new { id = model.CurrentOrderID });
+                        user.Password = SecurePasswordHasher.Hash(model.NewPassword);
+                        await _api.PutAsync($"/users/{UserID}", user);
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        //passwords did not match
+                        ModelState.AddModelError("CustomError", $"Passwords did not match.");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("CustomError", $"Order not found.");
-                }
-                
-                var orderViewModel = GetOrderViewModel(order);
-                model = new PaymentViewModel(orderViewModel, order.ID);
-                return View(model);
-            }
-            catch(Exception ex)
-            {
-                return RedirectToAction("Error");
-            }
-
-        }
-
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var order = await GetOrderAsync(id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            var orderViewModel = GetOrderViewModel(order);
-            return View(orderViewModel);
-        }
-        protected bool AddDiscount(OrderModel order, string lookupCode)
-        {
-            try
-            {
-                var discount = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items")
-                    .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.LookupCode == lookupCode);
-                if (discount != null)
-                {
-                    var amount = 0M;
-                    switch (discount.PriceTypeID)
-                    {
-                        case (int)PriceTypeEnums.Fixed:
-                            amount = discount.Price ?? 0;
-                            break;
-                        case (int)PriceTypeEnums.Variable:
-                            var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID);
-                            amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
-                            break;
-                    }
-                    var lineItem = new LineItemModel
-                    {
-                        ItemAmount = amount > 0 ? amount * -1 : amount,
-                        ItemID = discount.ID,
-                        OrderID = order.ID
-                    };
-                    _api.Post("/lineitems", lineItem);
-                    return true;
+                    //old password was not correct
+                    ModelState.AddModelError("CustomError", $"Password was not correct.");
                 }
             }
-            catch
-            {
-
-            }
-            return false;
-
-        }
-        protected bool UpdateDiscounts(OrderModel order)
-        {
-            try
-            {
-                var discounts = _api.Get<IEnumerable<ItemModel>>("/items")
-                .Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
-                foreach (var discount in discounts)
-                {
-                    var lineItemDiscount = _api.Get<ItemModel>($"/items/{discount.ID}");
-                    if (lineItemDiscount?.ID > 0)
-                    {
-
-                        var amount = 0M;
-                        switch (discount.PriceTypeID)
-                        {
-                            case (int)PriceTypeEnums.Fixed: //fixed
-                                amount = discount.Price ?? 0;
-                                break;
-                            case (int)PriceTypeEnums.Variable: //variable
-                                var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
-                                amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
-                                break;
-                        }
-
-                        _api.Delete($"/lineitems/{lineItemDiscount.ID}");
-
-                        if (amount != 0)
-                        {
-                            var lineItem = new LineItemModel
-                            {
-                                ItemAmount = amount > 0 ? amount * -1 : amount,
-                                ItemID = discount.ID,
-                                OrderID = order.ID
-                            };
-                            _api.Post("/lineitems", lineItem);
-                        }
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApplyDiscount(PaymentViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var order = await GetOrderAsync(model.CurrentOrderID);
-            if (AddDiscount(order, model.PromoCode))
+            if (ModelState.IsValid)
             {
+                var user = await _api.GetAsync<UserModel>($"/users/GetByUsername/{model.Username}");
+                if (user != null && SecurePasswordHasher.Verify(model.Password, user.Password))
+                {
+                    if (!user.Active)
+                    {
+                        //user has not been approved by an admin yet
+                        ModelState.AddModelError("CustomError", "Your account is inactive until an admin activates it.");
+                    }
+                    CreateUserSession(user);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    //password was not correct
+                    ModelState.AddModelError("CustomError", "Username or password was not correct.");
+                }
+            }
+            return View(model);
+        }
+        public IActionResult SignUp()
+        {
+            return View();
+        }
 
-            }
-            return RedirectToAction("Payment", new { orderId = model.CurrentOrderID });
-        }
-        public async Task<IActionResult> Edit(int itemId, int orderId)
-        {
-            var model = new RegisterEditViewModel();
-            var order = await GetOrderAsync(orderId);
-            var lineItems = order.LineItems.Where(x => x.ItemID == itemId);
-            var lineItem = lineItems.LastOrDefault();
-            if (lineItem != null)
-            {
-                model.OrderID = lineItem.OrderID;
-                model.ItemID = lineItem.ItemID;
-                model.Quantity = lineItems.Count();
-            }
-            return PartialView(model);
-        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(RegisterEditViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
-            var success = true;
-            var msg = string.Empty;
-            try
+            if (ModelState.IsValid)
             {
-                var orderTask = GetOrderAsync();
-                var itemTask = _api.GetAsync<ItemModel>($"/items/{model.ItemID}");
-                await Task.WhenAll(orderTask, itemTask);
-                var item = itemTask.Result;
-                var order = orderTask.Result;
-                var itemCount = order.LineItems.Count;
-                if (itemCount > 0)
+                try
                 {
-                    if (model.Quantity > itemCount)
+                    if (null == null)
                     {
-                        // add
-                        for (int i = 0; i < model.Quantity - itemCount; i++)
+                        if (model.Password == model.ConfirmPassword)
                         {
-                            success &= AddLineItem(item, order);
+                            //var user = new User
+                            //{
+                            //    Email = model.Email,
+                            //    FirstName = model.FirstName,
+                            //    MiddleName = model.MiddleName,
+                            //    LastName = model.LastName,
+                            //    Username = model.Username,
+                            //    Password = SecurePasswordHasher.Hash(model.Password),
+                            //    CreatedAt = DateTime.Now,
+                            //    Active = true
+                            //};
+                            //await _context.AddAsync(user);
+                            //await _context.SaveChangesAsync();
+
+                            //var merchant = new Merchant
+                            //{
+                            //    MerchantName = model.MerchantName,
+                            //    WebsiteUrl = model.WebsiteUrl,
+                            //    MerchantTypeID = (int)MerchantTypeEnums.Online,
+                            //    Active = true,
+                            //    CreatedAt = DateTime.Now,
+                            //    IsBillable = false,
+                            //    SelfBoardingApplication = true
+                            //};
+                            //await _context.AddAsync(merchant);
+                            //await _context.SaveChangesAsync();
+
+                            //var userMerchant = new MerchantUser
+                            //{
+                            //    Active = true,
+                            //    CreatedAt = DateTime.Now,
+                            //    MerchantID = merchant.ID,
+                            //    RoleID = (int)RoleEnums.OnlineSignUp,
+                            //    UserID = user.ID
+                            //};
+                           // await _context.AddAsync(userMerchant);
+                            //await _context.SaveChangesAsync();
+
+                            //CreateUserSession(user);
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("CustomError", $"Passwords did not match.");
                         }
                     }
-                    else if (model.Quantity < itemCount)
+                    else
                     {
-                        // remove
-                        for (int i = 0; i < itemCount - model.Quantity && i < itemCount; i++)
-                        {
-                            _api.Delete($"/lineItems/{order.LineItems[i].ID}");
-                        }
+                        ModelState.AddModelError("CustomError", $"The Username {model.Username} is already taken.");
                     }
                 }
-
+                catch (Exception)
+                {
+                    return RedirectToAction("Error");
+                }
             }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                success = false;
-            }
-            return Json(new { success, msg, orderId = model.OrderID });
+            return View(model);
         }
-
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

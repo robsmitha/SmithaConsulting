@@ -27,6 +27,7 @@ namespace Store.Controllers
         public int? CustomerID => HttpContext.Session.GetInt32(SessionKeysConstants.CUSTOMER_ID);
         public int? MerchantID => HttpContext.Session.GetInt32(SessionKeysConstants.MERCHANT_ID);
         public string ThemeCDN => HttpContext.Session.GetString(SessionKeysConstants.THEME_CDN);
+        public int? UserID => HttpContext.Session.GetInt32(SessionKeysConstants.USER_ID);
         #endregion
 
         protected readonly IApiService _api;
@@ -117,6 +118,30 @@ namespace Store.Controllers
 
         public OrderViewModel GetOrderViewModel(OrderModel order) => new OrderViewModel(order);
         #endregion
+
+        public void CreateUserSession(UserModel user)
+        {
+            //var merchantId = _context.MerchantUsers.FirstOrDefault(x => x.UserID == user.ID)?.MerchantID;
+            //if (merchantId != null)
+            //{
+            //    HttpContext.Session.SetInt32(SessionKeysConstants.MERCHANT_ID, merchantId.Value);
+            //}
+
+            HttpContext.Session.SetInt32(SessionKeysConstants.USER_ID, user.ID);
+            HttpContext.Session.SetString(SessionKeysConstants.USERNAME, user.Username);
+            HttpContext.Session.SetString(SessionKeysConstants.IMAGE_URL, user.ImageUrl ?? string.Empty);
+            //var merchantUser = _context.MerchantUsers.SingleOrDefault(x => x.UserID == userId && x.MerchantID == merchantId);
+            //if (merchantUser != null)
+            //{
+            //    var rolePermissions = _context.RolePermissions.Where(x => x.RoleID == merchantUser.RoleID);
+            //    var permissionIds = rolePermissions.Select(x => x.PermissionID);
+            //    var permissions = _context.Permissions.Where(x => permissionIds.Contains(x.ID));
+            //    if (permissions.Any())
+            //    {
+            //        HttpContext.Session.SetString(SessionKeysConstants.PERMISSION_LIST, JsonConvert.SerializeObject(permissions));
+            //    }
+            //}
+        }
 
     }
 }

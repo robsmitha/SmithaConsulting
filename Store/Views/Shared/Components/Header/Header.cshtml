@@ -1,20 +1,68 @@
 ﻿@model HeaderViewModel
-<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark shadow">
+
+<!-- Navigation -->
+<nav class="navbar navbar-light bg-light fixed-top shadow">
     <div class="container">
-        <a class="navbar-brand mr-auto mr-lg-0 lead" asp-area="" asp-controller="Home" asp-action="Index">
-            Store&nbsp;&nbsp;
+        <a class="navbar-brand font-weight-light" asp-area="" asp-controller="Home" asp-action="Index">
+            <i class="fa fa-store-alt"></i> MyStore
         </a>
-        @*<button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse offcanvas-collapse bg-dark font-weight-light">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
-                        <i class="fas fa-home"></i><span class="sr-only">Home</span> Home
+        @if (Model.IsLoggedIn)
+        {
+            <!-- Nav Item - User Information -->
+            <div class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">@Model.Greeting</span>
+                    <img class="img-profile rounded-circle" src="https://smitha-cdn.s3.us-east-2.amazonaws.com/Content/images/default-avatar.png">
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="@Url.Action("Details", "Users", new { id = Model.UserID })">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Profile
                     </a>
-                </li>
-            </ul>
-        </div>*@
+                    <a class="dropdown-item" href="@Url.Action("Details", "Merchants", new { id = Model.MerchantID })">
+                        <i class="fas fa-building fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Business
+                    </a>
+                    <a class="dropdown-item" href="@Url.Action("ChangePassword", "Home")">
+                        <i class="fas fa-retweet fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Change Password
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Logout
+                    </a>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="btn-group">
+                <a class="btn btn-primary" asp-controller="Store" asp-action="Index">Demo</a>
+                <a class="btn btn-outline-primary" asp-controller="Home" asp-action="Login">Sign In</a>
+            </div>
+        }
     </div>
 </nav>
+
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="SignOut" title="Sign out">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>

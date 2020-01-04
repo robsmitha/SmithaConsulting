@@ -1,6 +1,6 @@
 ﻿
 
-/*html {
+html {
     height: 100%;
     box-sizing: border-box;
 }
@@ -18,14 +18,23 @@ body {
     min-height: 100%;
 }
 
-main {
+/*main {
     margin: 0 auto;
     width: 94%;
-}
+}*/
 
 footer {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
-}*/
+}
+
+.dropdown.no-arrow .dropdown-toggle::after {
+    display: none;
+}
+
+.img-profile {
+    height: 2rem;
+    width: 2rem;
+}
