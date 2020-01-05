@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using DomainLayer.Models;
-using DomainLayer.Services;
-using DomainLayer.Utilities;
+using Domain.Models;
+using Domain.Services;
+using Domain.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Store.Models;
 

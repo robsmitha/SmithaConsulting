@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using DomainLayer.Enums;
+using Domain.Enums;
 using Store.Constants;
 using Store.Models;
 using Store.Utilities;
-using DomainLayer.Models;
-using DomainLayer.Services;
+using Domain.Models;
+using Domain.Services;
 using AutoMapper;
 using System;
 

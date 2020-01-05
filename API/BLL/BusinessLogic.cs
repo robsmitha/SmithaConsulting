@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using DataLayer.Data;
-using DataLayer.Repositories;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
 
 namespace API.BLL
 {

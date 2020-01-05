@@ -1,10 +1,10 @@
 ﻿
-using DomainLayer.Models;
+using Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using DomainLayer.Entities;
-using DataLayer.Repositories;
+using Domain.Entities;
+using Infrastructure.Repositories;
 
 namespace API.BLL
 {

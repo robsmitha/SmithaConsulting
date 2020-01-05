@@ -1,4 +1,4 @@
-﻿using DomainLayer.Models;
+﻿using Domain.Models;
 using System.Collections.Generic;
 
 namespace Store.Models

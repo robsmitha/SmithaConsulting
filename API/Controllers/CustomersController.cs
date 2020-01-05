@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DomainLayer.Models;
+using Domain.Models;
 using AutoMapper;
-using DataLayer.Data;
+using Infrastructure.Data;
 using API.BLL;
 
 namespace API.Controllers

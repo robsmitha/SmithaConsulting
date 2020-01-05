@@ -1,4 +1,4 @@
-﻿using DomainLayer.Models;
+﻿using Domain.Models;
 
 namespace Store.Models
 {

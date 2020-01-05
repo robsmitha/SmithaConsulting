@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.BLL;
 using AutoMapper;
-using DataLayer.Data;
-using DomainLayer.Models;
+using Infrastructure.Data;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

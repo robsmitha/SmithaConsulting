@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DomainLayer.Enums;
+using Domain.Enums;
 using Store.Models;
-using DomainLayer.Models;
-using DomainLayer.Services;
+using Domain.Models;
+using Domain.Services;
 using AutoMapper;
-using DomainLayer.Utilities;
-using DomainLayer.Entities;
+using Domain.Utilities;
+using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Store.Constants;
 

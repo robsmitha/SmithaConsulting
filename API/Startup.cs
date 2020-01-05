@@ -1,7 +1,7 @@
 ﻿using API.Utilities;
 using AutoMapper;
-using DataLayer.Data;
-using DomainLayer.Services;
+using Infrastructure.Data;
+using Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

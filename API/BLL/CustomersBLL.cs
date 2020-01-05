@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DomainLayer.Entities;
-using DataLayer.Repositories;
-using DomainLayer.Models;
+using Domain.Entities;
+using Infrastructure.Repositories;
+using Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

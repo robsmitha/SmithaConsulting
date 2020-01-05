@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DataLayer.Data;
-using DomainLayer.Models;
+using Infrastructure.Data;
+using Domain.Models;
 using AutoMapper;
 using System;
 using API.BLL;

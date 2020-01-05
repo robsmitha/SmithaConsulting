@@ -1,5 +1,5 @@
 ﻿using System;
-using DataLayer.Data;
+using Infrastructure.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

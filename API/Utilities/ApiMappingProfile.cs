@@ -1,6 +1,6 @@
-﻿using DomainLayer.Models;
+﻿using Domain.Models;
 using AutoMapper;
-using DomainLayer.Entities;
+using Domain.Entities;
 
 namespace API.Utilities
 {
