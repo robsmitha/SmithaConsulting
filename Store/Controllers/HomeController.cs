@@ -26,44 +26,12 @@ namespace Store.Controllers
             var model = new HomeViewModel(userId);
             return View(model);
         }
+
         public IActionResult Login()
         {
             return View();
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _api.GetAsync<UserModel>($"/users/{UserID}");
-                if (user != null && SecurePasswordHasher.Verify(model.OldPassword, user.Password))
-                {
-                    if (model.NewPassword == model.OldPassword)
-                    {
-                        //New password must be different that current password
-                        ModelState.AddModelError("CustomError", $"New password must be different that current password.");
-                    }
-                    else if (model.NewPassword == model.ConfirmPassword)
-                    {
-                        user.Password = SecurePasswordHasher.Hash(model.NewPassword);
-                        await _api.PutAsync($"/users/{UserID}", user);
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        //passwords did not match
-                        ModelState.AddModelError("CustomError", $"Passwords did not match.");
-                    }
-                }
-                else
-                {
-                    //old password was not correct
-                    ModelState.AddModelError("CustomError", $"Password was not correct.");
-                }
-            }
-            return View(model);
-        }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -140,11 +108,6 @@ namespace Store.Controllers
                 }
             }
             return View(model);
-        }
-        public IActionResult SignOut()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index");
         }
         public IActionResult About()
         {

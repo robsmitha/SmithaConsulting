@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DomainLayer.Models;
 using DomainLayer.Services;
+using DomainLayer.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Store.Models;
 
@@ -25,6 +27,40 @@ namespace Store.Controllers
             var model = new ChangePasswordViewModel();
             return View(model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _api.GetAsync<UserModel>($"/users/{UserID}");
+                if (user != null && SecurePasswordHasher.Verify(model.OldPassword, user.Password))
+                {
+                    if (model.NewPassword == model.OldPassword)
+                    {
+                        //New password must be different that current password
+                        ModelState.AddModelError("CustomError", $"New password must be different that current password.");
+                    }
+                    else if (model.NewPassword == model.ConfirmPassword)
+                    {
+                        user.Password = SecurePasswordHasher.Hash(model.NewPassword);
+                        await _api.PutAsync($"/users/{UserID}", user);
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        //passwords did not match
+                        ModelState.AddModelError("CustomError", $"Passwords did not match.");
+                    }
+                }
+                else
+                {
+                    //old password was not correct
+                    ModelState.AddModelError("CustomError", $"Password was not correct.");
+                }
+            }
+            return View(model);
+        }
         public async Task<IActionResult> Order(int id)
         {
             var order = await GetOrderAsync(id);
@@ -36,6 +72,11 @@ namespace Store.Controllers
 
             var orderViewModel = GetOrderViewModel(order);
             return View(orderViewModel);
+        }
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

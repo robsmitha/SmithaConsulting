@@ -62,13 +62,7 @@ namespace API.Controllers
         {
             try
             {
-                var model = await BLL.Users.GetByUsernameAsync(username);
-                if (model == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(model);
+                return Ok(await BLL.Users.GetByUsernameAsync(username));
             }
             catch (Exception ex)
             {
