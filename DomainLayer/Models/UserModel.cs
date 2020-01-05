@@ -16,5 +16,7 @@ namespace DomainLayer.Models
         public string Password { get; set; }
         public string Username { get; set; }
         public string ImageUrl { get; set; }
+        public string MerchantName { get; set; }
+        public string WebsiteUrl { get; set; }
     }
 }

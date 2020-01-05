@@ -30,11 +30,6 @@ namespace Store.Controllers
         {
             return View();
         }
-        public IActionResult ChangePassword()
-        {
-            var model = new ChangePasswordViewModel();
-            return View(model);
-        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -108,49 +103,25 @@ namespace Store.Controllers
             {
                 try
                 {
-                    if (null == null)
+                    var user = await _api.GetAsync<UserModel>($"/users/GetByUsername/{model.Username}");
+                    if (user == null)
                     {
                         if (model.Password == model.ConfirmPassword)
                         {
-                            //var user = new User
-                            //{
-                            //    Email = model.Email,
-                            //    FirstName = model.FirstName,
-                            //    MiddleName = model.MiddleName,
-                            //    LastName = model.LastName,
-                            //    Username = model.Username,
-                            //    Password = SecurePasswordHasher.Hash(model.Password),
-                            //    CreatedAt = DateTime.Now,
-                            //    Active = true
-                            //};
-                            //await _context.AddAsync(user);
-                            //await _context.SaveChangesAsync();
-
-                            //var merchant = new Merchant
-                            //{
-                            //    MerchantName = model.MerchantName,
-                            //    WebsiteUrl = model.WebsiteUrl,
-                            //    MerchantTypeID = (int)MerchantTypeEnums.Online,
-                            //    Active = true,
-                            //    CreatedAt = DateTime.Now,
-                            //    IsBillable = false,
-                            //    SelfBoardingApplication = true
-                            //};
-                            //await _context.AddAsync(merchant);
-                            //await _context.SaveChangesAsync();
-
-                            //var userMerchant = new MerchantUser
-                            //{
-                            //    Active = true,
-                            //    CreatedAt = DateTime.Now,
-                            //    MerchantID = merchant.ID,
-                            //    RoleID = (int)RoleEnums.OnlineSignUp,
-                            //    UserID = user.ID
-                            //};
-                           // await _context.AddAsync(userMerchant);
-                            //await _context.SaveChangesAsync();
-
-                            //CreateUserSession(user);
+                            user = new UserModel 
+                            {
+                                Email = model.Email,
+                                FirstName = model.FirstName,
+                                MiddleName = model.MiddleName,
+                                LastName = model.LastName,
+                                Username = model.Username,
+                                Password = SecurePasswordHasher.Hash(model.Password),
+                                Active = true,
+                                MerchantName = model.MerchantName,
+                                WebsiteUrl = model.WebsiteUrl
+                            };
+                            user = await _api.PostAsync($"/users", user);
+                            CreateUserSession(user);
                             return RedirectToAction("Index");
                         }
                         else

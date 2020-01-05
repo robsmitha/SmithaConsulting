@@ -177,7 +177,7 @@ namespace Store.Controllers
                         order.OrderStatusTypeID = (int)OrderStatusTypeEnums.Paid;
                         _api.Put($"/orders/{order.ID}", order);
 
-                        return RedirectToAction("OrderDetails", new { id = model.CurrentOrderID });
+                        return RedirectToAction("Order", "Account", new { id = model.CurrentOrderID });
                     }
                 }
                 else
@@ -196,23 +196,6 @@ namespace Store.Controllers
 
         }
 
-        public async Task<IActionResult> OrderDetails(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var order = await GetOrderAsync(id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            var orderViewModel = GetOrderViewModel(order);
-            return View(orderViewModel);
-        }
         protected bool AddDiscount(OrderModel order, string lookupCode)
         {
             try

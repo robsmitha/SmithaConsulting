@@ -75,6 +75,12 @@ namespace DataLayer.Repositories
             get => usersRepository = usersRepository ?? new GenericRepository<User>(_context);
             set => usersRepository = value;
         }
+        private GenericRepository<MerchantUser> merchantUserRepository;
+        public GenericRepository<MerchantUser> MerchantUserRepository
+        {
+            get => merchantUserRepository = merchantUserRepository ?? new GenericRepository<MerchantUser>(_context);
+            set => merchantUserRepository = value;
+        }
         #endregion
 
         public void Save()

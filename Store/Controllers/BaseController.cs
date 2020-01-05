@@ -48,7 +48,7 @@ namespace Store.Controllers
                 return;
             }
 
-            if (CustomerID == null)
+            if (CustomerID <= 0 || CustomerID == null)
             {
                 var customer = _api.Post("/customers", new CustomerModel());
                 CreateCustomerSession(customer);

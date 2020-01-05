@@ -48,7 +48,26 @@ namespace API.BLL
         public async Task<UserModel> AddAsync(UserModel model)
         {
             var entity = _mapper.Map<User>(model);
+            var merchant = new Merchant
+            {
+                MerchantName = model.MerchantName,
+                Active = true,
+                CreatedAt = DateTime.Now,
+                MerchantTypeID = 1,
+                WebsiteUrl = model.WebsiteUrl,
+            };
+            _unitOfWork.MerchantRepository.Add(merchant);
             _unitOfWork.UsersRepository.Add(entity);
+            await _unitOfWork.SaveAsync();
+            var role = new MerchantUser
+            {
+                Active = true,
+                CreatedAt = DateTime.Now,
+                MerchantID = merchant.ID,
+                UserID = entity.ID,
+                RoleID = 1
+            };
+            _unitOfWork.MerchantUserRepository.Add(role);
             await _unitOfWork.SaveAsync();
             return _mapper.Map<UserModel>(entity);
         }
