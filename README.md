@@ -15,10 +15,14 @@ The Operations Software Solution implements a [Domain Driven Design (DDD)](https
 
 
 ### Application Layer
+**Summary:** Application level logic for complex business scenarios.
+* API
+* Business Logic Layer
+
+
+### Presentation Layer
 **Summary:** Front end applications the user interacts with to delegate collaborations of domain objects to the Domain Layer.
-* Administration
 * Store
-* Portfolio
 
 
 
