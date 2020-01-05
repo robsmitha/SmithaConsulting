@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Store.Models
 {
-    public class StoreEditViewModel
+    public class CartEditViewModel
     {
         public int OrderID { get; set; }
         public int ItemID { get; set; }

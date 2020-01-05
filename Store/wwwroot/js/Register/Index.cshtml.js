@@ -7,19 +7,19 @@ $(function () {
 })
 
 function LoadCart(orderId) {
-    $.get('/Store/LoadCart/', { orderId: orderId }, function (data) {
+    $.get('/Register/LoadCart/', { orderId: orderId }, function (data) {
         $('#div_cart').html(data)
     })
 }
 
 function ListRegister(orderId) {
-    $.get('/Store/List/', { orderId: orderId }, function (data) {
+    $.get('/Register/List/', { orderId: orderId }, function (data) {
         $('#div_list').html(data)
     })
 }
 
 function EditRegister(itemId, orderId) {
-    $.get('/Store/Edit/', { itemId: itemId, orderId: orderId }, function (data) {
+    $.get('/Register/Edit/', { itemId: itemId, orderId: orderId }, function (data) {
         $('#div_edit_register').html(data)
     })
 }
@@ -27,7 +27,7 @@ function EditRegister(itemId, orderId) {
 function SaveRegister() {
     var model = $('#form_edit_register').serialize()
     $.ajax({
-        url: '/Store/Edit/',
+        url: '/Register/Edit/',
         type: 'POST',
         data: model,
         success: function (data) {
@@ -49,7 +49,7 @@ function AddLineItem(id, edit) {
     $('#add_item_id').val(id)
     var model = $('#form_add_item').serialize()
     $.ajax({
-        url: '/Store/AddLineItem/',
+        url: '/Register/AddLineItem/',
         type: 'POST',
         data: model,
         success: function (data) {
@@ -76,7 +76,7 @@ function RemoveItem(id) {
     $('#remove_item_id').val(id)
     var model = $('#form_remove_item').serialize()
     $.ajax({
-        url: '/Store/RemoveItem/',
+        url: '/Register/RemoveItem/',
         type: 'POST',
         data: model,
         success: function (data) {
@@ -96,7 +96,7 @@ function RemoveLineItem(id) {
     $('#remove_line_item_id').val(id)
     var model = $('#form_remove_line_item').serialize()
     $.ajax({
-        url: '/Store/RemoveLineItem/',
+        url: '/Register/RemoveLineItem/',
         type: 'POST',
         data: model,
         success: function (data) {

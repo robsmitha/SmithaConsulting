@@ -11,6 +11,7 @@ using Store.Utilities;
 using DomainLayer.Models;
 using DomainLayer.Services;
 using AutoMapper;
+using System;
 
 namespace Store.Controllers
 {
@@ -117,6 +118,103 @@ namespace Store.Controllers
         }
 
         public OrderViewModel GetOrderViewModel(OrderModel order) => new OrderViewModel(order);
+        protected bool AddLineItem(ItemModel item, OrderModel order)
+        {
+            if (item?.ID > 0)
+            {
+                var lineItem = new LineItemModel
+                {
+                    ItemAmount = item.Price ?? 0M,
+                    ItemID = item.ID,
+                };
+                lineItem.OrderID = order.ID;
+                _api.Post("/lineitems", lineItem);
+                return true;
+            }
+            return false;
+        }
+        protected bool AddDiscount(OrderModel order, string lookupCode)
+        {
+            try
+            {
+                var discount = _api.Get<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items")
+                    .FirstOrDefault(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.LookupCode == lookupCode);
+                if (discount != null)
+                {
+                    var amount = 0M;
+                    switch (discount.PriceTypeID)
+                    {
+                        case (int)PriceTypeEnums.Fixed:
+                            amount = discount.Price ?? 0;
+                            break;
+                        case (int)PriceTypeEnums.Variable:
+                            var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID);
+                            amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage.Value;
+                            break;
+                    }
+                    var lineItem = new LineItemModel
+                    {
+                        ItemAmount = amount > 0 ? amount * -1 : amount,
+                        ItemID = discount.ID,
+                        OrderID = order.ID
+                    };
+                    _api.Post("/lineitems", lineItem);
+                    return true;
+                }
+            }
+            catch
+            {
+
+            }
+            return false;
+
+        }
+        protected bool UpdateDiscounts(OrderModel order)
+        {
+            try
+            {
+                var discounts = _api.Get<IEnumerable<ItemModel>>("/items")
+                .Where(x => x.ItemTypeID == (int)ItemTypeEnums.Discount && x.MerchantID == MerchantID);
+                foreach (var discount in discounts)
+                {
+                    var lineItemDiscount = _api.Get<ItemModel>($"/items/{discount.ID}");
+                    if (lineItemDiscount?.ID > 0)
+                    {
+
+                        var amount = 0M;
+                        switch (discount.PriceTypeID)
+                        {
+                            case (int)PriceTypeEnums.Fixed: //fixed
+                                amount = discount.Price ?? 0;
+                                break;
+                            case (int)PriceTypeEnums.Variable: //variable
+                                var lineItems = _api.Get<IEnumerable<LineItemModel>>("/lineitems").Where(x => x.OrderID == order.ID && x.ID != lineItemDiscount.ID);
+                                amount = lineItems.Sum(x => x.ItemAmount) * discount.Percentage ?? 0;
+                                break;
+                        }
+
+                        _api.Delete($"/lineitems/{lineItemDiscount.ID}");
+
+                        if (amount != 0)
+                        {
+                            var lineItem = new LineItemModel
+                            {
+                                ItemAmount = amount > 0 ? amount * -1 : amount,
+                                ItemID = discount.ID,
+                                OrderID = order.ID
+                            };
+                            _api.Post("/lineitems", lineItem);
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
 
         public void CreateUserSession(UserModel user)

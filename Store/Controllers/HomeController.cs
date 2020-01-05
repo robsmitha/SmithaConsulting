@@ -27,6 +27,11 @@ namespace Store.Controllers
             return View(model);
         }
 
+        public IActionResult Documentation()
+        {
+            return View();
+        }
+
         public IActionResult Login()
         {
             return View();

@@ -1,10 +1,10 @@
 ﻿namespace Store.Models
 {
-    public class StoreCartViewModel
+    public class CartViewModel
     {
         public OrderViewModel Order { get; set; }
-        public StoreCartViewModel() { }
-        public StoreCartViewModel(OrderViewModel order)
+        public CartViewModel() { }
+        public CartViewModel(OrderViewModel order)
         {
             Order = order;
         }

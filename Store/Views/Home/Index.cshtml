@@ -133,21 +133,30 @@
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
-            <div class="col-xl-9 mx-auto">
-                <h2 class="mb-4">Ready to get started? Sign up now!</h2>
-            </div>
-            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <form action="/Home/SignUp">
-                    <div class="form-row">
-                        <div class="col-12 col-md-9 mb-2 mb-md-0">
-                            <input type="email" name="email" class="form-control form-control-lg" placeholder="Enter your email...">
+            @if (!Model.IsLoggedIn)
+            {
+                <div class="col-xl-9 mx-auto">
+                    <h2 class="mb-4">Ready to get started? Sign up now!</h2>
+                </div>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <form action="/Home/SignUp">
+                        <div class="form-row">
+                            <div class="col-12 col-md-9 mb-2 mb-md-0">
+                                <input type="email" name="email" class="form-control form-control-lg" placeholder="Enter your email...">
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <button type="submit" class="btn btn-block btn-lg btn-primary">Sign up!</button>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-3">
-                            <button type="submit" class="btn btn-block btn-lg btn-primary">Sign up!</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <div class="col-xl-9 mx-auto">
+                    <h2 class="mb-4">Need some help getting started? Checkout our docs!</h2>
+                </div>
+            }
         </div>
     </div>
 </section>

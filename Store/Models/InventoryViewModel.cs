@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Store.Models
 {
-    public class StoreListViewModel
+    public class InventoryViewModel
     {
         public List<ItemModel> Items { get; set; }
-        public StoreListViewModel(List<ItemModel> items)
+        public InventoryViewModel(List<ItemModel> items)
         {
             Items = items;
         }

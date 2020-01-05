@@ -65,7 +65,7 @@
 
                 if (Model.OrderViewModel?.Order.ID != null)
                 {
-                    <a href="@Url.Action("Index", "Store")" class="list-group-item list-group-item-action text-uppercase text-center lead">
+                    <a href="@Url.Action("Index", "Register")" class="list-group-item list-group-item-action text-uppercase text-center lead">
                         <i class="far fa-arrow-alt-circle-left"></i> Modify Order
                     </a>
                 }
@@ -73,7 +73,7 @@
             }
         </div>
 
-        <form method="post" asp-action="ApplyDiscount" asp-controller="Store" class="card p-2">
+        <form method="post" asp-action="ApplyDiscount" asp-controller="Payments" class="card p-2">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="input-group">
                 <input asp-for="PromoCode" class="form-control" placeholder="Promo code" />
@@ -89,7 +89,7 @@
         <div class="my-3">
             <h1 class="h3 mb-3 font-weight-light">Billing Info</h1>
         </div>
-        <form method="post" asp-action="Payment" asp-controller="Store">
+        <form method="post" asp-action="Payment" asp-controller="Payments">
             @Html.ValidationMessage("CustomError")
             <input type="hidden" asp-for="CurrentOrderID" />
 
