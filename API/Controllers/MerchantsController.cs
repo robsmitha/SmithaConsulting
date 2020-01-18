@@ -51,6 +51,20 @@ namespace API.Controllers
                 return StatusCode(500, ex);
             }
         }
+        // GET: api/Merchants/5/items
+        [HttpGet("{id}/lineItems")]
+        public async Task<ActionResult<IEnumerable<LineItemModel>>> GetMerchantLineItems(int id)
+        {
+            try
+            {
+                var lineItems = await BLL.Merchants.GetMerchantLineItems(id);
+                return Ok(lineItems);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
 
         // GET: api/Merchants/5
         [HttpGet("{id}")]

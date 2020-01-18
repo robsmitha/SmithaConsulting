@@ -31,6 +31,13 @@ namespace API.BLL
                 .GetMerchantItemsAsync(id);
             return _mapper.Map<IEnumerable<ItemModel>>(items);
         }
+        public async Task<IEnumerable<LineItemModel>> GetMerchantLineItems(int id)
+        {
+            var items = await _unitOfWork
+                .MerchantRepository
+                .GetMerchantLineItemsAsync(id);
+            return _mapper.Map<IEnumerable<LineItemModel>>(items);
+        }
         public async Task<MerchantModel> UpdateAsync(MerchantModel model)
         {
             var merchant = await _unitOfWork

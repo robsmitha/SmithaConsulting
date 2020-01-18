@@ -1,0 +1,11 @@
+﻿@model  EarningsViewModel
+
+<div class="chart-area">
+    <canvas id="myAreaChart"></canvas>
+</div>
+
+<script>
+    var line_labels = JSON.parse('@Html.Raw(Model.LabelsJSON)')
+    var line_data = JSON.parse('@Model.EarningsJSON')
+</script>
+<script src="~/js/Account/Earnings.cshtml.js" asp-append-version="true"></script>

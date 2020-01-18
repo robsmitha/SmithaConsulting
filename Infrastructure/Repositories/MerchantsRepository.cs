@@ -19,5 +19,10 @@ namespace Infrastructure.Repositories
             .Include(o => o.Merchant)
             .Where(i => i.MerchantID == id)
             .ToListAsync();
+        public async Task<List<LineItem>> GetMerchantLineItemsAsync(int id) => await context.LineItems
+            .Include(o => o.Order)
+            .ThenInclude(o => o.Merchant)
+            .Where(l => l.Order.MerchantID == id)
+            .ToListAsync();
     }
 }
