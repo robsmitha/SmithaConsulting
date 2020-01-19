@@ -1,0 +1,41 @@
+﻿@using Domain.Enums;
+@model InventoryViewModel
+
+
+<div class="row">
+    @foreach (var item in Model.Items)
+    {
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <a href="/Store/Item/@item.ID"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a href="/Store/Item/@item.ID">@item.ItemName</a>
+                    </h4>
+                    <h5>
+                        @{
+                            var priceDisplay = string.Empty;
+                            switch (item.PriceTypeID)
+                            {
+                                case (int)PriceTypeEnums.Fixed:
+                                    priceDisplay = item.Price.HasValue ? item.Price.Value.ToString("C") : "FREE";
+                                    break;
+                                case (int)PriceTypeEnums.Variable:
+                                    priceDisplay = "VARIABLE";
+                                    break;
+                            }
+                            @priceDisplay
+                        }
+                    </h5>
+                    <p class="card-text">
+                        @item.ItemDescription
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!-- /.row -->

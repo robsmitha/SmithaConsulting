@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Domain.Models;
+using Store.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ namespace Store.Utilities
     {
         public StoreMappingProfile()
         {
+            CreateMap<ItemModel, ItemViewModel>().ReverseMap();
 
         }
     }

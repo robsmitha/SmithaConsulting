@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Domain.Enums;
+using Domain.Models;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
+using Store.Models;
 
 namespace Store.Controllers
 {
@@ -13,11 +16,20 @@ namespace Store.Controllers
         public StoreController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
         public IActionResult Index()
         {
-            return View();
+            var model = new ShopViewModel();
+            return View(model);
         }
-        public IActionResult Item()
+        public async Task<IActionResult> Inventory()
         {
-            return View();
+            var items = await _api.GetAsync<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items");
+            var model = new InventoryViewModel(items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList());
+            return PartialView("_Inventory", model);
+        }
+        public async Task<IActionResult> Item(int id)
+        {
+            var item = await _api.GetAsync<ItemModel>($"/items/{id}");
+            var model = _mapper.Map<ItemViewModel>(item);
+            return View(model);
         }
     }
 }
