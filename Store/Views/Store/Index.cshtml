@@ -46,12 +46,12 @@
 <!-- /.row -->
 
 @section Scripts{
-    <script src="~/js/ListComponent.js" asp-append-version="true"></script>
+    <script src="~/js/ListPlugin.js" asp-append-version="true"></script>
     <script>
-        var inventory = $('#inventory').ListComponent({
+        var inventory = $('#inventory').ListPlugin({
             url: '/Store/Inventory'
         })
-        var categories = $('#categories').ListComponent({
+        var categories = $('#categories').ListPlugin({
             url: '/Store/ItemCategories',
             defaultArgs: { categoryId: @ViewData["categoryId"] }
         })

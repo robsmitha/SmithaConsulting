@@ -71,31 +71,27 @@
 
 </div>
 @section Scripts{
-    <script src="~/js/ListComponent.js" asp-append-version="true"></script>
+    <script src="~/js/ListPlugin.js" asp-append-version="true"></script>
+    <script src="~/js/CartModule.js" asp-append-version="true"></script>
     <script>
-        var categories = $('#categories').ListComponent({
+        var categories = $('#categories').ListPlugin({
             url: '/Store/ItemCategories'
         })
+        
+        CartModule.init({
+            addItemForm: $('#form_add_item'),
+            addItemUrl: '/Store/AddLineItem/',
+            onAddItemComplete: function (data) {
+                $('.add-item').prop('disabled', false)
+                if (data.success == false) {
+                    console.log(data.message)
+                }
+            }
+        });
+
         function AddLineItem() {
             $('.add-item').prop('disabled', true)
-            var model = $('#form_add_item').serialize()
-            $.ajax({
-                url: '/Store/AddLineItem/',
-                type: 'POST',
-                data: model,
-                success: function (data) {
-                    if (data.success) {
-                        $('.add-item').prop('disabled', false)
-                    }
-                    else {
-                        console.log(msg)
-                    }
-                },
-                error: function (request, error) {
-                    console.log("Request: " + JSON.stringify(request));
-                }
-            });
+            CartModule.addItem();
         }
-
     </script>
 }

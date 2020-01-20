@@ -89,7 +89,7 @@
         <div class="my-3">
             <h1 class="h3 mb-3 font-weight-light">Billing Info</h1>
         </div>
-        <form method="post" asp-action="Payment" asp-controller="Payments">
+        <form method="post" asp-action="Payment" asp-controller="Payments" onsubmit="$('#btn_place_order').prop('disabled', true)">
             @Html.ValidationMessage("CustomError")
             <input type="hidden" asp-for="CurrentOrderID" />
 
@@ -127,7 +127,7 @@
             <hr class="mb-4">
             @if (Model?.OrderViewModel != null)
             {
-                <button class="btn btn-outline-primary btn-lg btn-lg btn-block" type="submit">
+                <button id="btn_place_order" class="btn btn-outline-primary btn-lg btn-lg btn-block" type="submit">
                     <i class="far fa-check-circle"></i> Place Order
                 </button>
             }

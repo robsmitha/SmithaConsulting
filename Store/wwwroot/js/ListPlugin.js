@@ -1,5 +1,5 @@
 ﻿
-$.fn.ListComponent = function (options) {
+$.fn.ListPlugin = function (options) {
 
     var $this = $(this)
 
