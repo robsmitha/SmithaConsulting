@@ -81,6 +81,12 @@ namespace Infrastructure.Repositories
             get => merchantUserRepository = merchantUserRepository ?? new GenericRepository<MerchantUser>(_context);
             set => merchantUserRepository = value;
         }
+        private GenericRepository<ItemCategoryType> itemCategoryTypeRepository;
+        public GenericRepository<ItemCategoryType> ItemCategoryTypeRepository
+        {
+            get => itemCategoryTypeRepository = itemCategoryTypeRepository ?? new GenericRepository<ItemCategoryType>(_context);
+            set => itemCategoryTypeRepository = value;
+        }
         #endregion
 
         public void Save()

@@ -79,5 +79,11 @@ namespace API.BLL
             get => users = users ?? new UsersBLL(_unitOfWork, _mapper);
             set => users = value;
         }
+        private ItemCategoryTypesBLL itemCategoryTypes;
+        public ItemCategoryTypesBLL ItemCategoryTypes
+        {
+            get => itemCategoryTypes = itemCategoryTypes ?? new ItemCategoryTypesBLL(_unitOfWork, _mapper);
+            set => itemCategoryTypes = value;
+        }
     }
 }

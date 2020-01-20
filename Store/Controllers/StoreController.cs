@@ -14,8 +14,9 @@ namespace Store.Controllers
     public class StoreController : BaseController
     {
         public StoreController(IApiService api, IMapper mapper, ICacheService cache) : base(api, mapper, cache) { }
-        public IActionResult Index()
+        public IActionResult Index(int? categoryId)
         {
+            ViewData["categoryId"] = categoryId ?? 0;
             var model = new ShopViewModel();
             return View(model);
         }
@@ -30,6 +31,13 @@ namespace Store.Controllers
             var item = await _api.GetAsync<ItemModel>($"/items/{id}");
             var model = _mapper.Map<ItemViewModel>(item);
             return View(model);
+        }
+        public async Task<IActionResult> ItemCategories(int? categoryId)
+        {
+            ViewData["categoryId"] = categoryId ?? 0;
+            var categories = await _api.GetAsync<IEnumerable<ItemCategoryTypeModel>>("/ItemCategoryTypes");
+            var model = new ItemCategoryTypesViewModel(categories?.ToList());
+            return PartialView("_ItemCategories", model);
         }
     }
 }

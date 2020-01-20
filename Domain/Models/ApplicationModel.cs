@@ -13,16 +13,5 @@ namespace Domain.Models
         public int ApplicationTypeID { get; set; }
         public int ThemeID { get; set; }
         public ApplicationModel() { }
-        public ApplicationModel(Application application)
-        {
-            if(application != null)
-            {
-                ID = application.ID;
-                Name = application.Name;
-                Description = application.Description;
-                ApplicationTypeID = application.ApplicationTypeID;
-                ThemeID = application.ThemeID;
-            }
-        }
     }
 }

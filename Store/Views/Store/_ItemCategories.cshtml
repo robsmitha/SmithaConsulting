@@ -1,0 +1,15 @@
+﻿@model ItemCategoryTypesViewModel
+
+@{ 
+    var categorySelected = (int)ViewData["categoryId"] > 0;
+    var allActive = !categorySelected ? "active" : "";
+}
+
+<div class="list-group">
+    <a href="/Store" class="list-group-item @allActive">All Categories</a>
+    @foreach (var category in Model.ItemCategoryTypes)
+    {
+        var active = categorySelected && category.ID == (int)ViewData["categoryId"] ? "active" : "";
+        <a href="/Store?categoryId=@category.ID" class="list-group-item @active">@category.Name</a>
+    }
+</div>
