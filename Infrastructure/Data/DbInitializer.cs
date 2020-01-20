@@ -248,7 +248,7 @@ namespace Infrastructure.Data
             };
             context.Users.Add(user);
 
-            var @namespace = "Infrastructure.Entities";
+            var @namespace = "Domain.Entities";
             var entities = AppDomain.CurrentDomain.GetAssemblies()
                        .SelectMany(t => t.GetTypes())
                        .Where(t => t.IsClass && t.Namespace == @namespace 

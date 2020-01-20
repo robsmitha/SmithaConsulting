@@ -56,18 +56,18 @@ namespace Store.Controllers
             }
 
             #region Set Theme in Session
-            if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
-            {
-                var application = _api.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
-                if (application != null)
-                {
-                    var theme = _api.Get<ThemeModel>($"/themes/{application.ThemeID}");
-                    if (theme != null)
-                    {
-                        HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
-                    }
-                }
-            }
+            //if (ThemeCDN == null && !string.IsNullOrEmpty(ApplicationName))
+            //{
+            //    var application = _api.Get<ApplicationModel>($"/applications/GetByName/{ApplicationName}");
+            //    if (application != null)
+            //    {
+            //        var theme = _api.Get<ThemeModel>($"/themes/{application.ThemeID}");
+            //        if (theme != null)
+            //        {
+            //            HttpContext.Session.SetString(SessionKeysConstants.THEME_CDN, theme?.StyleSheetCDN);
+            //        }
+            //    }
+            //}
             #endregion
         }
 

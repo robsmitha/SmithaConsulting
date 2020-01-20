@@ -34,6 +34,15 @@
                 </p>
                 <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
                 4.0 stars
+                <hr />
+                @using (Html.BeginForm("AddLineItem", "Store", FormMethod.Post, new { id = "form_add_item" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.ID)
+                    <button type="button" class="btn btn-success add-item" onclick="AddLineItem()">
+                        Add to Cart
+                    </button>
+                }
             </div>
         </div>
         <!-- /.card -->
@@ -67,5 +76,26 @@
         var categories = $('#categories').ListComponent({
             url: '/Store/ItemCategories'
         })
+        function AddLineItem() {
+            $('.add-item').prop('disabled', true)
+            var model = $('#form_add_item').serialize()
+            $.ajax({
+                url: '/Store/AddLineItem/',
+                type: 'POST',
+                data: model,
+                success: function (data) {
+                    if (data.success) {
+                        $('.add-item').prop('disabled', false)
+                    }
+                    else {
+                        console.log(msg)
+                    }
+                },
+                error: function (request, error) {
+                    console.log("Request: " + JSON.stringify(request));
+                }
+            });
+        }
+
     </script>
 }

@@ -39,5 +39,39 @@ namespace Store.Controllers
             var model = new ItemCategoryTypesViewModel(categories?.ToList());
             return PartialView("_ItemCategories", model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddLineItem(ItemViewModel model)
+        {
+            var msg = string.Empty;
+            var orderTask = GetOrderAsync();
+            var itemTask = _api.GetAsync<ItemModel>($"/items/{model.ID}");
+            await Task.WhenAll(orderTask, itemTask);
+            var order = orderTask.Result;
+            var item = itemTask.Result;
+            bool success;
+            try
+            {
+                //Create Order if needed
+                if (order == null)
+                {
+                    order = new OrderModel
+                    {
+                        OrderStatusTypeID = (int)OrderStatusTypeEnums.Open,
+                        MerchantID = MerchantID.Value,
+                        CustomerID = CustomerID,
+                        CreatedAt = DateTime.Now
+                    };
+                    order = _api.Post("/orders", order);
+                }
+                success = AddLineItem(item, order);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                success = false;
+            }
+            return Json(new { success, msg, orderId = order?.ID });
+        }
     }
 }

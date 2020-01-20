@@ -59,19 +59,19 @@
         </div>
     </div>
 </div>
-@using (Html.BeginForm("AddLineItem", "Store", FormMethod.Post, new { id = "form_add_item" }))
+@using (Html.BeginForm("AddLineItem", "Register", FormMethod.Post, new { id = "form_add_item" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
     @Html.HiddenFor(m => m.SelectedItemID, new { id = "add_item_id" })
 }
-@using (Html.BeginForm("RemoveItem", "Store", FormMethod.Post, new { id = "form_remove_item" }))
+@using (Html.BeginForm("RemoveItem", "Register", FormMethod.Post, new { id = "form_remove_item" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
     @Html.HiddenFor(m => m.SelectedItemID, new { id = "remove_item_id" })
 }
-@using (Html.BeginForm("RemoveLineItem", "Store", FormMethod.Post, new { id = "form_remove_line_item" }))
+@using (Html.BeginForm("RemoveLineItem", "Register", FormMethod.Post, new { id = "form_remove_line_item" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.CurrentOrderID, new { @class = "current-order-id" })
