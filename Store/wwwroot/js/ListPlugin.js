@@ -11,7 +11,7 @@ $.fn.ListPlugin = function (options) {
                 '<span class="sr-only">Loading...</span>' +
                 '</div>';
         },
-        onComplete: function (data) { console.log(data) }
+        onComplete: function (data) { }
     }, options);
 
     function _list(args) {

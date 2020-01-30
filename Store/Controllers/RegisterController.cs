@@ -20,15 +20,15 @@ namespace Store.Controllers
             var model = new RegisterViewModel(order, UserID);
             return View(model);
         }
-        public async Task<IActionResult> List(int? orderId)
+        public async Task<IActionResult> List()
         {
             var items = await _api.GetAsync<IEnumerable<ItemModel>>($"/merchants/{MerchantID}/items");
             var model = new InventoryViewModel(items.Where(x => x.ItemTypeID != (int)ItemTypeEnums.Discount).ToList());
             return PartialView("_List", model);
         }
-        public async Task<IActionResult> LoadCart(int? orderId)
+        public async Task<IActionResult> LoadCart()
         {
-            var order = await GetOrderAsync(orderId);
+            var order = await GetOrderAsync();
             var orderViewModel = GetOrderViewModel(order);
             var model = new CartViewModel(orderViewModel);
             return PartialView("_Cart", model);
@@ -75,7 +75,7 @@ namespace Store.Controllers
         {
             var msg = string.Empty;
             var success = false;
-            var order = await GetOrderAsync(model.CurrentOrderID);
+            var order = await GetOrderAsync();
             try
             {
                 var lineItem = order.LineItems.LastOrDefault(x => x.OrderID == order.ID && x.ItemID == model.SelectedItemID);
@@ -98,7 +98,7 @@ namespace Store.Controllers
         {
             var msg = string.Empty;
             var success = false;
-            var order = await GetOrderAsync(model.CurrentOrderID);
+            var order = await GetOrderAsync();
             try
             {
                 _api.Delete($"/orders/{order.ID}/lineitems/{model.SelectedItemID}");
@@ -112,15 +112,14 @@ namespace Store.Controllers
             return Json(new { success, msg, orderId = order?.ID });
         }
 
-        public async Task<IActionResult> Edit(int itemId, int orderId)
+        public async Task<IActionResult> Edit(int itemId)
         {
             var model = new CartEditViewModel();
-            var order = await GetOrderAsync(orderId);
+            var order = await GetOrderAsync();
             var lineItems = order.LineItems.Where(x => x.ItemID == itemId);
             var lineItem = lineItems.LastOrDefault();
             if (lineItem != null)
             {
-                model.OrderID = lineItem.OrderID;
                 model.ItemID = lineItem.ItemID;
                 model.Quantity = lineItems.Count();
             }
@@ -166,7 +165,7 @@ namespace Store.Controllers
                 msg = ex.Message;
                 success = false;
             }
-            return Json(new { success, msg, orderId = model.OrderID });
+            return Json(new { success, msg });
         }
 
     }

@@ -23,13 +23,11 @@ body {
     width: 94%;
 }*/
 
-@media (min-width: 991.98px) {
-    /*footer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }*/
+footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 

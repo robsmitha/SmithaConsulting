@@ -56,7 +56,7 @@ namespace Store
             IApiService api = new ApiService(Configuration["Configurations:APIEndpoint"], Configuration["Configurations:APIKey"]);
             services.AddSingleton(api);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

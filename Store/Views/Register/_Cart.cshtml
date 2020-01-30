@@ -5,64 +5,104 @@
     var lineItems = Model.Order != null && Model.Order.LineItems != null ? Model.Order.LineItems : null;
     var lineItemCount = lineItems?.Count ?? 0;
     var distinctLineItems = lineItems.GroupBy(x => x.ItemID).Select(g => g.First()).ToList();
-    var orderId = lineItems.FirstOrDefault()?.OrderID;
 }
 
-<div class="list-group mb-3">
-    @{
-        foreach (var lineItem in distinctLineItems)
-        {
-            var qty = lineItems.Where(x => x.ItemID == lineItem.ItemID).Count();
-            switch (lineItem.ItemTypeID)
+
+
+<div class="card mt-3 shadow">
+    <div class="py-2 px-4">
+        <span class="h3 my-3 font-weight-light">
+            Shopping Cart
+            <span class="badge badge-secondary float-right">
+                @lineItemCount
+            </span>
+        </span>
+    </div>
+    <div class="list-group list-group-flush mb-0">
+        @{
+            foreach (var lineItem in distinctLineItems)
             {
-                case (int)ItemTypeEnums.Discount:
-                    <button type="button" class="list-group-item list-group-item-action list-group-item-light" disabled>
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="my-0 lead">
-                                    @lineItem.ItemName
-                                </h6>
-                                <small class="text-muted font-weight-light">@lineItem.ItemDescription</small>
+                var qty = lineItems.Where(x => x.ItemID == lineItem.ItemID).Count();
+                switch (lineItem.ItemTypeID)
+                {
+                    case (int)ItemTypeEnums.Discount:
+                        <button type="button" class="list-group-item list-group-item-action list-group-item-light" disabled>
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="my-0 lead">
+                                        @lineItem.ItemName
+                                    </h6>
+                                    <small class="text-muted font-weight-light">@lineItem.ItemDescription</small>
+                                </div>
+                                <div class="col-auto text-right">
+                                    <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
+                                </div>
                             </div>
-                            <div class="col-auto text-right">
-                                <span class="text-success">@lineItem.ItemAmount.ToString("C")</span>
+                        </button>
+                        break;
+                    default:
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col">
+                                    <h6 class="my-0 lead">
+                                        @lineItem.ItemName
+                                    </h6>
+                                    <small class="text-muted">@lineItem.ItemDescription</small>
+                                </div>
+                                <div class="col-auto text-right">
+                                    <span class="text-muted font-weight-light">
+                                        @lineItem.ItemAmount.ToString("C")
+                                        <br />
+                                        QTY. @qty
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="btn-group" role="group" aria-label="@lineItem.ItemDescription counter">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm quantity-counter" onclick="AddLineItem(@lineItem.ItemID)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm quantity-counter" onclick="if (@qty === 1) { RemoveItem(@lineItem.ItemID) } else { RemoveLineItem(@lineItem.ItemID) }">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="RemoveItem(@lineItem.ItemID)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </button>
-                    break;
-                default:
-                    <button class="list-group-item list-group-item-action" onclick="EditRegister(@lineItem.ItemID, @lineItem.OrderID)" data-toggle="modal" data-target="#modal_edit_register">
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="my-0 lead">
-                                    @lineItem.ItemName
-                                </h6>
-                                <small class="text-muted">@lineItem.ItemDescription</small>
-                            </div>
-                            <div class="col-auto text-right">
-                                <span class="text-muted font-weight-light">
-                                    @lineItem.ItemAmount.ToString("C")
-                                    <br />
-                                    QTY. @qty
-                                </span>
-                            </div>
-                        </div>
-                    </button>
-                    break;
+                        break;
+                }
+
             }
-
         }
-        <div class="list-group-item d-flex justify-content-between">
-            <span class="lead">Total (USD)</span>
-            <strong class="lead">@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
+        <div class="list-group-item">
+            <div class="row justify-content-end">
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col">
+                            <span class="lead font-weight-bold">Subtotal: </span>
+                        </div>
+                        <div class="col text-right">
+                            <strong class="lead">@lineItems.Sum(x => x.ItemAmount).ToString("C")</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        if (lineItemCount > 0 && orderId > 0)
+        @if (lineItemCount > 0)
         {
-            <a href="@Url.Action("Payment", "Payments")" class="list-group-item list-group-item-action text-uppercase text-center lead">
-                <i class="far fa-arrow-alt-circle-right"></i> Checkout Now
+            <a href="@Url.Action("Payment", "Payments")" class="list-group-item list-group-item-primary list-group-item-action text-uppercase text-center">
+                Checkout Now
             </a>
         }
-    }
+        <a href="@Url.Action("Index", "Store")" class="list-group-item list-group-item-secondary list-group-item-action text-uppercase text-center">
+            Continue Shopping
+        </a>
+    </div>
 </div>
 

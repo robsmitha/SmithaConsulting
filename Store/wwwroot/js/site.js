@@ -1,14 +1,10 @@
 ﻿$(function () { 
-    InitHeader()
-    InitFooter
+    InitLayout()
 })
-function InitFooter() {
-    var hfooter = $('footer').height()
-    $('main').css('padding-bottom', hfooter + 'px')
-}
-function InitHeader() {
+function InitLayout() {
+    var hfooter = $('footer').outerHeight()
     var navHeight = $('.navbar').outerHeight()
-    $('body').attr('style', 'padding-top:' + navHeight + 'px !important')
+    $('body').attr('style', 'padding-top:' + navHeight + 'px !important;' + 'padding-bottom:' + hfooter + 'px !important')
     $('.offcanvas-collapse').attr('style', 'top: ' + navHeight + 'px !important')
 }
 function number_format(number, decimals, dec_point, thousands_sep) {
