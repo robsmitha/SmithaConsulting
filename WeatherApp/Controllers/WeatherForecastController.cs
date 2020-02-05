@@ -22,11 +22,11 @@ namespace WeatherApp.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> Get(double lat, double lng)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            var result = _api.Get<Domain.ThirdParty.DarkSky.Response>("Weather/42.3601,-71.0589");
-            var model = result.daily.data.Select(d => new WeatherForecast
+            var weatherResult = _api.Get<Domain.ThirdParty.DarkSky.Response>($"Weather/{lat},{lng}");
+            var model = weatherResult.daily.data.Select(d => new WeatherForecast
             {
                 Date = dtDateTime.AddSeconds(Convert.ToDouble(d.time)).ToLocalTime(),
                 Summary = d.summary,
