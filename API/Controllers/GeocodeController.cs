@@ -17,11 +17,21 @@ namespace API.Controllers
         private string Key = ConfigurationManager.GetConfiguration("GoogleApiKey");
 
         [HttpGet("{address}")]
-        public ActionResult<Domain.ThirdParty.GoogleGeocode.Response> Get(string address)
+        public ActionResult<Domain.ThirdParty.GoogleGeocode.Response> Geocode(string address)
         {
             var client = new ApiService(Endpoint, Key);
 
-            var function = $"{address}&key={Key}";
+            var function = $"address={address}&key={Key}";
+            var response = client.Get<Domain.ThirdParty.GoogleGeocode.Response>(function);
+
+            return response;
+        }
+        [HttpGet("ReverseGeocode/{lat},{lng}")]
+        public ActionResult<Domain.ThirdParty.GoogleGeocode.Response> ReverseGeocode(double lat, double lng)
+        {
+            var client = new ApiService(Endpoint, Key);
+
+            var function = $"latlng={lat},{lng}&key={Key}";
             var response = client.Get<Domain.ThirdParty.GoogleGeocode.Response>(function);
 
             return response;

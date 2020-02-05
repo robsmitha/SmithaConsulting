@@ -154,7 +154,7 @@ namespace Domain.Services
         private string FormatRequestUri(string function)
         {
             var requestUri = Endpoint;
-            requestUri += !function.StartsWith("/") ? $"/{function}" : function;
+            requestUri += !function.StartsWith("/") && !Endpoint.Contains("?") ? $"/{function}" : function;
             return requestUri;
         }
         #endregion
