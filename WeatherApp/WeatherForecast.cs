@@ -4,13 +4,16 @@ namespace WeatherApp
 {
     public class WeatherForecast
     {
-        public DateTime Date { get; set; }
-
-        //public int TemperatureC { get; set; }
-
-        //public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-        public int TemperatureF { get; set; }
-        public int TemperatureC => (int)((TemperatureF - 32) * 0.5556); //32 - (int)(TemperatureF * 0.5556);
-        public string Summary { get; set; }
+        public Currently Currently { get; set; }
+        public Minutely Minutely { get; set; }
+        public Hourly Hourly { get; set; }
+        public Daily Daily { get; set; }
+        public WeatherForecast(Domain.ThirdParty.DarkSky.Response response)
+        {
+            Currently = new Currently(response.currently);
+            Minutely = new Minutely(response.minutely);
+            Hourly = new Hourly(response.hourly);
+            Daily = new Daily(response.daily);
+        }
     }
 }

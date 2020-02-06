@@ -1,22 +1,76 @@
-<h1 id="tableLabel">Weather forecast for {{address}}</h1>
 
-<p *ngIf="!forecasts"><em>Loading...</em></p>
+<p *ngIf="!forecast"><em>Loading...</em></p>
 
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="forecasts">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Temp. (C)</th>
-      <th>Temp. (F)</th>
-      <th>Summary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let forecast of forecasts">
-      <td>{{ forecast.date }}</td>
-      <td>{{ forecast.temperatureC }}</td>
-      <td>{{ forecast.temperatureF }}</td>
-      <td>{{ forecast.summary }}</td>
-    </tr>
-  </tbody>
-</table>
+<div *ngIf="forecast">
+
+  <div class="p-3 bg-light clearfix rounded mb-3 shadow">
+    <h1 class="h4">
+      Weather forecast for {{address}}
+    </h1>
+    <div class="row">
+      <div class="col-md">
+        <span class="lead">{{forecast.currently.summary}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md">
+        <span>
+          Temperature:
+        </span>
+        {{forecast.currently.temperature}} (F)
+        <br />
+        <small>
+          <span>
+            Feels Like:
+          </span>
+          {{forecast.currently.feelsLikeTemperature}} (F)
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <h3>Daily Summary: {{forecast.daily.summary}}</h3>
+  <div class="mb-3 pb-0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>High (F)</th>
+          <th>Low (F)</th>
+          <th>Summary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of forecast.daily.data">
+          <td>{{row.date}}</td>
+          <td>{{row.temperatureHigh}}</td>
+          <td>{{row.temperatureLow}}</td>
+          <td>{{row.summary}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Hourly Summary: {{forecast.hourly.summary}}</h3>
+  <div class="mb-3 pb-0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Temp. (F)</th>
+          <th>Feels Like (F)</th>
+          <th>Summary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of forecast.hourly.data">
+          <td>{{row.time}}</td>
+          <td>{{row.temperature}}</td>
+          <td>{{row.feelsLikeTemperature}}</td>
+          <td>{{row.summary}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

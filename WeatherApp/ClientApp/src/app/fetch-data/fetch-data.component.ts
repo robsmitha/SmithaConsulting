@@ -2,12 +2,13 @@ import { Component, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 
+
 @Component({
   selector: 'app-fetch-data',
   templateUrl: './fetch-data.component.html'
 })
 export class FetchDataComponent {
-  public forecasts: WeatherForecast[];
+  public forecast: WeatherForecast;
   private lat;
   private lng;
   public address;
@@ -18,15 +19,52 @@ export class FetchDataComponent {
       this.address = params['address'];
     });
     let params = new HttpParams().set("lat", this.lat).set("lng", this.lng);
-    http.get<WeatherForecast[]>(baseUrl + 'weatherforecast', { params: params }).subscribe(result => {
-      this.forecasts = result;
+    http.get<WeatherForecast>(baseUrl + 'weatherforecast', { params: params }).subscribe(result => {
+      this.forecast = result;
     }, error => console.error(error));
   }
 }
 
 interface WeatherForecast {
+  currently: Currently,
+  minutely: Minutely,
+  hourly: Hourly,
+  daily: Daily
+}
+
+interface Currently {
   date: string;
-  temperatureC: number;
-  temperatureF: number;
+  temperature: number;
+  feelsLikeTemperature: number;
   summary: string;
+  icon: string;
+}
+
+interface Minutely {
+  summary: string;
+  icon: string;
+  data: Array<WeatherData>;
+}
+
+interface Hourly {
+  summary: string;
+  icon: string;
+  data: Array<WeatherData>;
+}
+
+interface Daily {
+  summary: string;
+  icon: string;
+  data: Array<WeatherData>;
+}
+
+interface WeatherData {
+  time: string;
+  date: string;
+  summary: string;
+  icon: string;
+  temperature: number;
+  feelsLikeTemperature: number;
+  temperatureHigh: number;
+  temperatureLow: number;
 }

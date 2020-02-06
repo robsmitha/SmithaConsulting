@@ -19,6 +19,8 @@ namespace Domain.ThirdParty.DarkSky
         public int precipIntensityMaxTime { get; set; }
         public double precipProbability { get; set; }
         public string precipType { get; set; }
+        public double apparentTemperature { get; set; }
+        public double temperature { get; set; }
         public double temperatureHigh { get; set; }
         public int temperatureHighTime { get; set; }
         public double temperatureLow { get; set; }

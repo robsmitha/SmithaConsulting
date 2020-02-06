@@ -13,7 +13,6 @@ export class HomeComponent {
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this._http = http;
     this._baseUrl = baseUrl;
-    
   }
   
   public searchAddress() {
@@ -32,6 +31,7 @@ export class HomeComponent {
       alert('Please enter an address or location');
     }  
   }
+
   public useCurrentLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
