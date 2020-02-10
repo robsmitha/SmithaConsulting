@@ -23,17 +23,8 @@ namespace WeatherApp.Controllers
         [HttpGet]
         public Address Get(string address = null, double? lat = null, double? lng = null)
         {
-            var locationResult = !string.IsNullOrEmpty(address)
-                ? _api.Get<Domain.ThirdParty.GoogleGeocode.Response>($"Geocode/{address}")
-                : _api.Get<Domain.ThirdParty.GoogleGeocode.Response>($"Geocode/ReverseGeocode/{lat},{lng}");
-            
-            var location = locationResult.results.FirstOrDefault();
-            
-            return new Address(
-                enteredAddress: address, 
-                formattedAddress: location?.formatted_address, 
-                lat: location?.geometry.location.lat, 
-                lng: location?.geometry.location.lng);
+            var addressResult = _api.Get<Domain.ThirdParty.GoogleGeocode.Response>(!string.IsNullOrEmpty(address) ? $"Geocode/{address}" : $"Geocode/ReverseGeocode/{lat},{lng}");
+            return new Address(address, addressResult.results.FirstOrDefault());
         }
     }
 }

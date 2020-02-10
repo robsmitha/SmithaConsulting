@@ -12,12 +12,12 @@ namespace WeatherApp
         public bool ValidAddress => Latitude != 0 && Longitude != 0;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Address(string enteredAddress, string formattedAddress = null, double? lat = null, double? lng = null)
+        public Address(string address, Domain.ThirdParty.GoogleGeocode.Result location)
         {
-            EnteredAddress = enteredAddress;
-            FormattedAddress = formattedAddress;
-            Latitude = lat ?? 0;
-            Longitude = lng ?? 0;
+            EnteredAddress =  address;
+            FormattedAddress = location?.formatted_address;
+            Latitude= location?.geometry.location.lat ?? 0;
+            Longitude = location?.geometry.location.lng ?? 0;
         }
     }
 }

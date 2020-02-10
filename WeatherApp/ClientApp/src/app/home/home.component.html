@@ -1,18 +1,19 @@
 
-
-<div class="row">
-  <div class="col-md-4 offset-md-4">
-    <label for=" location">
-      Enter Location
-    </label>
-    <div class="form-group">
-      <input [(ngModel)]="address" type="text" class="form-control" (keyup.enter)="searchAddress()" />
+  <div class="form-row align-items-center">
+    <div class="col-auto">
+      <label class="sr-only" for=" location">
+        Enter Location
+      </label>
+      <input [(ngModel)]="address" type="text" class="form-control" (keyup.enter)="searchAddress()" placeholder="Enter Location" />
     </div>
-    <button type="button" (click)="searchAddress()" class="btn btn-primary btn-block">
-      Get Weather
-    </button>
-    <button type="button" (click)="useCurrentLocation()" class="btn btn-secondary btn-block">
-      Use Current Location
-    </button>
+    <div class="col-auto">
+      <button type="button" (click)="searchAddress()" class="btn btn-primary btn-block">
+        Get Weather
+      </button>
+    </div>
+    <div class="col-auto">
+      <button type="button" (click)="useCurrentLocation()" class="btn btn-outline-primary btn-block">
+        Use Current Location
+      </button>
+    </div>
   </div>
-</div>

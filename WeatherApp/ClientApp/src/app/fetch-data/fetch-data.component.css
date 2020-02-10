@@ -1,0 +1,9 @@
+
+#map {
+  height: 200px;
+  width: 100%;
+}
+.summary-card{
+    padding: 3rem !important;
+    height: 200px
+}

@@ -12,9 +12,9 @@ namespace WeatherApp
         public IEnumerable<WeatherData> Data { get; set; }
         public Minutely(Domain.ThirdParty.DarkSky.Minutely minutely)
         {
-            Summary = minutely.summary;
-            Icon = minutely.summary;
-            Data = minutely.data.Select(d => new WeatherData(d));
+            Summary = minutely?.summary;
+            Icon = minutely?.summary;
+            Data = minutely?.data.Select(d => new WeatherData(d));
         }
     }
 }
