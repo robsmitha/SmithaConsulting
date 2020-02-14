@@ -20,6 +20,11 @@ namespace API.BLL
             var customer = await _unitOfWork.CustomerRepository.GetAsync(c => c.ID == customerId);
             return _mapper.Map<CustomerModel>(customer);
         }
+        public async Task<CustomerModel> GetByEmailAsync(string email)
+        {
+            var customer = await _unitOfWork.CustomerRepository.GetAsync(c => c.Email == email);
+            return _mapper.Map<CustomerModel>(customer);
+        }
         public async Task<CustomerModel> UpdateAsync(CustomerModel model)
         {
             var customer = _unitOfWork.CustomerRepository.Get(x => x.ID == model.ID);

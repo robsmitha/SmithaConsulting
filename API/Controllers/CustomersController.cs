@@ -125,5 +125,19 @@ namespace API.Controllers
                 return StatusCode(500, ex);
             }
         }
+
+        // GET: api/Customers/SignIn
+        [HttpPost("SignIn")]
+        public async Task<ActionResult<CustomerModel>> SignIn(CustomerModel model)
+        {
+            try
+            {
+                return Ok(await BLL.Customers.GetByEmailAsync(model.Email));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
     }
 }

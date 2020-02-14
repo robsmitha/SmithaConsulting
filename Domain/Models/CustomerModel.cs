@@ -11,20 +11,7 @@ namespace Domain.Models
         public string MiddleName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-
-        public CustomerModel(Customer customer)
-        {
-            if (customer != null)
-            {
-                ID = customer.ID;
-                CreatedAt = customer.CreatedAt;
-                FirstName = customer.FirstName;
-                MiddleName = customer.MiddleName;
-                LastName = customer.LastName;
-                Email = customer.Email;
-            }
-        }
-
+        public string Password { get; set; } = string.Empty;
         public CustomerModel() { }
     }
 }

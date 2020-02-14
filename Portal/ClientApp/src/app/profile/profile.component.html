@@ -1,0 +1,10 @@
+
+
+<div *ngIf="!customer">
+  Loading...
+</div>
+
+<div *ngIf="customer">
+  <h1>{{customer.firstName}}</h1>
+  {{customer.id}}
+</div>
