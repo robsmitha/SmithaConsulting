@@ -44,5 +44,11 @@ namespace Portal.Controllers
         {
             return await _api.GetAsync<CustomerModel>($"/customers/{id}");
         }
+
+        [HttpPost("EditProfile")]
+        public async Task<CustomerModel> EditProfile(CustomerModel data)
+        {
+            return await _api.PutAsync($"/customers/{data.ID}", data);
+        }
     }
 }

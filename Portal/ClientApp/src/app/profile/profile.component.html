@@ -5,6 +5,32 @@
 </div>
 
 <div *ngIf="customer">
-  <h1>{{customer.firstName}}</h1>
-  {{customer.id}}
+  <h1>
+    {{customer.firstName}}
+    {{customer.lastName}}
+    <button type="button" (click)="editProfile()">
+      Edit
+    </button>
+  </h1>
+
+  <div class="row">
+    <div class="col">
+      <span class="font-weight-bold">
+        Customer ID:
+      </span>
+      {{customer.id}}
+    </div>
+    <div class="col">
+      <span class="font-weight-bold">
+        Email:
+      </span>
+      {{customer.email}}
+    </div>
+    <div class="col">
+      <span class="font-weight-bold">
+        Created:
+      </span>
+      {{customer.createdAt}}
+    </div>
+  </div>
 </div>

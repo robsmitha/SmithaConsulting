@@ -15,6 +15,9 @@ export class CustomerService {
   signUpCustomer(data: Customer): Observable<any> {
     return this.client.post('account/signup', data);
   }
+  editCustomer(data: Customer): Observable<any> {
+    return this.client.post('account/editprofile', data);
+  }
   loadCustomer(id: number): Observable<any> {
     let params = new HttpParams().set("id", id.toString());
     return this.client.get('account/profile', { params: params })
