@@ -1,34 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-interface AuthData {
-  success: boolean;
-  message: string;
-}
 
 @Injectable()
 export class AuthService {
 
-  private loggedInStatus = JSON.parse(localStorage.getItem('loggedIn') || 'false')
-  private customerId = JSON.parse(localStorage.getItem('customerId') || 'false')
-
   constructor(private http: HttpClient) {}
 
   setLoggedIn(value: boolean) {
-    this.loggedInStatus = value;
     localStorage.setItem('loggedIn', value.toString());
   }
 
   setCustomerId(id: number) {
-    this.customerId = id;
     localStorage.setItem('customerId', id.toString());
   }
 
-  get isLoggedIn() {
-    return JSON.parse(localStorage.getItem('loggedIn') || this.loggedInStatus);
+  setGreeting(greeting: string) {
+    localStorage.setItem('greeting', greeting);
   }
 
-  get CustomerId() {
-    return JSON.parse(localStorage.getItem('customerId') || this.customerId);
+  setEmail(email: string) {
+    localStorage.setItem('email', email);
+  }
+
+  get isLoggedIn(): boolean {
+    return JSON.parse(localStorage.getItem('loggedIn') || 'false')
+  }
+
+  get CustomerId(): number {
+    return JSON.parse(localStorage.getItem('customerId') || '0')
+  }
+
+  get getGreeting() {
+    return localStorage.getItem('greeting')
+  }
+
+  get getEmail() {
+    return localStorage.getItem('email')
   }
 }

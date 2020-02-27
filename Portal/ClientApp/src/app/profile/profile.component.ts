@@ -14,6 +14,7 @@ import { DatePipe } from '@angular/common';
 export class ProfileComponent {
   customer: Customer
   private id: number
+  fullName: string
   constructor(private customerService: CustomerService,
     private router: Router,
     private authService: AuthService,
@@ -25,6 +26,7 @@ export class ProfileComponent {
       subscribe(data => {
         this.customer = data
         this.customer.createdAt = this.datePipe.transform(this.customer.createdAt, 'MM-dd-yyyy')
+        this.fullName = data.firstName + " " + data.middleName + " " + data.lastName
       });
   }
   editProfile(): void {

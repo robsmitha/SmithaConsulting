@@ -1,8 +1,14 @@
 
+<page-header [customTitle]="'Welcome to The Customer Portal!'"></page-header>
 
-<h1>Welcome to The Customer Portal</h1>
 
-<p class="lead" *ngIf="!isLoggedIn">
-  Please sign in or sign up to continue.
-</p>
 
+<div class="container">
+  <div *ngIf="!isLoggedIn">
+    <p class="lead">
+      Please sign in or sign up to continue.
+    </p>
+    <a class="btn btn-primary mr-2" [routerLink]="['/sign-in']">Sign In</a>
+    <a class="btn btn-secondary" [routerLink]="['/sign-up']">Sign Up</a>
+  </div>
+</div>

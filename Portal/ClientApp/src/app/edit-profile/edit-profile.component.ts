@@ -22,6 +22,7 @@ export class EditProfileComponent {
     this.id = authService.CustomerId
     this.customerService.loadCustomer(this.id).
       subscribe(data => {
+        this.customer = data;
         this.editProfileForm = this.formBuilder.group({
           id: data.id,
           firstName: data.firstName,

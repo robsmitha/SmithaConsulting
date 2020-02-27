@@ -15,6 +15,8 @@ export class SignOutComponent {
   ngOnInit() {
     this.authService.setLoggedIn(false);
     this.authService.setCustomerId(0);
+    this.authService.setGreeting(null);
+    this.authService.setEmail(null);
     this.router.navigateByUrl('/');
   }
 }

@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\classes\customer.ts" />
+    <None Remove="ClientApp\src\app\page-header\page-header.component.ts" />
+    <None Remove="ClientApp\src\app\profile-menu\profile-menu.component.ts" />
     <None Remove="ClientApp\src\app\profile\profile.component.ts" />
     <None Remove="ClientApp\src\app\services\auth.service.ts" />
     <None Remove="ClientApp\src\app\services\customer.service.ts" />
@@ -39,6 +41,8 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\classes\customer.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\page-header\page-header.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\profile-menu\profile-menu.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\profile\profile.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\customer.service.ts" />

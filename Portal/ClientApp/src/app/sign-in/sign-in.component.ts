@@ -30,6 +30,8 @@ export class SignInComponent {
         if (data.id > 0) {
           this.authService.setLoggedIn(true);
           this.authService.setCustomerId(data.id);
+          this.authService.setEmail(data.email);
+          this.authService.setGreeting(`Hi, ${data.firstName}`);
           this.router.navigateByUrl('profile');
         } else {
           alert('Not found');

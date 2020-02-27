@@ -13,6 +13,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { SignOutComponent } from './sign-out/sign-out.component';
+import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
+import { PageHeaderComponent } from './page-header/page-header.component';
 
 import { CustomerService } from './services/customer.service';
 import { AuthService } from './services/auth.service';
@@ -28,6 +30,8 @@ import { AuthGuard } from './utilities/auth.guard';
     ProfileComponent,
     SignOutComponent,
     EditProfileComponent,
+    ProfileMenuComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
