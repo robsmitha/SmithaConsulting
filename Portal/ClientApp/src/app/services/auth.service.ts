@@ -23,6 +23,13 @@ export class AuthService {
     localStorage.setItem('email', email);
   }
 
+  setLoginSession(data: any) {
+    this.setLoggedIn(true);
+    this.setCustomerId(data.id);
+    this.setEmail(data.email);
+    this.setGreeting(`Hi, ${data.firstName}`);
+  }
+
   get isLoggedIn(): boolean {
     return JSON.parse(localStorage.getItem('loggedIn') || 'false')
   }

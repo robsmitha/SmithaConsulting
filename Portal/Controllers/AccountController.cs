@@ -27,11 +27,11 @@ namespace Portal.Controllers
         public async Task<CustomerModel> SignIn(CustomerModel data)
         {
             var customer = await _api.PostAsync($"/customers/SignIn/", data);
-            if (customer != null && SecurePasswordHasher.Verify(data.Password, customer.Password))
+            if (SecurePasswordHasher.Verify(data.Password, customer.Password))
             {
-
+                return customer;
             }
-            return customer;
+            return null;
         }
         [HttpPost("SignUp")]
         public async Task<CustomerModel> SignUp(CustomerModel data)
@@ -48,6 +48,9 @@ namespace Portal.Controllers
         [HttpPost("EditProfile")]
         public async Task<CustomerModel> EditProfile(CustomerModel data)
         {
+            if(!SecurePasswordHasher.IsHashSupported(data.Password = SecurePasswordHasher.Hash(data.Password))){
+                data.Password = SecurePasswordHasher.Hash(data.Password);
+            }
             return await _api.PutAsync($"/customers/{data.ID}", data);
         }
     }

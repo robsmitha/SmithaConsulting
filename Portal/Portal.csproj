@@ -25,12 +25,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\change-password\change-password.component.ts" />
     <None Remove="ClientApp\src\app\classes\customer.ts" />
     <None Remove="ClientApp\src\app\page-header\page-header.component.ts" />
     <None Remove="ClientApp\src\app\profile-menu\profile-menu.component.ts" />
     <None Remove="ClientApp\src\app\profile\profile.component.ts" />
     <None Remove="ClientApp\src\app\services\auth.service.ts" />
     <None Remove="ClientApp\src\app\services\customer.service.ts" />
+    <None Remove="ClientApp\src\app\shared\confirmpassword.directive.ts" />
+    <None Remove="ClientApp\src\app\shared\password.validator.ts" />
     <None Remove="ClientApp\src\app\sign-out\sign-out.component.ts" />
     <None Remove="ClientApp\src\app\utilities\auth.guard.ts" />
   </ItemGroup>
@@ -40,12 +43,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\change-password\change-password.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\classes\customer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\page-header\page-header.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\profile-menu\profile-menu.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\profile\profile.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\customer.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\confirmpassword.directive.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\password.validator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\sign-out\sign-out.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\utilities\auth.guard.ts" />
   </ItemGroup>

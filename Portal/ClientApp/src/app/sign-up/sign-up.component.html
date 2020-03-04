@@ -14,12 +14,26 @@
               First Name
             </label>
             <input id="firstName" type="text" formControlName="firstName" class="form-control">
+            <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)"
+                 class="text-danger">
+
+              <div *ngIf="firstName.errors.required">
+                First Name is required.
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label for="lastName">
               Last Name
             </label>
             <input id="lastName" type="text" formControlName="lastName" class="form-control">
+            <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+                 class="text-danger">
+
+              <div *ngIf="lastName.errors.required">
+                Last Name is required.
+              </div>
+            </div>
           </div>
           <hr />
 
@@ -27,7 +41,14 @@
             <label for="email">
               Email
             </label>
-            <input id="email" type="text" formControlName="email" class="form-control">
+            <input id="email" type="email" formControlName="email" class="form-control">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                 class="text-danger">
+
+              <div *ngIf="email.errors.required">
+                Last Name is required.
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -35,6 +56,13 @@
               Password
             </label>
             <input id="password" type="password" formControlName="password" class="form-control">
+            <div *ngIf="password.invalid && (password.dirty || password.touched)"
+                 class="text-danger">
+
+              <div *ngIf="password.errors.required">
+                Password is required.
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -42,9 +70,19 @@
               Confirm Password
             </label>
             <input id="confirmPassword" type="password" formControlName="confirmPassword" class="form-control">
+            <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
+                 class="text-danger">
+
+              <div *ngIf="confirmPassword.errors.required">
+                Confirm Passoword is required.
+              </div>
+            </div>
+            <div class="text-danger" *ngIf="signUpForm.errors?.confirmPasswordMismatch && (signUpForm.touched || signUpForm.dirty)">
+              Passwords must match
+            </div>
           </div>
 
-          <button class="btn btn-primary" type="submit">Sign Up</button>
+          <button class="btn btn-primary" type="submit" [disabled]="signUpForm.invalid">Sign Up</button>
 
         </form>
       </div>

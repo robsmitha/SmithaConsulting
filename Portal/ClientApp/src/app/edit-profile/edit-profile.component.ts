@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CustomerService } from '../services/customer.service';
 import { AuthService } from '../services/auth.service';
 import { Customer } from '../classes/customer';
@@ -12,31 +12,37 @@ import { Router } from '@angular/router';
 export class EditProfileComponent {
   customer: Customer
   editProfileForm;
-  private id: number
 
   constructor(private customerService: CustomerService,
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService) {
 
-    this.id = authService.CustomerId
-    this.customerService.loadCustomer(this.id).
+      this.customerService.loadCustomer(authService.CustomerId).
       subscribe(data => {
         this.customer = data;
-        this.editProfileForm = this.formBuilder.group({
-          id: data.id,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          middleName: data.middleName,
-          email: data.email,
-          password: data.password,
-          active: data.active,
-          createdAt: data.createdAt,
-          modifiedTime: data.modifiedTime
-        });
-      });
+        if (this.customer != null) {
 
-    
+          this.editProfileForm = new FormGroup({
+            firstName: new FormControl(this.customer.firstName, [
+              Validators.required
+            ]),
+            middleName: new FormControl(this.customer.middleName),
+            lastName: new FormControl(this.customer.lastName, [
+              Validators.required
+            ]),
+            id: new FormControl(this.customer.id),
+            email: new FormControl(this.customer.email),
+            password: new FormControl(this.customer.password),
+            active: new FormControl(this.customer.active),
+            createdAt: new FormControl(this.customer.createdAt),
+            modifiedTime: new FormControl(this.customer.modifiedTime),
+          });
+        }
+        else {
+          this.router.navigateByUrl('/')
+        }
+      });
   }
 
   ngOnInit() {
@@ -52,5 +58,17 @@ export class EditProfileComponent {
           alert('Not found');
         }
       });
+  }
+
+  get firstName() {
+    return this.editProfileForm.get('firstName')
+  }
+
+  get middleName() {
+    return this.editProfileForm.get('middleName')
+  }
+
+  get lastName() {
+    return this.editProfileForm.get('lastName')
   }
 }
