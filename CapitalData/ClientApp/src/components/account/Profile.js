@@ -26,7 +26,7 @@ export class Profile extends Component {
             ? <p><em>Loading...</em></p>
             : Profile.renderProfile(this.state.user);
         return (
-            <div>
+            <div className="container">
                 Profile
                 {contents}
             </div>

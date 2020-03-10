@@ -27,8 +27,8 @@ export class NavMenu extends Component {
     render() {
         return (
             <header>
-                <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" dark color="dark">
-                    <Container>
+                <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow" dark color="dark">
+                    <Container fluid>
                         <NavbarBrand tag={Link} to="/">CapitalData</NavbarBrand>
                         <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
@@ -36,13 +36,16 @@ export class NavMenu extends Component {
                                 <NavItem>
                                     <NavLink tag={Link} to="/">Home</NavLink>
                                 </NavItem>
-                                <NavItem hidden={this.state.authenticated}>
+                                <NavItem>
+                                    <NavLink tag={Link} to="/members">Members</NavLink>
+                                </NavItem>
+                                <NavItem id="nav_sign_in" hidden={this.state.authenticated}>
                                     <NavLink tag={Link} to="/sign-in">Sign in</NavLink>
                                 </NavItem>
-                                <NavItem hidden={!this.state.authenticated}>
+                                <NavItem id="nav_profile" hidden={!this.state.authenticated}>
                                     <NavLink tag={Link} to="/profile">Profile</NavLink>
                                 </NavItem>
-                                <NavItem hidden={!this.state.authenticated}>
+                                <NavItem id="nav_sign_out" hidden={!this.state.authenticated}>
                                     <NavLink tag={Link} to="/sign-out">Sign out</NavLink>
                                 </NavItem>
                             </ul>

@@ -12,12 +12,15 @@ export class SignOut extends Component {
 
     signOut = () => {
         Authentication.clearLocalStorage();
-        window.location.href = '/'
+        document.getElementById('nav_sign_in').hidden = false;
+        document.getElementById('nav_profile').hidden = true;
+        document.getElementById('nav_sign_out').hidden = true;
+        this.props.history.push('/')
     }
 
     render() {
         return (
-            <div>
+            <div class="container">
                 <h1>Signing you out..</h1>
             </div>
             )

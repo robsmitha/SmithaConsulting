@@ -2,7 +2,7 @@
 import { Authentication } from '../../services/authentication'
 
 export class SignIn extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -36,10 +36,11 @@ export class SignIn extends Component {
         });
         const data = await response.json();
         if (data && data.id > 0) {
-            Authentication.setUserId(data.id)
-            //redirect to profile
-            //this.props.history.push('/profile')
-            window.location.href = '/profile'
+            Authentication.setUserId(data.id);
+            document.getElementById('nav_sign_in').hidden = true;
+            document.getElementById('nav_profile').hidden = false;
+            document.getElementById('nav_sign_out').hidden = false;
+            this.props.history.push('/profile')
         }
         else {
             alert('The username or password was incorrect.')
@@ -48,19 +49,23 @@ export class SignIn extends Component {
 
     render() {
         return (
-            <div>
-                <h1>Sign In</h1>
-                <form method="post" onSubmit={this.requestSignIn}>
-                    <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <input type="text" name="username" id="username" className="form-control" onChange={this.myChangeHandler} />
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-4">
+                        <h1>Sign In</h1>
+                        <form method="post" onSubmit={this.requestSignIn}>
+                            <div className="form-group">
+                                <label htmlFor="username">Username</label>
+                                <input type="text" name="username" id="username" className="form-control" onChange={this.myChangeHandler} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <input type="password" name="password" id="password" className="form-control" onChange={this.myChangeHandler} />
+                            </div>
+                            <button className="btn btn-primary" type="submit">Sign in</button>
+                        </form>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" name="password" id="password" className="form-control" onChange={this.myChangeHandler} />
-                    </div>
-                    <button className="btn btn-primary" type="submit">Sign in</button>
-                </form>
+                </div>
             </div>
             )
     }
